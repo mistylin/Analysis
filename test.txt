@@ -1,0 +1,16 @@
+Results 1- GLM
+  taskvalue  distractor  interaction
+betas: 0.60 0.02 0.29
+t-value: 0.08 1.10 -1.06
+p-value: 0.93 0.27 0.29
+Results 2 - Color vs Ori 
+RT
+t: 0.18 ; p: 0.86
+Accuracy
+t: 0.84 ; p: 0.40
+Results 3 - types of answers on RT
+F: 11.91 ; p: 0.00 
+posthoc tests, threashold: .05/3= .017
+Ttest_indResult(statistic=-4.1781521984261563, pvalue=0.00052114910556252437)
+Ttest_indResult(statistic=-2.2991421709506401, pvalue=0.02349934847434745)
+Ttest_indResult(statistic=2.6457474999432069, pvalue=0.013434700333423307)
