@@ -80,7 +80,7 @@ def create_masks():
 	right_task_mask = np.array(((np.array(task)==1)*((np.array(button)=='w')+(np.array(button)=='e')))+((np.array(task)==2)*((np.array(button)=='b')+(np.array(button)=='y')))) # sfjl
 	wrong_task_mask = np.array(((np.array(task)==2)*((np.array(button)=='w')+(np.array(button)=='e')))+((np.array(task)==1)*((np.array(button)=='b')+(np.array(button)=='y')))) # sfjl
 
-	responses_mask = np.array((np.array(all_responses)==1) + ((np.array(all_responses)==0)* wrong_task_mask)) 
+	responses_mask = np.array((np.array(all_responses)==1) + ((np.array(all_responses)==0)* right_task_mask)) 
 
 	correct_answer_mask = np.array(np.array(all_responses)==1) 
 	incorrect_answer_mask = np.array((np.array(all_responses)==0) * (~np.array(wrong_task_mask)))
