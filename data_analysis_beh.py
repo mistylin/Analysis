@@ -9,10 +9,11 @@ import matplotlib.pylab as pl
 from IPython import embed as shell
 import seaborn as sn
 import sys
+from scipy.stats.stats import pearsonr
 
 sn.set_style('ticks')
 
-run_on_aeneas = False
+run_on_aeneas = True 
 
 if run_on_aeneas:
 	data_dir = '/home/raw_data/2017/visual/Attention/fMRI/'
@@ -179,7 +180,6 @@ def plot_staircase(csv_files, subname):
 	#s1.set_yaxis
 
 	s3 = f.add_subplot(233)
-
 	objects = ('red','green', 'horzontal', 'vertical')
 	y_pos = np.arange(len(objects))
 	y_values = np.array([np.mean(red_task_accuracy[51:]), np.mean(gre_task_accuracy[51:]), np.mean(hor_task_accuracy[51:]), np.mean(ver_task_accuracy[51:])])
@@ -187,16 +187,12 @@ def plot_staircase(csv_files, subname):
 	sd = np.array([np.std(red_task_accuracy[51:]), np.std(gre_task_accuracy[51:]), np.std(hor_task_accuracy[51:]), np.std(ver_task_accuracy[51:])])
 	n = np.array([np.array(red_task_accuracy[51:]).shape[0], np.array(gre_task_accuracy[51:]).shape[0], np.array(hor_task_accuracy[51:]).shape[0], np.array(ver_task_accuracy[51:]).shape[0] ])
 	yerr = (sd/np.sqrt(n.squeeze()))*1.96
-# why shape? ValueError: In safezip, len(args[0])=4 but len(args[1])=1, !!! could use len()
-
+	# why shape? ValueError: In safezip, len(args[0])=4 but len(args[1])=1, !!! could use len()
 	pl.bar(y_pos, y_values, yerr = yerr, align = 'center', alpha = 0.5)
-
 	#sn.barplot( data = y_values, ci = 95, capsize = .2)
 	#pl.errorbar(y_pos, y_values, yerr = yerr, fmt='-o')
-
 	pl.axhline(0.79,color='k',ls='--')
 	pl.xticks (y_pos, objects, fontsize = 40) # why doesn't work?
-
 	#pl.ylable('percentage of correct')
 	pl.title( 'accuracy for four conditions', fontsize = 20)
 	pl.ylim([0, 1])
@@ -220,7 +216,7 @@ def plot_staircase(csv_files, subname):
 	s5.set_title('staircase orientation', fontsize = 20)
 
 	#pl.show()
-	pl.savefig(figure_dir + 'scanner_%s_color_ori_staircase_plot.pdf'%(subname))
+	pl.savefig(figure_dir + 'scanner_%s_color_ori_staircase_plot.jpg'%(subname))
 	#pl.savefig('/Users/xiaomeng/disks/Aeneas_Home/pdfs/%s_color_ori_staircase_plot.pdf'%(subname))
 
 def compute_behavioral_performance(csv_files):
@@ -234,15 +230,15 @@ def compute_behavioral_performance(csv_files):
 
 	color_task_mask, ori_task_mask, red_task_mask, gre_task_mask, hor_task_mask, ver_task_mask, right_task_mask, wrong_task_mask, responses_mask, correct_answer_mask, incorrect_answer_mask, top_left_mask, top_right_mask, bottom_left_mask, bottom_right_mask = create_masks()
 
-	RT_color = np.array(reaction_time)[color_task_mask] # with nan values
-	RT_ori = np.array(reaction_time)[ori_task_mask] # with nan values
-	Accuracy_color = np.array(all_responses)[color_task_mask] # with nan values
-	Accuracy_ori = np.array(all_responses)[ori_task_mask] # with nan values
+	RT_color = np.array(reaction_time)[color_task_mask * (~np.isnan(reaction_time))] # with nan values
+	RT_ori = np.array(reaction_time)[ori_task_mask * (~np.isnan(reaction_time))] # with nan values
+	Accuracy_color = np.array(all_responses)[color_task_mask * (~np.isnan(reaction_time))] # with nan values
+	Accuracy_ori = np.array(all_responses)[ori_task_mask * (~np.isnan(reaction_time))] # with nan values
 
-	RT_correct = np.array(reaction_time)[correct_answer_mask]
-	RT_incorrect = np.array(reaction_time)[incorrect_answer_mask]
-	RT_right_task = np.array(reaction_time)[right_task_mask]
-	RT_wrong_task = np.array(reaction_time)[wrong_task_mask]
+	RT_correct = np.array(reaction_time)[correct_answer_mask * (~np.isnan(reaction_time))]
+	RT_incorrect = np.array(reaction_time)[incorrect_answer_mask * (~np.isnan(reaction_time))]
+	RT_right_task = np.array(reaction_time)[right_task_mask * (~np.isnan(reaction_time))]
+	RT_wrong_task = np.array(reaction_time)[wrong_task_mask * (~np.isnan(reaction_time))]
 
 	# GLM to test RT vs TASKVALUE or DISTRACTOR or interaction
 	norm_color = np.abs(np.array(trial_color)) / np.abs(np.array(trial_color)).max()
@@ -284,16 +280,21 @@ def compute_behavioral_performance(csv_files):
 	# cor_vs_dir= scipy.stats.ttest_ind(RT_correct, RT_wrong_direction, equal_var=False, nan_policy='omit')
 	# task_vs_dir = scipy.stats.ttest_ind(RT_wrong_task, RT_wrong_direction, equal_var=False, nan_policy='omit')
 
-	return betas, t, p, t_Col_vs_Ori_RT, p_Col_vs_Ori_RT, t_Col_vs_Ori_Acc, p_Col_vs_Ori_Acc, t_cor_vs_incor_RT, p_cor_vs_incor_RT, t_righ_vs_wro_task_RT, p_righ_vs_wro_task_RT 
 
-# 	# average across runs should changes names!!! adding 'means'!!!
-# 	RT_mean_sub = np.nanmean(np.array(reaction_time))
-# 	accuracy_sub = np.nanmean(np.array(all_responses))
-# 	RT_correct = np.nanmean(np.array(reaction_time)[correct_answer_mask])
-# 	RT_wrong = np.nanmean(np.array(reaction_time)[wrong_answer_mask])
+	# # some detailed evidences
+	# RT_color_mean = np.nanmean(np.array(reaction_time)[color_task_mask] ) # with nan values
+	# RT_ori_mean  = np.nanmean(np.array(reaction_time)[ori_task_mask] )# with nan values
+	# Accuracy_color_mean  = np.nanmean(np.array(all_responses)[color_task_mask]) # with nan values
+	# Accuracy_ori_mean  = np.nanmean(np.array(all_responses)[ori_task_mask]) # with nan values
 
-# 	RT_wrong_task = np.nanmean(np.array(reaction_time)[wrong_task_mask])
-# 	RT_wrong_direction = np.nanmean(np.array(reaction_time)[wrong_direction_mask])
+	# RT_correct_mean  = np.nanmean(np.array(reaction_time)[correct_answer_mask])
+	# RT_incorrect_mean  = np.nanmean(np.array(reaction_time)[incorrect_answer_mask])
+	# RT_right_task_mean  = np.nanmean(np.array(reaction_time)[right_task_mask])
+	# RT_wrong_task_mean  = np.nanmean(np.array(reaction_time)[wrong_task_mask])
+
+
+	return betas, t, p, t_Col_vs_Ori_RT, p_Col_vs_Ori_RT, t_Col_vs_Ori_Acc, p_Col_vs_Ori_Acc, t_cor_vs_incor_RT, p_cor_vs_incor_RT, t_righ_vs_wro_task_RT, p_righ_vs_wro_task_RT, RT_color, RT_ori, Accuracy_color, Accuracy_ori, RT_correct, RT_incorrect, RT_right_task, RT_wrong_task 
+
 
 # 	# four locations
 # 	## top left (x = -2.5, y =2.5)
@@ -353,7 +354,7 @@ def compute_behavioral_performance(csv_files):
 def save_results (subname):
 	# save results into a txt file
 	#pl.savefig(figure_dir + 'scanner/staircase_plots/%s_color_ori_staircase_plot.pdf'%(subname))
-	betas, t, p, t_Col_vs_Ori_RT, p_Col_vs_Ori_RT, t_Col_vs_Ori_Acc, p_Col_vs_Ori_Acc, t_cor_vs_incor_RT, p_cor_vs_incor_RT, t_righ_vs_wro_task_RT, p_righ_vs_wro_task_RT = compute_behavioral_performance(csv_files)
+	betas, t, p, t_Col_vs_Ori_RT, p_Col_vs_Ori_RT, t_Col_vs_Ori_Acc, p_Col_vs_Ori_Acc, t_cor_vs_incor_RT, p_cor_vs_incor_RT, t_righ_vs_wro_task_RT, p_righ_vs_wro_task_RT, RT_color, RT_ori, Accuracy_color, Accuracy_ori, RT_correct, RT_incorrect, RT_right_task, RT_wrong_task = compute_behavioral_performance(csv_files)
 
 	sys.stdout = open(figure_dir + 'scanner_%s_results.txt'%(subname), 'w')
 
@@ -385,14 +386,78 @@ def save_results (subname):
 	print 'Results 4 - Right vs Wrong tasks on RT'
 	print 't: %.2f ; p: %.2f' % (t_righ_vs_wro_task_RT, p_righ_vs_wro_task_RT)
 
-
 	# print 'F: %.2f ; p: %.2f ' % (F_answers_RT, p_answers_RT)
 	# print 'posthoc tests, threashold: .05/3= .017'
 	# print 'cor_vs_task', cor_vs_task
 	# print 'cor_vs_dir', cor_vs_dir
 	# print 'task_vs_dir',task_vs_dir
-
 	sys.stdout.close()
+
+
+	#GLM
+	# s1 = f.add_subplot(231)
+
+	# TASKVALUE[~np.isnan(reaction_time)]
+	# pearsonr(TASKVALUE, RT)
+	# pearsonr(DISTRACTOR, RT)
+	f = pl.figure(figsize = (15,5))
+	# color vs. ori on RT
+	s1 = f.add_subplot(141)
+	objects = ('color','orientation')
+	y_pos = np.arange(len(objects))
+	y_values = np.array([np.mean(RT_color), np.mean(RT_ori)])
+	sd = np.array([np.std(RT_color), np.std(RT_ori)])
+	n = np.array([np.array(RT_color).shape[0], np.array(RT_ori).shape[0] ])
+	yerr = (sd/np.sqrt(n.squeeze()))*1.96
+	pl.bar(y_pos, y_values, yerr = yerr, align = 'center', alpha = 0.5)
+	pl.xticks (y_pos, objects, fontsize = 40) # why doesn't work?
+	pl.title( 'color vs. ori on RT')#, fontsize = 20)
+	pl.ylim([0, 1])
+	sn.despine(offset=10)
+	
+	# color vs. ori on Accuracy
+	s2 = f.add_subplot(142)
+	objects = ('color','orientation')
+	y_pos = np.arange(len(objects))
+	y_values = np.array([np.mean(Accuracy_color), np.mean(Accuracy_ori)])
+	sd = np.array([np.std(Accuracy_color), np.std(Accuracy_ori)])
+	n = np.array([np.array(Accuracy_color).shape[0], np.array(Accuracy_ori).shape[0] ])
+	yerr = (sd/np.sqrt(n.squeeze()))*1.96
+	pl.bar(y_pos, y_values, yerr = yerr, align = 'center', alpha = 0.5)
+	pl.xticks (y_pos, objects, fontsize = 40) # why doesn't work?
+	pl.title( 'color vs. ori on Accuracy')#, fontsize = 20)
+	pl.ylim([0, 1])
+	sn.despine(offset=10)
+
+	# correct vs. incorrect on RT
+	s3 = f.add_subplot(143)
+	objects = ('correct','incorrect')
+	y_pos = np.arange(len(objects))
+	y_values = np.array([np.mean(RT_correct), np.mean(RT_incorrect)])
+	sd = np.array([np.std(RT_correct), np.std(RT_incorrect)])
+	n = np.array([np.array(RT_correct).shape[0], np.array(RT_incorrect).shape[0] ])
+	yerr = (sd/np.sqrt(n.squeeze()))*1.96
+	pl.bar(y_pos, y_values, yerr = yerr, align = 'center', alpha = 0.5)
+	pl.xticks (y_pos, objects, fontsize = 40) # why doesn't work?
+	pl.title( 'correct vs. incorrect on RT')#, fontsize = 20)
+	pl.ylim([0, 1])
+	sn.despine(offset=10)
+
+	# valid vs. invalid on RT
+	s4 = f.add_subplot(144)
+	objects = ('valid','invalid')
+	y_pos = np.arange(len(objects))
+	y_values = np.array([np.mean(RT_right_task), np.mean(RT_wrong_task)])
+	sd = np.array([np.std(RT_right_task), np.std(RT_wrong_task)])
+	n = np.array([np.array(RT_right_task).shape[0], np.array(RT_wrong_task).shape[0] ])
+	yerr = (sd/np.sqrt(n.squeeze()))*1.96
+	pl.bar(y_pos, y_values, yerr = yerr, align = 'center', alpha = 0.5)
+	pl.xticks (y_pos, objects, fontsize = 40) # why doesn't work?
+	pl.title( 'valid vs. invalid on RT')#, fontsize = 20)
+	pl.ylim([0, 1])
+	sn.despine(offset=10)
+
+	pl.savefig(figure_dir + 'scanner_%s_results.jpg'%(subname))
 
 
 # loop over the subjects
