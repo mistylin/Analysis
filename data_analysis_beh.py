@@ -21,7 +21,7 @@ else:
 	data_dir = '/Users/xiaomeng/disks/Aeneas_Raw/2017/visual/Attention/fMRI/'
 	figure_dir = '/Users/xiaomeng/disks/Aeneas_Shared/2017/visual/Attention/behaviour/'
 
-sublist =  ['DE','TK']
+sublist =  ['DE','TK','MV']
 beh ='beh/'
 
 '''fMRI beh >> 1)change sublist, 2)csv_files path, 3)buttons 4) savefig folders 5) locaitons 6) pop out csv_files with 0 7)'''
@@ -182,13 +182,24 @@ def plot_staircase(csv_files, subname):
 
 	objects = ('red','green', 'horzontal', 'vertical')
 	y_pos = np.arange(len(objects))
-	y_values = [np.mean(red_task_accuracy[51:]), np.mean(gre_task_accuracy[51:]), np.mean(hor_task_accuracy[51:]), np.mean(ver_task_accuracy[51:])]
-	pl.bar(y_pos, y_values, align = 'center', alpha = 0.5)
+	y_values = np.array([np.mean(red_task_accuracy[51:]), np.mean(gre_task_accuracy[51:]), np.mean(hor_task_accuracy[51:]), np.mean(ver_task_accuracy[51:])])
+	#shell()
+	sd = np.array([np.std(red_task_accuracy[51:]), np.std(gre_task_accuracy[51:]), np.std(hor_task_accuracy[51:]), np.std(ver_task_accuracy[51:])])
+	n = np.array([np.array(red_task_accuracy[51:]).shape[0], np.array(gre_task_accuracy[51:]).shape[0], np.array(hor_task_accuracy[51:]).shape[0], np.array(ver_task_accuracy[51:]).shape[0] ])
+	yerr = (sd/np.sqrt(n.squeeze()))*1.96
+# why shape? ValueError: In safezip, len(args[0])=4 but len(args[1])=1, !!! could use len()
+
+	pl.bar(y_pos, y_values, yerr = yerr, align = 'center', alpha = 0.5)
+
+	#sn.barplot( data = y_values, ci = 95, capsize = .2)
+	#pl.errorbar(y_pos, y_values, yerr = yerr, fmt='-o')
+
 	pl.axhline(0.79,color='k',ls='--')
-	pl.xticks (y_pos, objects, fontsize = 20)
+	pl.xticks (y_pos, objects, fontsize = 40) # why doesn't work?
+
 	#pl.ylable('percentage of correct')
 	pl.title( 'accuracy for four conditions', fontsize = 20)
-	#pl.ylim([0, 50])
+	pl.ylim([0, 1])
 	sn.despine(offset=10)
 	#s3.set_title('staircase color')
 

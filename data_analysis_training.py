@@ -2,11 +2,13 @@ from __future__ import division
 import pandas as pd
 #from math import *
 import numpy as np
+import scipy
 import os
 import glob
 import matplotlib.pylab as pl
 from IPython import embed as shell
 import seaborn as sn
+import sys
 
 sn.set_style('ticks')
 
@@ -19,6 +21,7 @@ else:
 	data_dir = '/Users/xiaomeng/disks/Aeneas_Raw/2017/visual/Attention/Behavioural/Pre_scan_data/'
 	figure_dir = '/Users/xiaomeng/disks/Aeneas_Shared/2017/visual/Attention/behaviour/'
 
+'''fMRI beh >> 1)change sublist, 2)csv_files path, 3)buttons 4) savefig folders 5) locaitons 6) pop out csv_files with 0 7)'''
 
 #data_dir = '/Users/xiaomeng/disks/Aeneas_Raw/2017/visual/Attention/Behavioural/'
 sublist =  ['SL','MS']
@@ -36,8 +39,10 @@ def load_data(csv_files):
 	trial_ori = []
 	trial_stimulus =[]
 
+	# shell()
 	for this_file in csv_files: # loop over files
 
+		#shell()
 		csv_data = pd.read_csv(this_file)  #load data na_values = ["NaN"]
 		
 		# # each run
@@ -63,34 +68,38 @@ def create_masks():
 	'''create masks'''
 	reaction_time, all_responses, task, button, position_x, position_y, trial_color, trial_ori, trial_stimulus = load_data(csv_files) #  all the data
 
+	
 	color_task_mask = np.array(np.array(task)==1)
 	ori_task_mask = np.array(np.array(task)==2)
+
 	red_task_mask = np.array(color_task_mask * ((trial_stimulus == 0) + (trial_stimulus == 1)))
 	gre_task_mask = np.array(color_task_mask * ((trial_stimulus == 2) + (trial_stimulus == 3)))
 	hor_task_mask = np.array(ori_task_mask * ((trial_stimulus == 0) + (trial_stimulus == 2)))
 	ver_task_mask = np.array(ori_task_mask * ((trial_stimulus == 1) + (trial_stimulus == 3)))
 	
-	responses_mask = np.array((np.array(all_responses)==1) + (np.array(all_responses)==0) )
-	correct_answer_mask = np.array(np.array(all_responses)==1) 
-	wrong_answer_mask = np.array(np.array(all_responses)==0)
-	
-	wrong_task_mask = np.array(((np.array(task)==2)*((np.array(button)=='s')+(np.array(button)=='f')))+((np.array(task)==1)*((np.array(button)=='j')+(np.array(button)=='l'))))
-	wrong_direction_mask = np.array((np.array(all_responses)==0) * (~np.array(wrong_task_mask)))
+	right_task_mask = np.array(((np.array(task)==1)*((np.array(button)=='s')+(np.array(button)=='f')))+((np.array(task)==2)*((np.array(button)=='j')+(np.array(button)=='l')))) # sfjl
+	wrong_task_mask = np.array(((np.array(task)==2)*((np.array(button)=='s')+(np.array(button)=='f')))+((np.array(task)==1)*((np.array(button)=='j')+(np.array(button)=='l')))) # sfjl
 
-	# four locations
+	responses_mask = np.array((np.array(all_responses)==1) + ((np.array(all_responses)==0)* right_task_mask)) 
+
+	correct_answer_mask = np.array(np.array(all_responses)==1) 
+	incorrect_answer_mask = np.array((np.array(all_responses)==0) * (~np.array(wrong_task_mask)))
+
+	 #four locations
 	top_left_mask = np.array((np.array(position_x) == -2.5) * (np.array(position_y) == 2.5))
 	top_right_mask = np.array((np.array(position_x) == 2.5) * (np.array(position_y) == 2.5))
 	bottom_left_mask = np.array((np.array(position_x) == -2.5) * (np.array(position_y) == -2.5))
 	bottom_right_mask = np.array((np.array(position_x) == 2.5) * (np.array(position_y) == -2.5))
 
-	return color_task_mask, ori_task_mask, red_task_mask, gre_task_mask, hor_task_mask, ver_task_mask, responses_mask, correct_answer_mask, wrong_answer_mask, wrong_task_mask, wrong_direction_mask, top_left_mask, top_right_mask, bottom_left_mask, bottom_right_mask 
+	return color_task_mask, ori_task_mask, red_task_mask, gre_task_mask, hor_task_mask, ver_task_mask, right_task_mask, wrong_task_mask, responses_mask, correct_answer_mask, incorrect_answer_mask, top_left_mask, top_right_mask, bottom_left_mask, bottom_right_mask 
 
 
 def plot_staircase(csv_files, subname):
 	'''plot stairecase for each participant'''
 	
 	all_responses = load_data(csv_files)[1] # index starts from 0
-	responses_mask = create_masks()[6] # changes! if add seperatable analysis
+	responses_mask = create_masks()[8] # changes! if add seperatable analysis
+	correct_answer_mask = create_masks()[9]
 	color_task_mask = create_masks()[0]
 	ori_task_mask = create_masks()[1]
 	red_task_mask = create_masks()[2]
@@ -100,7 +109,7 @@ def plot_staircase(csv_files, subname):
 
 
 	# color & orientation accuracy
-	##responses = np.array(all_responses)[responses_mask]
+	#responses = np.array(all_responses)[responses_mask]
 	color_responses = np.array(all_responses)[responses_mask * color_task_mask]
 	color_n_responses = np.arange(1, len(color_responses)+1)
 	color_cum_responses = np.cumsum(color_responses)
@@ -135,10 +144,15 @@ def plot_staircase(csv_files, subname):
 	trial_color = load_data(csv_files)[6]
 	trial_ori = load_data(csv_files)[7]
 
-	red_staircase = np.abs(trial_color[responses_mask * red_task_mask])
-	gre_staircase = np.abs(trial_color[responses_mask * gre_task_mask])
-	hor_staircase = np.abs(trial_ori[responses_mask * hor_task_mask])
-	ver_staircase = np.abs(trial_ori[responses_mask * ver_task_mask])
+	red_staircase = np.abs(trial_color[correct_answer_mask * red_task_mask])
+	gre_staircase = np.abs(trial_color[correct_answer_mask * gre_task_mask])
+	hor_staircase = np.abs(trial_ori[correct_answer_mask * hor_task_mask])
+	ver_staircase = np.abs(trial_ori[correct_answer_mask * ver_task_mask])
+
+	# red_staircase = np.abs(trial_color[responses_mask * red_task_mask])
+	# gre_staircase = np.abs(trial_color[responses_mask * gre_task_mask])
+	# hor_staircase = np.abs(trial_ori[responses_mask * hor_task_mask])
+	# ver_staircase = np.abs(trial_ori[responses_mask * ver_task_mask])
 
 	#plot accuracy & staircase
 	f = pl.figure(figsize = (25,15))
@@ -170,11 +184,12 @@ def plot_staircase(csv_files, subname):
 	y_pos = np.arange(len(objects))
 	y_values = [np.mean(red_task_accuracy[51:]), np.mean(gre_task_accuracy[51:]), np.mean(hor_task_accuracy[51:]), np.mean(ver_task_accuracy[51:])]
 	pl.bar(y_pos, y_values, align = 'center', alpha = 0.5)
+
 	pl.axhline(0.79,color='k',ls='--')
 	pl.xticks (y_pos, objects, fontsize = 20)
 	#pl.ylable('percentage of correct')
 	pl.title( 'accuracy for four conditions', fontsize = 20)
-	#pl.ylim([0, 50])
+	pl.ylim([0, 1])
 	sn.despine(offset=10)
 	#s3.set_title('staircase color')
 
@@ -193,20 +208,75 @@ def plot_staircase(csv_files, subname):
 	#pl.ylim([0, 5])
 	sn.despine(offset=10)
 	s5.set_title('staircase orientation', fontsize = 20)
+
 	#pl.show()
-	#pl.savefig('/Users/xiaomeng/disks/Aeneas_Home/pdfs/%s_color_ori_staircase_plot.pdf'%(subname))
 	pl.savefig(figure_dir + 'lab_%s_color_ori_staircase_plot.pdf'%(subname))
+	#pl.savefig('/Users/xiaomeng/disks/Aeneas_Home/pdfs/%s_color_ori_staircase_plot.pdf'%(subname))
 
-#def compute_behavioral_performance(csv_files):
-# 	''' compute 
-# 	1) RT, accuracy for each run, and averaged values over runs
-# 	2) RT for different condiitons 
-# 	(correct response, ,wrong response, wrong task, wrong direction)'''
-
-# 	color_task_mask, ori_task_mask, correct_answer_mask, wrong_answer_mask, responses_mask, wrong_task_mask, wrong_direction_mask, top_left_mask, top_right_mask, bottom_left_mask, bottom_right_mask = create_masks()
+def compute_behavioral_performance(csv_files):
+	''' compute 
+	1) RT, accuracy for each run, and averaged values over runs
+	2) RT for different condiitons 
+	(correct response, ,wrong response, wrong task, wrong direction)'''
 
 
-# 	# average across runs
+	reaction_time, all_responses, task, button, position_x, position_y, trial_color, trial_ori, trial_stimulus = load_data(csv_files)
+
+	color_task_mask, ori_task_mask, red_task_mask, gre_task_mask, hor_task_mask, ver_task_mask, right_task_mask, wrong_task_mask, responses_mask, correct_answer_mask, incorrect_answer_mask, top_left_mask, top_right_mask, bottom_left_mask, bottom_right_mask = create_masks()
+
+	RT_color = np.array(reaction_time)[color_task_mask] # with nan values
+	RT_ori = np.array(reaction_time)[ori_task_mask] # with nan values
+	Accuracy_color = np.array(all_responses)[color_task_mask] # with nan values
+	Accuracy_ori = np.array(all_responses)[ori_task_mask] # with nan values
+
+	RT_correct = np.array(reaction_time)[correct_answer_mask]
+	RT_incorrect = np.array(reaction_time)[incorrect_answer_mask]
+	RT_right_task = np.array(reaction_time)[right_task_mask]
+	RT_wrong_task = np.array(reaction_time)[wrong_task_mask]
+
+	# GLM to test RT vs TASKVALUE or DISTRACTOR or interaction
+	norm_color = np.abs(np.array(trial_color)) / np.abs(np.array(trial_color)).max()
+	norm_ori = np.abs(np.array(trial_ori)) / np.abs(np.array(trial_ori)).max()
+
+	TASKVALUE = np.zeros((len(reaction_time),))
+	TASKVALUE[np.array(task)==1] = norm_color[np.array(task)==1]
+	TASKVALUE[np.array(task)==2] = norm_ori[np.array(task)==2]
+	TASKVALUE = TASKVALUE[~np.isnan(reaction_time)] #* ~np.isnan(all_responses)] # why use two creteria?
+
+	DISTRACTOR = np.zeros((len(reaction_time),))
+	DISTRACTOR[np.array(task)==2] = norm_color[np.array(task)==2] #how do you define the distractor?
+	DISTRACTOR[np.array(task)==1] = norm_ori[np.array(task)==1]
+	DISTRACTOR = DISTRACTOR[~np.isnan(reaction_time)]# * ~np.isnan(all_responses)]
+
+	RT = np.array(reaction_time)[~np.isnan(reaction_time)]# * ~np.isnan(all_responses)]
+	X = np.hstack([np.ones((len(RT),1)), TASKVALUE[:,np.newaxis], DISTRACTOR[:,np.newaxis], TASKVALUE[:,np.newaxis]*DISTRACTOR[:,np.newaxis]])
+	betas = np.linalg.lstsq(X, RT)[0]
+	#betas_new = np.linalg.pinv(X).dot(RT)
+	SE = np.sqrt(np.sum((X.dot(betas) - RT)**2)/(RT.size - X.shape[1]))
+	df= RT.size - X.shape[1]
+	t = [betas.squeeze().dot(contrast) / SE for contrast in np.array([[0,1,0,0],[0,0,1,0], [0,0,0,1]])]
+	p = scipy.stats.t.sf(np.abs(t), df)*2
+
+
+	# Color vs Orientation on RT, %correct
+	t_Col_vs_Ori_RT, p_Col_vs_Ori_RT = scipy.stats.ttest_ind(RT_color, RT_ori, equal_var=False, nan_policy='omit')
+	t_Col_vs_Ori_Acc, p_Col_vs_Ori_Acc = scipy.stats.ttest_ind(Accuracy_color, Accuracy_ori, equal_var=False, nan_policy='omit')
+	
+	# correct vs incorrect answers on RT
+	t_cor_vs_incor_RT, p_cor_vs_incor_RT = scipy.stats.ttest_ind(RT_correct, RT_incorrect, equal_var=False, nan_policy='omit')
+
+	# right vs wrong tasks on RT
+	t_righ_vs_wro_task_RT, p_righ_vs_wro_task_RT = scipy.stats.ttest_ind(RT_right_task, RT_wrong_task, equal_var=False, nan_policy='omit')
+
+	# # Correct vs Incorrect task vs Incorrect direction on RT
+	# F_answers_RT, p_answers_RT = scipy.stats.f_oneway(RT_correct, RT_wrong_task, RT_wrong_direction)
+	# cor_vs_task = scipy.stats.ttest_ind(RT_correct, RT_wrong_task, equal_var=False, nan_policy='omit')
+	# cor_vs_dir= scipy.stats.ttest_ind(RT_correct, RT_wrong_direction, equal_var=False, nan_policy='omit')
+	# task_vs_dir = scipy.stats.ttest_ind(RT_wrong_task, RT_wrong_direction, equal_var=False, nan_policy='omit')
+
+	return betas, t, p, t_Col_vs_Ori_RT, p_Col_vs_Ori_RT, t_Col_vs_Ori_Acc, p_Col_vs_Ori_Acc, t_cor_vs_incor_RT, p_cor_vs_incor_RT, t_righ_vs_wro_task_RT, p_righ_vs_wro_task_RT 
+
+# 	# average across runs should changes names!!! adding 'means'!!!
 # 	RT_mean_sub = np.nanmean(np.array(reaction_time))
 # 	accuracy_sub = np.nanmean(np.array(all_responses))
 # 	RT_correct = np.nanmean(np.array(reaction_time)[correct_answer_mask])
@@ -269,17 +339,65 @@ def plot_staircase(csv_files, subname):
 	# 	staircase.extend(addition)
 	# pl.plot(staircase)
 
+def save_results (subname):
+	# save results into a txt file
+	#pl.savefig(figure_dir + 'scanner/staircase_plots/%s_color_ori_staircase_plot.pdf'%(subname))
+	betas, t, p, t_Col_vs_Ori_RT, p_Col_vs_Ori_RT, t_Col_vs_Ori_Acc, p_Col_vs_Ori_Acc, t_cor_vs_incor_RT, p_cor_vs_incor_RT, t_righ_vs_wro_task_RT, p_righ_vs_wro_task_RT = compute_behavioral_performance(csv_files)
+
+	sys.stdout = open(figure_dir + 'lab_%s_results.txt'%(subname), 'w')
+
+		# f = open(os.path.join('data', self.subject_initials + '_staircase.txt'), 'w')
+		# f.write(";".join([str(self.staircases[s].get_intensity()) for s in range(len(self.staircases))]))			
+		# f.close()
+
+	print '[main] Running analysis for %s'% (subname) #No. %s participant %s' % (str(subii+1), subname)
+	print 'Results 1- GLM' 
+	print '  taskvalue  distractor  interaction'
+	print 'betas: %.2f %.2f %.2f' % (betas[0], betas[1], betas[2],)
+	#print 'betas_new: %.2f %.2f %.2f'%  (betas_new[0], betas_new[1], betas_new[2])
+	print 't-value: %.2f %.2f %.2f'% (t[0], t[1], t[2])
+	print 'p-value: %.2f %.2f %.2f'%  (p[0], p[1], p[2])
+	
+	# Color vs Orientation on RT, %correct
+
+	print 'Results 2 - Color vs Ori '
+	print 'RT'
+	print 't: %.2f ; p: %.2f' % (t_Col_vs_Ori_RT, p_Col_vs_Ori_RT)
+	print 'Accuracy'
+	print 't: %.2f ; p: %.2f' % (t_Col_vs_Ori_Acc, p_Col_vs_Ori_Acc)
+
+	# Correct vs Incorrect task vs Incorrect direction on RT
+
+	print 'Results 3 - Correct vs Incorrect answers on RT'
+	print 't: %.2f ; p: %.2f' % (t_cor_vs_incor_RT, p_cor_vs_incor_RT)
+
+	print 'Results 4 - Right vs Wrong tasks on RT'
+	print 't: %.2f ; p: %.2f' % (t_righ_vs_wro_task_RT, p_righ_vs_wro_task_RT)
+
+
+	# print 'F: %.2f ; p: %.2f ' % (F_answers_RT, p_answers_RT)
+	# print 'posthoc tests, threashold: .05/3= .017'
+	# print 'cor_vs_task', cor_vs_task
+	# print 'cor_vs_dir', cor_vs_dir
+	# print 'task_vs_dir',task_vs_dir
+
+	sys.stdout.close()
+
 
 # loop over the subjects
 for subii, subname in enumerate(sublist):
 
-	print '[main] Running analysis for No. %s participant %s' % (str(subii+1), subname)
+	#print '[main] Running analysis for No. %s participant %s' % (str(subii+1), subname)
 	subject_dir= os.path.join(data_dir,subname)
 	csv_files = glob.glob(subject_dir+'/*.csv')
 	csv_files.sort()
+	#shell()
 
-	#compute_behavioral_performance(csv_files)
+	if csv_files[0].split('_')[2]=='0':
+		csv_files.pop(0)
+
 	plot_staircase(csv_files,subname)
+	save_results(subname)
 
 
 	
