@@ -230,10 +230,10 @@ def compute_behavioral_performance(csv_files):
 
 	color_task_mask, ori_task_mask, red_task_mask, gre_task_mask, hor_task_mask, ver_task_mask, right_task_mask, wrong_task_mask, responses_mask, correct_answer_mask, incorrect_answer_mask, top_left_mask, top_right_mask, bottom_left_mask, bottom_right_mask = create_masks()
 
-	RT_color = np.array(reaction_time)[color_task_mask * (~np.isnan(reaction_time))] # with nan values
-	RT_ori = np.array(reaction_time)[ori_task_mask * (~np.isnan(reaction_time))] # with nan values
-	Accuracy_color = np.array(all_responses)[color_task_mask * (~np.isnan(reaction_time))] # with nan values
-	Accuracy_ori = np.array(all_responses)[ori_task_mask * (~np.isnan(reaction_time))] # with nan values
+	RT_color = np.array(reaction_time)[color_task_mask * (~np.isnan(reaction_time))] # without nan values
+	RT_ori = np.array(reaction_time)[ori_task_mask * (~np.isnan(reaction_time))] # without nan values
+	Accuracy_color = np.array(all_responses)[color_task_mask * (~np.isnan(reaction_time))] # without nan values
+	Accuracy_ori = np.array(all_responses)[ori_task_mask * (~np.isnan(reaction_time))] # without nan values
 
 	RT_correct = np.array(reaction_time)[correct_answer_mask * (~np.isnan(reaction_time))]
 	RT_incorrect = np.array(reaction_time)[incorrect_answer_mask * (~np.isnan(reaction_time))]
@@ -250,8 +250,8 @@ def compute_behavioral_performance(csv_files):
 	TASKVALUE = TASKVALUE[~np.isnan(reaction_time)] #* ~np.isnan(all_responses)] # why use two creteria?
 
 	DISTRACTOR = np.zeros((len(reaction_time),))
-	DISTRACTOR[np.array(task)==2] = norm_color[np.array(task)==2] #how do you define the distractor?
-	DISTRACTOR[np.array(task)==1] = norm_ori[np.array(task)==1]
+	DISTRACTOR[np.array(task)==2] = norm_color[np.array(task)==1] #how do you define the distractor?
+	DISTRACTOR[np.array(task)==1] = norm_ori[np.array(task)==2]
 	DISTRACTOR = DISTRACTOR[~np.isnan(reaction_time)]# * ~np.isnan(all_responses)]
 
 	RT = np.array(reaction_time)[~np.isnan(reaction_time)]# * ~np.isnan(all_responses)]
@@ -263,6 +263,11 @@ def compute_behavioral_performance(csv_files):
 	t = [betas.squeeze().dot(contrast) / SE for contrast in np.array([[0,1,0,0],[0,0,1,0], [0,0,0,1]])]
 	p = scipy.stats.t.sf(np.abs(t), df)*2
 
+	# print '[main] Running analysis for %s'% (subname) #No. %s participant %s' % (str(subii+1), subname)
+	#shell ()
+
+	# print pearsonr(TASKVALUE, RT)
+	# print pearsonr(DISTRACTOR, RT)
 
 	# Color vs Orientation on RT, %correct
 	t_Col_vs_Ori_RT, p_Col_vs_Ori_RT = scipy.stats.ttest_ind(RT_color, RT_ori, equal_var=False, nan_policy='omit')
@@ -398,8 +403,8 @@ def save_results (subname):
 	# s1 = f.add_subplot(231)
 
 	# TASKVALUE[~np.isnan(reaction_time)]
-	# pearsonr(TASKVALUE, RT)
-	# pearsonr(DISTRACTOR, RT)
+	# print pearsonr(TASKVALUE, RT)
+	# print pearsonr(DISTRACTOR, RT)
 	f = pl.figure(figsize = (15,5))
 	# color vs. ori on RT
 	s1 = f.add_subplot(141)
