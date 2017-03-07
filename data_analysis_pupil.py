@@ -21,12 +21,12 @@ sys.path.append( 'utils' )
 from PupilAnalyzer import PupilAnalyzer
 
 
-subID = 'ms'
+subID = 'MS' #, SL'
 
-data_folder = '/home/barendregt/Analysis/xiaomeng/Data/'
+data_folder = '/home/xiaomeng/Data/Pre_scan_data/MS'
 
 
-h5filename = os.path.join(data_folder + '/' + subID + '.h5')
+h5filename = os.path.join(data_folder, subID + '.h5')
 
 pa = PupilAnalyzer(subID, h5filename, data_folder)
 
