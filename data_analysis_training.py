@@ -27,7 +27,7 @@ else:
 #data_dir = '/Users/xiaomeng/disks/Aeneas_Raw/2017/visual/Attention/Behavioural/'
 sublist =  ['SL','MS']
 
-def load_data(csv_files):
+def load_beh_data(csv_files):
 	'''extend data over runs, print RT, accuracy for each run'''
 	#print ' RT  &  accuracy '
 	reaction_time = []
@@ -67,7 +67,7 @@ def load_data(csv_files):
 
 def create_masks():
 	'''create masks'''
-	reaction_time, all_responses, task, button, position_x, position_y, trial_color, trial_ori, trial_stimulus = load_data(csv_files) #  all the data
+	reaction_time, all_responses, task, button, position_x, position_y, trial_color, trial_ori, trial_stimulus = load_beh_data(csv_files) #  all the data
 
 	
 	color_task_mask = np.array(np.array(task)==1)
@@ -98,7 +98,7 @@ def create_masks():
 def plot_staircase(csv_files, subname):
 	'''plot stairecase for each participant'''
 	
-	all_responses = load_data(csv_files)[1] # index starts from 0
+	all_responses = load_beh_data(csv_files)[1] # index starts from 0
 	responses_mask = create_masks()[8] # changes! if add seperatable analysis
 	correct_answer_mask = create_masks()[9]
 	color_task_mask = create_masks()[0]
@@ -142,8 +142,8 @@ def plot_staircase(csv_files, subname):
 	ver_task_accuracy = ver_task_cum_responses/ver_task_n_responses
 
 	# staircase
-	trial_color = load_data(csv_files)[6]
-	trial_ori = load_data(csv_files)[7]
+	trial_color = load_beh_data(csv_files)[6]
+	trial_ori = load_beh_data(csv_files)[7]
 
 	red_staircase = np.abs(trial_color[correct_answer_mask * red_task_mask])
 	gre_staircase = np.abs(trial_color[correct_answer_mask * gre_task_mask])
@@ -230,7 +230,7 @@ def compute_behavioral_performance(csv_files):
 	(correct response, ,wrong response, wrong task, wrong direction)'''
 
 
-	reaction_time, all_responses, task, button, position_x, position_y, trial_color, trial_ori, trial_stimulus = load_data(csv_files)
+	reaction_time, all_responses, task, button, position_x, position_y, trial_color, trial_ori, trial_stimulus = load_beh_data(csv_files)
 
 	color_task_mask, ori_task_mask, red_task_mask, gre_task_mask, hor_task_mask, ver_task_mask, right_task_mask, wrong_task_mask, responses_mask, correct_answer_mask, incorrect_answer_mask, top_left_mask, top_right_mask, bottom_left_mask, bottom_right_mask = create_masks()
 
@@ -475,7 +475,7 @@ for subii, subname in enumerate(sublist):
 	subject_dir= os.path.join(data_dir,subname)
 	csv_files = glob.glob(subject_dir+'/*.csv')
 	csv_files.sort()
-	#shell()
+	shell()
 
 	if csv_files[0].split('_')[2]=='0':
 		csv_files.pop(0)
