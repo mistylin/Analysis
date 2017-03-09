@@ -26,6 +26,22 @@ from PupilAnalyzer import PupilAnalyzer # from the file import the method, the f
 sublist = ['MS', 'SL'] #, SL'
 subID = 'MS'
 
+def load_eye_data (subID)
+
+	data_folder = '/home/xiaomeng/Data/Pre_scan_data/' + str(subID) + '/'
+
+	figure_dir = '/home/xiaomeng/Data/Pre_scan_data/pupil_fig/' 
+
+	h5filename = os.path.join(data_folder, subID + '.h5')
+
+	pa = PupilAnalyzer(subID, h5filename, data_folder) # create an object to store output of PupilAnalyzer Class
+
+	pa.load_data() # object.method() >> create the h5 file
+
+	pa.get_aliases()
+
+	return pa
+
 def get_minlength_sub(pa):
 	# get minlength_run over runs, for one participant
 	minlength_sub = []
@@ -66,17 +82,17 @@ for subii,subID in enumerate(sublist):
 	
 	print '[main] Running analysis for %s' % (subID)
 
-	data_folder = '/home/xiaomeng/Data/Pre_scan_data/' + str(subID) + '/'
+	# data_folder = '/home/xiaomeng/Data/Pre_scan_data/' + str(subID) + '/'
 
-	figure_dir = '/home/xiaomeng/Data/Pre_scan_data/pupil_fig/' 
+	# figure_dir = '/home/xiaomeng/Data/Pre_scan_data/pupil_fig/' 
 
-	h5filename = os.path.join(data_folder, subID + '.h5')
+	# h5filename = os.path.join(data_folder, subID + '.h5')
 
-	pa = PupilAnalyzer(subID, h5filename, data_folder) # create an object
+	# pa = PupilAnalyzer(subID, h5filename, data_folder) # create an object
 
-	pa.load_data() # object.method() >> create the h5 file
+	# pa.load_data() # object.method() >> create the h5 file
 
-	pa.get_aliases()
+	aliases = pa.get_aliases()
 
 	minlength_sub = get_minlength_sub(pa)
 
