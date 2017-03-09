@@ -23,24 +23,24 @@ from PupilAnalyzer import PupilAnalyzer # from the file import the method, the f
 # sublist = ['MS', 'SL']
 # def load_eye_data():
 
-sublist = ['MS', 'SL'] #, SL'
+sublist = ['SL'] #, SL'
 subID = 'MS'
 
-def load_eye_data (subID)
+# def load_eye_data (subID)
 
-	data_folder = '/home/xiaomeng/Data/Pre_scan_data/' + str(subID) + '/'
+# 	data_folder = '/home/xiaomeng/Data/Pre_scan_data/' + str(subID) + '/'
 
-	figure_dir = '/home/xiaomeng/Data/Pre_scan_data/pupil_fig/' 
+# 	figure_dir = '/home/xiaomeng/Data/Pre_scan_data/pupil_fig/' 
 
-	h5filename = os.path.join(data_folder, subID + '.h5')
+# 	h5filename = os.path.join(data_folder, subID + '.h5')
 
-	pa = PupilAnalyzer(subID, h5filename, data_folder) # create an object to store output of PupilAnalyzer Class
+# 	pa = PupilAnalyzer(subID, h5filename, data_folder) # create an object to store output of PupilAnalyzer Class
 
-	pa.load_data() # object.method() >> create the h5 file
+# 	pa.load_data() # object.method() >> create the h5 file
 
-	pa.get_aliases()
+# 	pa.get_aliases()
 
-	return pa
+# 	return pa
 
 def get_minlength_sub(pa):
 	# get minlength_run over runs, for one participant
@@ -83,16 +83,17 @@ for subii,subID in enumerate(sublist):
 	print '[main] Running analysis for %s' % (subID)
 
 	# data_folder = '/home/xiaomeng/Data/Pre_scan_data/' + str(subID) + '/'
+	data_folder = '/home/barendregt/disks/Aeneas_Raw/2017/visual/Attention/Behavioural/Pre_scan_data/SL/'
 
-	# figure_dir = '/home/xiaomeng/Data/Pre_scan_data/pupil_fig/' 
+	figure_dir = '/home/xiaomeng/Data/Pre_scan_data/pupil_fig/' 
 
-	# h5filename = os.path.join(data_folder, subID + '.h5')
+	h5filename = os.path.join(data_folder, subID + '.h5')
 
-	# pa = PupilAnalyzer(subID, h5filename, data_folder) # create an object
+	pa = PupilAnalyzer(subID, h5filename, data_folder) # create an object
 
-	# pa.load_data() # object.method() >> create the h5 file
+	pa.load_data() # object.method() >> create the h5 file
 
-	aliases = pa.get_aliases()
+	pa.get_aliases()
 
 	minlength_sub = get_minlength_sub(pa)
 
