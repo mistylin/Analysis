@@ -23,7 +23,7 @@ from PupilAnalyzer import PupilAnalyzer # from the file import the method, the f
 # sublist = ['MS', 'SL']
 # def load_eye_data():
 
-sublist = ['MS', 'SL'] #, SL'
+sublist = ['SL'] #, SL'
 subID = 'MS'
 
 # def load_eye_data (subID)
@@ -82,7 +82,12 @@ for subii,subID in enumerate(sublist):
 	
 	print '[main] Running analysis for %s' % (subID)
 
+<<<<<<< HEAD
 	data_folder = '/home/xiaomeng/Data/Pre_scan_data/' + str(subID) + '/'
+=======
+	# data_folder = '/home/xiaomeng/Data/Pre_scan_data/' + str(subID) + '/'
+	#data_folder = '/home/barendregt/disks/Aeneas_Raw/2017/visual/Attention/Behavioural/Pre_scan_data/SL/'
+>>>>>>> db0c8b1282fd0d3a4eebe0e6472713d60158e062
 
 	figure_dir = '/home/xiaomeng/Data/Pre_scan_data/pupil_fig/' 
 

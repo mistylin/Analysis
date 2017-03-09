@@ -314,7 +314,14 @@ class EDFOperator( Operator ):
 		if len(parameters) > 0:		# there were parameters in the edf file
 			self.parameters = parameters
 			print([k.keys() for k in self.parameters])
-			ptd = [(k, np.float64) for k in set(self.parameters[0].keys())]
+			# ptd = [(k, np.float64) for k in set(self.parameters[0].keys())]
+			ptd = []
+			for pii in range(len(parameters)):
+				for k in set(self.parameters[pii].keys()):
+					if k not in ptd:
+						ptd.append(k)
+
+			ptd = [(k, np.float64) for k in ptd]			
 			self.parameter_type_dictionary = np.dtype(ptd)
 		else: # we have to take the parameters from the output_dict pickle file of the same name as the edf file. 
 			self.logger.info('no parameter information in edf file')

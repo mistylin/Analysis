@@ -61,7 +61,10 @@ class PupilAnalyzer(Analyzer):
 		if not os.path.isfile(self.data_file):
 
 			edf_files = glob.glob(self.edf_folder + '/*.edf')
-			edf_files.sort(key=lambda x: os.path.getmtime(x))
+			#edf_files.sort(key=lambda x: os.path.getmtime(x))
+			edf_files.sort()
+
+			# embed()
 
 			for ii,efile in enumerate(edf_files):
 

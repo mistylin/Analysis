@@ -126,6 +126,7 @@ class HDFEyeOperator(Operator):
 		
 		if hasattr(self.edf_operator, 'parameters'):
 			# create a table for the parameters of this run's trials
+			embed()
 			self.add_table_to_hdf(thisRunGroup, self.edf_operator.parameter_type_dictionary, self.edf_operator.parameters, 'parameters')
 		
 		if hasattr(self.edf_operator, 'events'):
