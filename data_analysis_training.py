@@ -15,11 +15,18 @@ sn.set_style('ticks')
 
 run_on_aeneas = True
 
+# if run_on_aeneas:
+# 	data_dir = '/home/raw_data/2017/visual/Attention/Behavioural/Pre_scan_data/'
+# 	figure_dir = '/home/shared/2017/visual/Attention/behaviour/'
+# else:
+# 	data_dir = '/Users/xiaomeng/disks/Aeneas_Raw/2017/visual/Attention/Behavioural/Pre_scan_data/'
+# 	figure_dir = '/Users/xiaomeng/disks/Aeneas_Shared/2017/visual/Attention/behaviour/'
+
 if run_on_aeneas:
-	data_dir = '/home/raw_data/2017/visual/Attention/Behavioural/Pre_scan_data/'
+	data_dir = '/home/xiaomeng/Data/Pre_scan_data/'
 	figure_dir = '/home/shared/2017/visual/Attention/behaviour/'
 else:
-	data_dir = '/Users/xiaomeng/disks/Aeneas_Raw/2017/visual/Attention/Behavioural/Pre_scan_data/'
+	data_dir = '/Users/xiaomeng/disks/Aeneas_Home/Data/Pre_scan_data/'
 	figure_dir = '/Users/xiaomeng/disks/Aeneas_Shared/2017/visual/Attention/behaviour/'
 
 '''fMRI beh >> 1)change sublist, 2)csv_files path, 3)buttons 4) savefig folders 5) locaitons 6) pop out csv_files with 0 7)'''
@@ -81,6 +88,7 @@ def create_masks():
 	right_task_mask = np.array(((np.array(task)==1)*((np.array(button)=='s')+(np.array(button)=='f')))+((np.array(task)==2)*((np.array(button)=='j')+(np.array(button)=='l')))) # sfjl
 	wrong_task_mask = np.array(((np.array(task)==2)*((np.array(button)=='s')+(np.array(button)=='f')))+((np.array(task)==1)*((np.array(button)=='j')+(np.array(button)=='l')))) # sfjl
 
+	# responses_mask(correct+incorrect): delete nanvalues and invalid values(wrong task)!!
 	responses_mask = np.array((np.array(all_responses)==1) + ((np.array(all_responses)==0)* right_task_mask)) 
 
 	correct_answer_mask = np.array(np.array(all_responses)==1) 
@@ -223,6 +231,7 @@ def plot_staircase(csv_files, subname):
 	pl.savefig(figure_dir + 'lab_%s_color_ori_staircase_plot.jpg'%(subname))
 	#pl.savefig('/Users/xiaomeng/disks/Aeneas_Home/pdfs/%s_color_ori_staircase_plot.pdf'%(subname))
 
+
 def compute_behavioral_performance(csv_files):
 	''' compute 
 	1) RT, accuracy for each run, and averaged values over runs
@@ -251,19 +260,20 @@ def compute_behavioral_performance(csv_files):
 	TASKVALUE = np.zeros((len(reaction_time),))
 	TASKVALUE[np.array(task)==1] = norm_color[np.array(task)==1]
 	TASKVALUE[np.array(task)==2] = norm_ori[np.array(task)==2]
-	TASKVALUE = TASKVALUE[~np.isnan(reaction_time)] #* ~np.isnan(all_responses)] # why use two creteria?
+	TASKVALUE = TASKVALUE[correct_answer_mask* (~np.isnan(reaction_time))] #* ~np.isnan(all_responses)] # why use two creteria?
 
 	DISTRACTOR = np.zeros((len(reaction_time),))
 	DISTRACTOR[np.array(task)==2] = norm_color[np.array(task)==1] #how do you define the distractor?
 	DISTRACTOR[np.array(task)==1] = norm_ori[np.array(task)==2]
-	DISTRACTOR = DISTRACTOR[~np.isnan(reaction_time)]# * ~np.isnan(all_responses)]
+	DISTRACTOR = DISTRACTOR[correct_answer_mask* (~np.isnan(reaction_time))]# * ~np.isnan(all_responses)]
 
-	RT = np.array(reaction_time)[~np.isnan(reaction_time)]# * ~np.isnan(all_responses)]
-	X = np.hstack([np.ones((len(RT),1)), TASKVALUE[:,np.newaxis], DISTRACTOR[:,np.newaxis], TASKVALUE[:,np.newaxis]*DISTRACTOR[:,np.newaxis]])
-	betas = np.linalg.lstsq(X, RT)[0]
+	# select correct RTs, use log, things to be done>> use d' to replace design matrix!!
+	RT_correct_log = np.log10(RT_correct)
+	X = np.hstack([np.ones((len(RT_correct_log),1)), TASKVALUE[:,np.newaxis], DISTRACTOR[:,np.newaxis], TASKVALUE[:,np.newaxis]*DISTRACTOR[:,np.newaxis]])
+	betas = np.linalg.lstsq(X, RT_correct_log)[0]
 	#betas_new = np.linalg.pinv(X).dot(RT)
-	SE = np.sqrt(np.sum((X.dot(betas) - RT)**2)/(RT.size - X.shape[1]))
-	df= RT.size - X.shape[1]
+	SE = np.sqrt(np.sum((X.dot(betas) - RT_correct_log)**2)/(RT_correct_log.size - X.shape[1]))
+	df= RT_correct_log.size - X.shape[1]
 	t = [betas.squeeze().dot(contrast) / SE for contrast in np.array([[0,1,0,0],[0,0,1,0], [0,0,0,1]])]
 	p = scipy.stats.t.sf(np.abs(t), df)*2
 
@@ -356,6 +366,69 @@ def compute_behavioral_performance(csv_files):
 	# 	addition = np.nanmean(accuracy_step)
 	# 	staircase.extend(addition)
 	# pl.plot(staircase)
+
+def plot_psychophysics():
+
+	reaction_time, all_responses, task, button, position_x, position_y, trial_color, trial_ori, trial_stimulus = load_beh_data(csv_files)
+
+	responses_mask = create_masks()[8] 
+
+	red_task_mask = create_masks()[2]
+	gre_task_mask = create_masks()[3]
+	hor_task_mask = create_masks()[4]
+	ver_task_mask = create_masks()[5]
+
+	# shorter, becuase without nan. take the staircase values, regardless of correctness (compared with e.g.red_staircase), just throw away nan values
+	red_staircase_all = np.abs(trial_color[responses_mask * red_task_mask])
+	gre_staircase_all = np.abs(trial_color[responses_mask * gre_task_mask])
+	hor_staircase_all = np.abs(trial_ori[responses_mask * hor_task_mask])
+	ver_staircase_all = np.abs(trial_ori[responses_mask * ver_task_mask])
+
+	#$shell()
+	# calculate range
+	red_min = red_staircase_all.min()
+	red_max = red_staircase_all.max()
+	
+	bins = 6 #bins will be 6-1
+	red_bin = np.linspace(red_min, red_max, bins, endpoint=True)
+
+	# already got shorter, as cut the trials with nan values. use red staircase all
+	red_bin1_mask =  (red_staircase_all> red_bin[0]) * (red_staircase_all <= red_bin[1]) 
+	red_bin2_mask =  (red_staircase_all> red_bin[1]) * (red_staircase_all < (red_min+ red_bin[2])) 
+	red_bin3_mask =  (red_staircase_all> red_bin[2]) * (red_staircase_all < (red_min+ red_bin[3])) 
+	red_bin4_mask =  (red_staircase_all> red_bin[3]) * (red_staircase_all < (red_min+ red_bin[4])) 
+	red_bin5_mask =  (red_staircase_all> red_bin[4]) * (red_staircase_all < (red_min+ red_bin[5])) 
+	
+	# do it like [] [] instead of [xxx * xxx], becuase the length should be the same
+	ACC_red_bin1 = np.array(all_responses)[responses_mask * red_task_mask] [red_bin1_mask]
+	ACC_red_bin2 = np.array(all_responses)[responses_mask * red_task_mask] [red_bin2_mask]
+	ACC_red_bin3 = np.array(all_responses)[responses_mask * red_task_mask] [red_bin3_mask]
+	ACC_red_bin4 = np.array(all_responses)[responses_mask * red_task_mask] [red_bin4_mask]
+	ACC_red_bin5 = np.array(all_responses)[responses_mask * red_task_mask] [red_bin5_mask]
+
+	f = pl.figure(figsize = (15,5))
+	# color vs. ori on RT
+	#s1 = f.add_subplot(141)
+	
+	objects = (red_bin[0], red_bin[1],red_bin[2],red_bin[3],red_bin[4])
+
+	y_pos = np.arange(len(objects))
+	y_values = np.array([np.mean(ACC_red_bin1), np.mean(ACC_red_bin2), np.mean(ACC_red_bin3), np.mean(ACC_red_bin4), np.mean(ACC_red_bin5)])
+	sd = np.array([np.std(ACC_red_bin1), np.std(ACC_red_bin2), np.std(ACC_red_bin3), np.std(ACC_red_bin4), np.std(ACC_red_bin5)])
+	n = np.array([np.array(ACC_red_bin1).shape[0], np.array(ACC_red_bin2).shape[0], np.array(ACC_red_bin3).shape[0], np.array(ACC_red_bin4).shape[0], np.array(ACC_red_bin5).shape[0] ])
+	yerr = (sd/np.sqrt(n.squeeze()))*1.96
+	
+	#pl.f()
+	#pl.errorbar(objects. y_values, yerr = yerr)
+	pl.bar(y_pos, y_values, yerr = yerr, align = 'center', alpha = 0.5)
+	pl.xticks (y_pos, objects, fontsize = 40) # why doesn't work?
+	pl.title( 'color vs. ori on Accuracy')#, fontsize = 20)
+	pl.ylim([0, 1])
+	sn.despine(offset=10)
+
+	pl.show()
+
+
 
 def save_results (subname):
 	# save results into a txt file
@@ -475,14 +548,14 @@ for subii, subname in enumerate(sublist):
 	subject_dir= os.path.join(data_dir,subname)
 	csv_files = glob.glob(subject_dir+'/*.csv')
 	csv_files.sort()
-	shell()
+	#shell()
 
 	if csv_files[0].split('_')[2]=='0':
 		csv_files.pop(0)
 
-	plot_staircase(csv_files,subname)
-	save_results(subname)
-
+	#plot_staircase(csv_files,subname)
+	#save_results(subname)
+	plot_psychophysics()
 
 	
 # # not useful anymore

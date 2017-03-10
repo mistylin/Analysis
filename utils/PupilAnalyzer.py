@@ -621,7 +621,7 @@ class PupilAnalyzer(Analyzer):
 
 		if 'timestamps' not in self.events.keys():
 			self.extract_signal_blocks()
-		embed()
+		#embed()
 
 		print '[%s] Starting FIR deconvolution' % (self.__class__.__name__)
 

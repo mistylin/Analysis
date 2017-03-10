@@ -15,12 +15,22 @@ sn.set_style('ticks')
 
 run_on_aeneas = True 
 
+# if run_on_aeneas:
+# 	data_dir = '/home/raw_data/2017/visual/Attention/fMRI/'
+# 	figure_dir = '/home/shared/2017/visual/Attention/behaviour/'
+# else:
+# 	data_dir = '/Users/xiaomeng/disks/Aeneas_Raw/2017/visual/Attention/fMRI/'
+# 	figure_dir = '/Users/xiaomeng/disks/Aeneas_Shared/2017/visual/Attention/behaviour/'
+
 if run_on_aeneas:
-	data_dir = '/home/raw_data/2017/visual/Attention/fMRI/'
+	data_dir = '/home/xiaomeng/Data/Pre_scan_data/'
 	figure_dir = '/home/shared/2017/visual/Attention/behaviour/'
 else:
-	data_dir = '/Users/xiaomeng/disks/Aeneas_Raw/2017/visual/Attention/fMRI/'
+	data_dir = '/Users/xiaomeng/disks/Aeneas_Home/Data/Pre_scan_data/'
 	figure_dir = '/Users/xiaomeng/disks/Aeneas_Shared/2017/visual/Attention/behaviour/'
+
+
+
 
 sublist =  ['DE','TK','MV']
 beh ='beh/'
@@ -219,6 +229,14 @@ def plot_staircase(csv_files, subname):
 	pl.savefig(figure_dir + 'scanner_%s_color_ori_staircase_plot.jpg'%(subname))
 	#pl.savefig('/Users/xiaomeng/disks/Aeneas_Home/pdfs/%s_color_ori_staircase_plot.pdf'%(subname))
 
+
+
+
+
+
+
+
+
 def compute_behavioral_performance(csv_files):
 	''' compute 
 	1) RT, accuracy for each run, and averaged values over runs
@@ -254,12 +272,13 @@ def compute_behavioral_performance(csv_files):
 	DISTRACTOR[np.array(task)==1] = norm_ori[np.array(task)==2]
 	DISTRACTOR = DISTRACTOR[~np.isnan(reaction_time)]# * ~np.isnan(all_responses)]
 
-	RT = np.array(reaction_time)[~np.isnan(reaction_time)]# * ~np.isnan(all_responses)]
-	X = np.hstack([np.ones((len(RT),1)), TASKVALUE[:,np.newaxis], DISTRACTOR[:,np.newaxis], TASKVALUE[:,np.newaxis]*DISTRACTOR[:,np.newaxis]])
-	betas = np.linalg.lstsq(X, RT)[0]
+	#RT = np.array(reaction_time)[~np.isnan(reaction_time) ]# * ~np.isnan(all_responses)]
+	RT_correct_log = np.log10(RT_correct)
+	X = np.hstack([np.ones((len(RT_correct_log),1)), TASKVALUE[:,np.newaxis], DISTRACTOR[:,np.newaxis], TASKVALUE[:,np.newaxis]*DISTRACTOR[:,np.newaxis]])
+	betas = np.linalg.lstsq(X, RT_correct_log)[0]
 	#betas_new = np.linalg.pinv(X).dot(RT)
-	SE = np.sqrt(np.sum((X.dot(betas) - RT)**2)/(RT.size - X.shape[1]))
-	df= RT.size - X.shape[1]
+	SE = np.sqrt(np.sum((X.dot(betas) - RT_correct_log)**2)/(RT_correct_log.size - X.shape[1]))
+	df= RT_correct_log.size - X.shape[1]
 	t = [betas.squeeze().dot(contrast) / SE for contrast in np.array([[0,1,0,0],[0,0,1,0], [0,0,0,1]])]
 	p = scipy.stats.t.sf(np.abs(t), df)*2
 
