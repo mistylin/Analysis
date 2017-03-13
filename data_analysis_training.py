@@ -10,6 +10,9 @@ from IPython import embed as shell
 import seaborn as sn
 import sys
 from scipy.stats.stats import pearsonr
+import pylab
+from psychopy import data #, gui, core
+from psychopy.tools.filetools import fromFile
 
 sn.set_style('ticks')
 
@@ -47,6 +50,10 @@ def load_beh_data(csv_files):
 	trial_ori = []
 	trial_stimulus =[]
 
+	#to calculate d prime
+	response = []
+	trial_direction = []
+
 	# shell()
 	for this_file in csv_files: # loop over files
 
@@ -66,15 +73,17 @@ def load_beh_data(csv_files):
 		trial_color.extend(csv_data['trial_color'])
 		trial_ori.extend(csv_data['trial_orientation'])
 		trial_stimulus.extend(csv_data['trial_stimulus'])
+		response.extend(csv_data['response'])
+		trial_direction.extend(['trial_direction'])
 
 		# print RT_run, accuracy_run
 
-	return np.array(reaction_time), np.array(all_responses), np.array(task), np.array(button), np.array(position_x), np.array(position_y), np.array(trial_color), np.array(trial_ori), np.array(trial_stimulus)
+	return np.array(reaction_time), np.array(all_responses), np.array(task), np.array(button), np.array(position_x), np.array(position_y), np.array(trial_color), np.array(trial_ori), np.array(trial_stimulus), np.array(response), np.array(trial_direction)
 
 
 def create_masks():
 	'''create masks'''
-	reaction_time, all_responses, task, button, position_x, position_y, trial_color, trial_ori, trial_stimulus = load_beh_data(csv_files) #  all the data
+	reaction_time, all_responses, task, button, position_x, position_y, trial_color, trial_ori, trial_stimulus, response, trial_direction = load_beh_data(csv_files) #  all the data
 
 	
 	color_task_mask = np.array(np.array(task)==1)
@@ -239,7 +248,7 @@ def compute_behavioral_performance(csv_files):
 	(correct response, ,wrong response, wrong task, wrong direction)'''
 
 
-	reaction_time, all_responses, task, button, position_x, position_y, trial_color, trial_ori, trial_stimulus = load_beh_data(csv_files)
+	reaction_time, all_responses, task, button, position_x, position_y, trial_color, trial_ori, trial_stimulus, response, trial_direction = load_beh_data(csv_files)
 
 	color_task_mask, ori_task_mask, red_task_mask, gre_task_mask, hor_task_mask, ver_task_mask, right_task_mask, wrong_task_mask, responses_mask, correct_answer_mask, incorrect_answer_mask, top_left_mask, top_right_mask, bottom_left_mask, bottom_right_mask = create_masks()
 
@@ -266,6 +275,40 @@ def compute_behavioral_performance(csv_files):
 	DISTRACTOR[np.array(task)==2] = norm_color[np.array(task)==1] #how do you define the distractor?
 	DISTRACTOR[np.array(task)==1] = norm_ori[np.array(task)==2]
 	DISTRACTOR = DISTRACTOR[correct_answer_mask* (~np.isnan(reaction_time))]# * ~np.isnan(all_responses)]
+
+	# d prime, define + as signal; - as noise
+	# color task
+	hit_col = all_responses [(responses_mask) *(task == 1) * (trial_direction ==1) * (response ==1) ]
+	signal_col = all_responses [(responses_mask) *(task == 1) * (trial_direction ==1)]
+	p_hit_col = np.numsum(hit_col)/ np.numsum(signal_col)
+	z_hit_col = scipy.norm.ppf(p_hit_col)
+	
+	FA_col = np.zeros((len(reaction_time),))
+	FA_col [(responses_mask) *(task == 1) * (trial_direction == -1) * (response ==1) ] = 1
+	noise_col = all_responses [(responses_mask) *(task == 1) * (trial_direction == -1)]
+	p_FA_col = np.numsum(FA_col)/ np.numsum(noise_col)
+	z_FA_col = scipy.norm.ppf(p_FA_col)
+
+	d_prime_col = (z_hit_col- z_FA_col)/np.sqrt(2)
+
+	# ori task
+	hit_ori = all_responses [(responses_mask) *(task == 2) * (trial_direction ==1) * (response ==1) ]
+	signal_ori = all_responses [(responses_mask) *(task == 2) * (trial_direction ==1)]
+	p_hit_ori = np.numsum(hit_col)/ np.numsum(signal_ori)
+	z_hit_ori = scipy.norm.ppf(p_hit_ori)
+	
+	FA_ori = np.zeros((len(reaction_time),))
+	FA_ori [(responses_mask) *(task == 2) * (trial_direction == -1) * (response ==1) ] = 1
+	noise_ori = all_responses [(responses_mask) *(task == 2) * (trial_direction == -1)]
+	p_FA_ori = np.numsum(FA_col)/ np.numsum(noise_ori)
+	z_FA_ori = scipy.norm.ppf(p_FA_ori)
+
+	d_prime_ori = (z_hit_ori- z_FA_ori)/np.sqrt(2)
+
+
+
+
+
 
 	# select correct RTs, use log, things to be done>> use d' to replace design matrix!!
 	RT_correct_log = np.log10(RT_correct)
@@ -369,7 +412,7 @@ def compute_behavioral_performance(csv_files):
 
 def plot_psychophysics():
 
-	reaction_time, all_responses, task, button, position_x, position_y, trial_color, trial_ori, trial_stimulus = load_beh_data(csv_files)
+	reaction_time, all_responses, task, button, position_x, position_y, trial_color, trial_ori, trial_stimulus, response, trial_direction = load_beh_data(csv_files)
 
 	responses_mask = create_masks()[8] 
 
@@ -379,54 +422,107 @@ def plot_psychophysics():
 	ver_task_mask = create_masks()[5]
 
 	# shorter, becuase without nan. take the staircase values, regardless of correctness (compared with e.g.red_staircase), just throw away nan values
-	red_staircase_all = np.abs(trial_color[responses_mask * red_task_mask])
-	gre_staircase_all = np.abs(trial_color[responses_mask * gre_task_mask])
-	hor_staircase_all = np.abs(trial_ori[responses_mask * hor_task_mask])
-	ver_staircase_all = np.abs(trial_ori[responses_mask * ver_task_mask])
+	# shorter, also because take first 40 trials
+	# = allIntensities
+	red_staircase_all = np.log10(np.abs(trial_color[responses_mask * red_task_mask])[0:40])
+	gre_staircase_all = np.log10(np.abs(trial_color[responses_mask * gre_task_mask])[0:40])
+	hor_staircase_all = np.log10(np.abs(trial_ori[responses_mask * hor_task_mask])[0:40])
+	ver_staircase_all = np.log10(np.abs(trial_ori[responses_mask * ver_task_mask])[0:40])
 
-	#$shell()
-	# calculate range
-	red_min = red_staircase_all.min()
-	red_max = red_staircase_all.max()
+	# = allresponses
+	red_task_responses = np.array(all_responses)[responses_mask * red_task_mask][0:40]
+	gre_task_responses = np.array(all_responses)[responses_mask * gre_task_mask][0:40]
+	hor_task_responses = np.array(all_responses)[responses_mask * hor_task_mask][0:40]
+	ver_task_responses = np.array(all_responses)[responses_mask * ver_task_mask][0:40]
+
+	# shell()
+	#get combined data
+	combinedInten, combinedResp, combinedN = data.functionFromStaircase(red_staircase_all, red_task_responses, 5)
 	
-	bins = 6 #bins will be 6-1
-	red_bin = np.linspace(red_min, red_max, bins, endpoint=True)
+	#fit curve - in this case using a Weibull function
+	# fit = data.FitFunction('weibullTAFC',combinedInten, combinedResp, guess=[0.2, 0.5])
+	fit = data.FitWeibull(combinedInten, combinedResp)
+	smoothInt = pylab.arange(min(combinedInten), max(combinedInten), 0.001)
+	smoothResp = fit.eval(smoothInt)
+	thresh = fit.inverse(0.8)
+	print thresh
 
-	# already got shorter, as cut the trials with nan values. use red staircase all
-	red_bin1_mask =  (red_staircase_all> red_bin[0]) * (red_staircase_all <= red_bin[1]) 
-	red_bin2_mask =  (red_staircase_all> red_bin[1]) * (red_staircase_all < (red_min+ red_bin[2])) 
-	red_bin3_mask =  (red_staircase_all> red_bin[2]) * (red_staircase_all < (red_min+ red_bin[3])) 
-	red_bin4_mask =  (red_staircase_all> red_bin[3]) * (red_staircase_all < (red_min+ red_bin[4])) 
-	red_bin5_mask =  (red_staircase_all> red_bin[4]) * (red_staircase_all < (red_min+ red_bin[5])) 
+	##plot curve
+	#pylab.subplot(122)
+	pylab.plot(smoothInt, smoothResp, '-')
+	pylab.plot([thresh, thresh],[0,0.8],'--'); pylab.plot([0, thresh], [0.8,0.8],'--')
+	pylab.title('threshold = %0.3f' %(thresh))
+	#plot points
+	pylab.plot(combinedInten, combinedResp, 'o')
+	pylab.ylim([0.5,1])
+	pylab.xlim([min(combinedInten)-0.1,max(combinedInten)+0.1])
+
+	#pylab.show()
+	pylab.savefig(figure_dir + 'lab_%s_psychophysics.jpg'%(subname))
+
+
+
+	# # calculate range
+	# red_min = red_staircase_all.min()
+	# red_max = red_staircase_all.max()
+
+	# print red_min, red_max
 	
-	# do it like [] [] instead of [xxx * xxx], becuase the length should be the same
-	ACC_red_bin1 = np.array(all_responses)[responses_mask * red_task_mask] [red_bin1_mask]
-	ACC_red_bin2 = np.array(all_responses)[responses_mask * red_task_mask] [red_bin2_mask]
-	ACC_red_bin3 = np.array(all_responses)[responses_mask * red_task_mask] [red_bin3_mask]
-	ACC_red_bin4 = np.array(all_responses)[responses_mask * red_task_mask] [red_bin4_mask]
-	ACC_red_bin5 = np.array(all_responses)[responses_mask * red_task_mask] [red_bin5_mask]
+	# boundaries = 6 #actual bins will be 6-1
+	# red_bin = np.linspace(red_min, red_max, boundaries, endpoint=True) # give 6 boundaries, thereby 5 bins
 
-	f = pl.figure(figsize = (15,5))
-	# color vs. ori on RT
-	#s1 = f.add_subplot(141)
+	# red_bin_mask =[]
+	# ACC_red_bin =[]
+	# for i, boundary in enumerate(red_bin):
+		
+	# 	if i < boundaries-1:
+
+	# 		red_bin_mask = (red_staircase_all> red_bin[i]) * (red_staircase_all <= red_bin[i+1])
+	# 		ACC_red_bin = red_task_responses[ren_bin_mask]
+
+	# 		#shell()
+	# 		print red_bin_i_mask
+	# 		print ACC_red_bin_i
 	
-	objects = (red_bin[0], red_bin[1],red_bin[2],red_bin[3],red_bin[4])
 
-	y_pos = np.arange(len(objects))
-	y_values = np.array([np.mean(ACC_red_bin1), np.mean(ACC_red_bin2), np.mean(ACC_red_bin3), np.mean(ACC_red_bin4), np.mean(ACC_red_bin5)])
-	sd = np.array([np.std(ACC_red_bin1), np.std(ACC_red_bin2), np.std(ACC_red_bin3), np.std(ACC_red_bin4), np.std(ACC_red_bin5)])
-	n = np.array([np.array(ACC_red_bin1).shape[0], np.array(ACC_red_bin2).shape[0], np.array(ACC_red_bin3).shape[0], np.array(ACC_red_bin4).shape[0], np.array(ACC_red_bin5).shape[0] ])
-	yerr = (sd/np.sqrt(n.squeeze()))*1.96
+	# # already got shorter, as cut the trials with nan values, and take the first 40 trials. use red staircase all
+	# red_bin1_mask =  (red_staircase_all> red_bin[0]) * (red_staircase_all <= red_bin[1]) 
+	# red_bin2_mask =  (red_staircase_all> red_bin[1]) * (red_staircase_all <= red_bin[2]) # *(red_staircase_all < (red_min+ red_bin[2])) 
+	# red_bin3_mask =  (red_staircase_all> red_bin[2]) * (red_staircase_all <= red_bin[3])
+	# red_bin4_mask =  (red_staircase_all> red_bin[3]) * (red_staircase_all <= red_bin[4])
+	# red_bin5_mask =  (red_staircase_all> red_bin[4]) * (red_staircase_all <= red_bin[5])
 	
-	#pl.f()
-	#pl.errorbar(objects. y_values, yerr = yerr)
-	pl.bar(y_pos, y_values, yerr = yerr, align = 'center', alpha = 0.5)
-	pl.xticks (y_pos, objects, fontsize = 40) # why doesn't work?
-	pl.title( 'color vs. ori on Accuracy')#, fontsize = 20)
-	pl.ylim([0, 1])
-	sn.despine(offset=10)
+	# # do it like [] [] instead of [xxx * xxx], becuase the length should be the same
+	# ACC_red_bin1 = red_task_responses [red_bin1_mask]
+	# ACC_red_bin2 = red_task_responses [red_bin2_mask]
+	# ACC_red_bin3 = red_task_responses [red_bin3_mask]
+	# ACC_red_bin4 = red_task_responses [red_bin4_mask]
+	# ACC_red_bin5 = red_task_responses [red_bin5_mask]
 
-	pl.show()
+
+
+	# f = pl.figure(figsize = (15,5))
+	# # color vs. ori on RT
+	# #s1 = f.add_subplot(141)
+	
+	# objects = (np.mean([red_bin[0], red_bin[1]]),np.mean([red_bin[1],red_bin[2]]),np.mean([red_bin[2],red_bin[3]]), np.mean([red_bin[3],red_bin[4]]), np.mean([red_bin[4],red_bin[5]]))
+
+	# y_pos = np.arange(len(objects))
+	# y_values = np.array([np.mean(ACC_red_bin1), np.mean(ACC_red_bin2), np.mean(ACC_red_bin3), np.mean(ACC_red_bin4), np.mean(ACC_red_bin5)])
+	# sd = np.array([np.std(ACC_red_bin1), np.std(ACC_red_bin2), np.std(ACC_red_bin3), np.std(ACC_red_bin4), np.std(ACC_red_bin5)])
+	# n = np.array([np.array(ACC_red_bin1).shape[0], np.array(ACC_red_bin2).shape[0], np.array(ACC_red_bin3).shape[0], np.array(ACC_red_bin4).shape[0], np.array(ACC_red_bin5).shape[0] ])
+	# yerr = (sd/np.sqrt(n.squeeze())) 
+	
+	# pl.errorbar(y_pos, y_values, yerr = yerr)
+	# #pl.bar(y_pos, y_values, yerr = yerr, align = 'center', alpha = 0.5)
+	# pl.xticks (y_pos, objects, fontsize = 40) # why doesn't work?
+
+	# pl.title( 'red_bin')#, fontsize = 20)
+	# pl.ylim([0, 1])
+	# sn.despine(offset=10)
+
+	# #pl.show()
+	# pl.savefig(figure_dir + 'lab_%s_psychophysics.jpg'%(subname))
 
 
 
