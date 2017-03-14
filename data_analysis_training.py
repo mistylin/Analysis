@@ -240,6 +240,170 @@ def plot_staircase(csv_files, subname):
 	pl.savefig(figure_dir + 'lab_%s_color_ori_staircase_plot.jpg'%(subname))
 	#pl.savefig('/Users/xiaomeng/disks/Aeneas_Home/pdfs/%s_color_ori_staircase_plot.pdf'%(subname))
 
+def plot_psychophysics():
+
+	reaction_time, all_responses, task, button, position_x, position_y, trial_color, trial_ori, trial_stimulus, response, trial_direction = load_beh_data(csv_files)
+
+	responses_mask = create_masks()[8] 
+
+	red_task_mask = create_masks()[2]
+	gre_task_mask = create_masks()[3]
+	hor_task_mask = create_masks()[4]
+	ver_task_mask = create_masks()[5]
+
+	# shorter, becuase without nan. take the staircase values, regardless of correctness (compared with e.g.red_staircase), just throw away nan values
+	# shorter, also because take first 40 trials
+	# = allIntensities
+	# red_staircase_all = np.abs(trial_color[responses_mask * red_task_mask])[0:40]
+	# gre_staircase_all = np.abs(trial_color[responses_mask * gre_task_mask])[0:40]
+	# hor_staircase_all = np.abs(trial_ori[responses_mask * hor_task_mask])[0:40]
+	# ver_staircase_all = np.abs(trial_ori[responses_mask * ver_task_mask])[0:40]
+
+	red_staircase_all = np.log10(np.abs(trial_color[responses_mask * red_task_mask]))
+	gre_staircase_all = np.log10(np.abs(trial_color[responses_mask * gre_task_mask]))
+	hor_staircase_all = np.log10(np.abs(trial_ori[responses_mask * hor_task_mask]))
+	ver_staircase_all = np.log10(np.abs(trial_ori[responses_mask * ver_task_mask]))
+	# = allresponses
+	red_task_responses = np.array(all_responses)[responses_mask * red_task_mask]
+	gre_task_responses = np.array(all_responses)[responses_mask * gre_task_mask]
+	hor_task_responses = np.array(all_responses)[responses_mask * hor_task_mask]
+	ver_task_responses = np.array(all_responses)[responses_mask * ver_task_mask]
+
+	# shell()
+	### use psychopy to plot psychometric function
+	# #get combined data
+	# combinedInten, combinedResp, combinedN = data.functionFromStaircase(red_staircase_all, red_task_responses, 10)
+	
+	# #fit curve - in this case using a Weibull function
+	# # fit = data.FitFunction('weibullTAFC',combinedInten, combinedResp, guess=[0.2, 0.5])
+	# fit = data.FitWeibull(combinedInten, combinedResp)
+	# smoothInt = pylab.arange(min(combinedInten), max(combinedInten), 0.001)
+	# smoothResp = fit.eval(smoothInt)
+	# thresh = fit.inverse(0.8)
+	# print thresh
+
+	# ##plot curve
+	# #pylab.subplot(122)
+	# pylab.plot(smoothInt, smoothResp, '-')
+	# pylab.plot([thresh, thresh],[0,0.8],'--'); pylab.plot([0, thresh], [0.8,0.8],'--')
+	# pylab.title('threshold = %0.3f' %(thresh))
+	# #plot points
+	# pylab.plot(combinedInten, combinedResp, 'o')
+	# pylab.ylim([0.5,1])
+	# pylab.xlim([min(combinedInten)-0.1,max(combinedInten)+0.1])
+
+	# #pylab.show()
+	# pylab.savefig(figure_dir + 'lab_%s_psychophysics.jpg'%(subname))
+
+	### plot psychometric function
+	#red
+	# calculate range
+	red_min = red_staircase_all.min()
+	red_max = red_staircase_all.max()
+
+	boundaries = 4 #actual bins will be 6-1
+	red_bin = np.linspace(red_min, red_max, boundaries, endpoint=True) # give 4 boundaries, thereby 3 bins
+
+	red_bin_mask = []
+	ACC_red_bin = []
+	objects = []
+	for i, boundary in enumerate(red_bin):
+		
+		if i < boundaries-1:	
+			red_bin_mask = (red_staircase_all> red_bin[i]) * (red_staircase_all <= red_bin[i+1])
+			ACC_red_bin.append( red_task_responses[red_bin_mask])
+
+			objects.append(np.mean([red_bin[i], red_bin[i+1]]))
+	# shell()
+	# ACC_red_bin = np.array(ACC_red_bin)
+	# y_values = np.array(ACC_red_bin).mean( axis = 1)
+	
+	# shell()
+	# # already got shorter, as cut the trials with nan values, and take the first 40 trials. use red staircase all
+	# red_bin1_mask =  (red_staircase_all> red_bin[0]) * (red_staircase_all <= red_bin[1]) 
+	# red_bin2_mask =  (red_staircase_all> red_bin[1]) * (red_staircase_all <= red_bin[2]) # *(red_staircase_all < (red_min+ red_bin[2])) 
+	# red_bin3_mask =  (red_staircase_all> red_bin[2]) * (red_staircase_all <= red_bin[3])
+	# red_bin4_mask =  (red_staircase_all> red_bin[3]) * (red_staircase_all <= red_bin[4])
+	# red_bin5_mask =  (red_staircase_all> red_bin[4]) * (red_staircase_all <= red_bin[5])
+	
+	# # do it like [] [] instead of [xxx * xxx], becuase the length should be the same
+	# ACC_red_bin1 = red_task_responses [red_bin1_mask]
+	# ACC_red_bin2 = red_task_responses [red_bin2_mask]
+	# ACC_red_bin3 = red_task_responses [red_bin3_mask]
+	# ACC_red_bin4 = red_task_responses [red_bin4_mask]
+	# ACC_red_bin5 = red_task_responses [red_bin5_mask]
+
+	f = pl.figure(figsize = (15,5))
+	# color vs. ori on RT
+	#s1 = f.add_subplot(141)
+	
+	#objects = (np.mean([red_bin[0], red_bin[1]]),np.mean([red_bin[1],red_bin[2]]),np.mean([red_bin[2],red_bin[3]]), np.mean([red_bin[3],red_bin[4]]), np.mean([red_bin[4],red_bin[5]]))
+
+	y_pos = np.arange(len(objects))
+	y_values = np.array([np.mean(ACC_red_bin[0]), np.mean(ACC_red_bin[1]), np.mean(ACC_red_bin[2])])
+	sd = np.array([np.std(ACC_red_bin[0]), np.std(ACC_red_bin[1]), np.std(ACC_red_bin[2])])
+	n = np.array([np.array(ACC_red_bin[0]).shape[0], np.array(ACC_red_bin[1]).shape[0], np.array(ACC_red_bin[2]).shape[0] ])
+	yerr = (sd/np.sqrt(n.squeeze())) 
+	
+	pl.errorbar(y_pos, y_values, yerr = yerr)
+	#pl.bar(y_pos, y_values, yerr = yerr, align = 'center', alpha = 0.5)
+	pl.xticks (y_pos, objects, fontsize = 40) # why doesn't work?
+
+	pl.title('red_bin')#, fontsize = 20)
+	pl.ylim([0, 1])
+	sn.despine(offset=10)
+
+	pl.show()
+	pl.savefig(figure_dir + 'lab_%s_psychophysics.jpg'%(subname))
+
+	#green
+	gre_min = gre_staircase_all.min()
+	gre_max = gre_staircase_all.max()
+
+	boundaries = 4 #actual bins will be 6-1
+	gre_bin = np.linspace(gre_min, gre_max, boundaries, endpoint=True) # give 4 boundaries, thereby 3 bins
+
+	gre_bin_mask = []
+	ACC_gre_bin = []
+	objects = []
+	for i, boundary in enumerate(gre_bin):
+		
+		if i < boundaries-1:	
+			gre_bin_mask = (gre_staircase_all> gre_bin[i]) * (gre_staircase_all <= gre_bin[i+1])
+			ACC_gre_bin.append( gre_task_responses[gre_bin_mask])
+
+	#horizontal
+	hor_min = hor_staircase_all.min()
+	hor_max = hor_staircase_all.max()
+
+	boundaries = 4 #actual bins will be 6-1
+	hor_bin = np.linspace(hor_min, hor_max, boundaries, endpoint=True) # give 4 boundaries, thereby 3 bins
+
+	hor_bin_mask = []
+	ACC_hor_bin = []
+	objects = []
+	for i, boundary in enumerate(hor_bin):
+		
+		if i < boundaries-1:	
+			hor_bin_mask = (hor_staircase_all> hor_bin[i]) * (hor_staircase_all <= hor_bin[i+1])
+			ACC_hor_bin.append( hor_task_responses[hor_bin_mask])
+
+	#vertical
+	ver_min = ver_staircase_all.min()
+	ver_max = ver_staircase_all.max()
+
+	boundaries = 4 #actual bins will be 6-1
+	ver_bin = np.linspace(ver_min, ver_max, boundaries, endpoint=True) # give 4 boundaries, thereby 3 bins
+
+	ver_bin_mask = []
+	ACC_ver_bin = []
+	objects = []
+	for i, boundary in enumerate(ver_bin):
+		
+		if i < boundaries-1:	
+			ver_bin_mask = (ver_staircase_all> ver_bin[i]) * (ver_staircase_all <= ver_bin[i+1])
+			ACC_ver_bin.append( ver_task_responses[ver_bin_mask])
+
 
 def compute_behavioral_performance(csv_files):
 	''' compute 
@@ -410,119 +574,6 @@ def compute_behavioral_performance(csv_files):
 	# 	staircase.extend(addition)
 	# pl.plot(staircase)
 
-def plot_psychophysics():
-
-	reaction_time, all_responses, task, button, position_x, position_y, trial_color, trial_ori, trial_stimulus, response, trial_direction = load_beh_data(csv_files)
-
-	responses_mask = create_masks()[8] 
-
-	red_task_mask = create_masks()[2]
-	gre_task_mask = create_masks()[3]
-	hor_task_mask = create_masks()[4]
-	ver_task_mask = create_masks()[5]
-
-	# shorter, becuase without nan. take the staircase values, regardless of correctness (compared with e.g.red_staircase), just throw away nan values
-	# shorter, also because take first 40 trials
-	# = allIntensities
-	red_staircase_all = np.log10(np.abs(trial_color[responses_mask * red_task_mask])[0:40])
-	gre_staircase_all = np.log10(np.abs(trial_color[responses_mask * gre_task_mask])[0:40])
-	hor_staircase_all = np.log10(np.abs(trial_ori[responses_mask * hor_task_mask])[0:40])
-	ver_staircase_all = np.log10(np.abs(trial_ori[responses_mask * ver_task_mask])[0:40])
-
-	# = allresponses
-	red_task_responses = np.array(all_responses)[responses_mask * red_task_mask][0:40]
-	gre_task_responses = np.array(all_responses)[responses_mask * gre_task_mask][0:40]
-	hor_task_responses = np.array(all_responses)[responses_mask * hor_task_mask][0:40]
-	ver_task_responses = np.array(all_responses)[responses_mask * ver_task_mask][0:40]
-
-	# shell()
-	#get combined data
-	combinedInten, combinedResp, combinedN = data.functionFromStaircase(red_staircase_all, red_task_responses, 5)
-	
-	#fit curve - in this case using a Weibull function
-	# fit = data.FitFunction('weibullTAFC',combinedInten, combinedResp, guess=[0.2, 0.5])
-	fit = data.FitWeibull(combinedInten, combinedResp)
-	smoothInt = pylab.arange(min(combinedInten), max(combinedInten), 0.001)
-	smoothResp = fit.eval(smoothInt)
-	thresh = fit.inverse(0.8)
-	print thresh
-
-	##plot curve
-	#pylab.subplot(122)
-	pylab.plot(smoothInt, smoothResp, '-')
-	pylab.plot([thresh, thresh],[0,0.8],'--'); pylab.plot([0, thresh], [0.8,0.8],'--')
-	pylab.title('threshold = %0.3f' %(thresh))
-	#plot points
-	pylab.plot(combinedInten, combinedResp, 'o')
-	pylab.ylim([0.5,1])
-	pylab.xlim([min(combinedInten)-0.1,max(combinedInten)+0.1])
-
-	#pylab.show()
-	pylab.savefig(figure_dir + 'lab_%s_psychophysics.jpg'%(subname))
-
-
-
-	# # calculate range
-	# red_min = red_staircase_all.min()
-	# red_max = red_staircase_all.max()
-
-	# print red_min, red_max
-	
-	# boundaries = 6 #actual bins will be 6-1
-	# red_bin = np.linspace(red_min, red_max, boundaries, endpoint=True) # give 6 boundaries, thereby 5 bins
-
-	# red_bin_mask =[]
-	# ACC_red_bin =[]
-	# for i, boundary in enumerate(red_bin):
-		
-	# 	if i < boundaries-1:
-
-	# 		red_bin_mask = (red_staircase_all> red_bin[i]) * (red_staircase_all <= red_bin[i+1])
-	# 		ACC_red_bin = red_task_responses[ren_bin_mask]
-
-	# 		#shell()
-	# 		print red_bin_i_mask
-	# 		print ACC_red_bin_i
-	
-
-	# # already got shorter, as cut the trials with nan values, and take the first 40 trials. use red staircase all
-	# red_bin1_mask =  (red_staircase_all> red_bin[0]) * (red_staircase_all <= red_bin[1]) 
-	# red_bin2_mask =  (red_staircase_all> red_bin[1]) * (red_staircase_all <= red_bin[2]) # *(red_staircase_all < (red_min+ red_bin[2])) 
-	# red_bin3_mask =  (red_staircase_all> red_bin[2]) * (red_staircase_all <= red_bin[3])
-	# red_bin4_mask =  (red_staircase_all> red_bin[3]) * (red_staircase_all <= red_bin[4])
-	# red_bin5_mask =  (red_staircase_all> red_bin[4]) * (red_staircase_all <= red_bin[5])
-	
-	# # do it like [] [] instead of [xxx * xxx], becuase the length should be the same
-	# ACC_red_bin1 = red_task_responses [red_bin1_mask]
-	# ACC_red_bin2 = red_task_responses [red_bin2_mask]
-	# ACC_red_bin3 = red_task_responses [red_bin3_mask]
-	# ACC_red_bin4 = red_task_responses [red_bin4_mask]
-	# ACC_red_bin5 = red_task_responses [red_bin5_mask]
-
-
-
-	# f = pl.figure(figsize = (15,5))
-	# # color vs. ori on RT
-	# #s1 = f.add_subplot(141)
-	
-	# objects = (np.mean([red_bin[0], red_bin[1]]),np.mean([red_bin[1],red_bin[2]]),np.mean([red_bin[2],red_bin[3]]), np.mean([red_bin[3],red_bin[4]]), np.mean([red_bin[4],red_bin[5]]))
-
-	# y_pos = np.arange(len(objects))
-	# y_values = np.array([np.mean(ACC_red_bin1), np.mean(ACC_red_bin2), np.mean(ACC_red_bin3), np.mean(ACC_red_bin4), np.mean(ACC_red_bin5)])
-	# sd = np.array([np.std(ACC_red_bin1), np.std(ACC_red_bin2), np.std(ACC_red_bin3), np.std(ACC_red_bin4), np.std(ACC_red_bin5)])
-	# n = np.array([np.array(ACC_red_bin1).shape[0], np.array(ACC_red_bin2).shape[0], np.array(ACC_red_bin3).shape[0], np.array(ACC_red_bin4).shape[0], np.array(ACC_red_bin5).shape[0] ])
-	# yerr = (sd/np.sqrt(n.squeeze())) 
-	
-	# pl.errorbar(y_pos, y_values, yerr = yerr)
-	# #pl.bar(y_pos, y_values, yerr = yerr, align = 'center', alpha = 0.5)
-	# pl.xticks (y_pos, objects, fontsize = 40) # why doesn't work?
-
-	# pl.title( 'red_bin')#, fontsize = 20)
-	# pl.ylim([0, 1])
-	# sn.despine(offset=10)
-
-	# #pl.show()
-	# pl.savefig(figure_dir + 'lab_%s_psychophysics.jpg'%(subname))
 
 
 
