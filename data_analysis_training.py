@@ -404,6 +404,69 @@ def plot_psychophysics():
 			ver_bin_mask = (ver_staircase_all> ver_bin[i]) * (ver_staircase_all <= ver_bin[i+1])
 			ACC_ver_bin.append( ver_task_responses[ver_bin_mask])
 
+	
+	#prepare for GLM, convert trial_color into graded_color (the len is full length)
+	#color
+	graded_color = np.zeros((len(trial_color),))
+	graded_color[red_task_mask]= 'red'
+	graded_color[gre_task_mask]= 'gre'
+	for ii, grade in graded_color:
+		# red
+		if grade =='red':
+			if (trial_color[ii] >= red_bin[0] )* (trial_color[ii] <= red_bin[1]): # don't use for loop, because '>= red_bin[0]' vs.'> red_bin[1]'
+				graded_color[ii] = 1 # the first red_bin is graded as bin1, for red
+			elif (trial_color[ii] > red_bin[1] )* (trial_color[ii] <= red_bin[2]):
+				graded_color[ii] = 2
+			elif (trial_color[ii] > red_bin[2] )* (trial_color[ii] <= red_bin[3]):
+				graded_color[ii] = 3
+		#green
+		elif grade =='gre':
+			if (trial_color[ii] >= gre_bin[0] )* (trial_color[ii] <= gre_bin[1]):
+				graded_color[ii] = 1 # the first gre_bin is graded as bin1, for gre
+			elif (trial_color[ii] > gre_bin[1] )* (trial_color[ii] <= gre_bin[2]):
+				graded_color[ii] = 2
+			elif (trial_color[ii] > gre_bin[2] )* (trial_color[ii] <= gre_bin[3]):
+				graded_color[ii] = 3
+	#orientation
+	graded_ori = np.zeros((len(trial_ori),))
+	graded_ori[hor_task_mask]= 'hor'
+	graded_ori[ver_task_mask]= 'ver'
+	for ii, grade in graded_ori:
+		# hor
+		if grade =='hor':
+			if (trial_ori[ii] >= hor_bin[0] )* (trial_ori[ii] <= hor_bin[1]): # don't use for loop, because '>= hor_bin[0]' vs.'> hor_bin[1]'
+				graded_ori[ii] = 1 # the first hor_bin is graded as bin1, for hor
+			elif (trial_ori[ii] > hor_bin[1] )* (trial_ori[ii] <= hor_bin[2]):
+				graded_ori[ii] = 2
+			elif (trial_ori[ii] > hor_bin[2] )* (trial_ori[ii] <= hor_bin[3]):
+				graded_ori[ii] = 3
+		#ver
+		elif grade =='ver':
+			if (trial_ori[ii] >= ver_bin[0] )* (trial_ori[ii] <= ver_bin[1]):
+				graded_ori[ii] = 1 # the first ver_bin is graded as bin1, for ver
+			elif (trial_ori[ii] > ver_bin[1] )* (trial_ori[ii] <= ver_bin[2]):
+				graded_ori[ii] = 2
+			elif (trial_ori[ii] > ver_bin[2] )* (trial_ori[ii] <= ver_bin[3]):
+				graded_ori[ii] = 3
+
+
+	graded_TASKVALUE_color = np.zeros((len(reaction_time),))
+	graded_TASKVALUE_color[np.array(task)==1] = graded_color[np.array(task)==1]
+	graded_TASKVALUE_color = graded_TASKVALUE_color[correct_answer_mask* (~np.isnan(reaction_time))]
+
+	graded_TASKVALUE_ori = np.zeros((len(reaction_time),))
+	graded_TASKVALUE_ori[np.array(task)==2] = graded_ori[np.array(task)==2]
+	graded_TASKVALUE_ori = graded_TASKVALUE_ori[correct_answer_mask* (~np.isnan(reaction_time))]
+
+	graded_DISTRACTOR_color = np.zeros((len(reaction_time),))
+	graded_DISTRACTOR_color[np.array(task)==1] = graded_color[np.array(task)==2]
+	graded_DISTRACTOR_color = graded_DISTRACTOR_color[correct_answer_mask* (~np.isnan(reaction_time))]
+
+	graded_DISTRACTOR_ori = np.zeros((len(reaction_time),))
+	graded_DISTRACTOR_ori[np.array(task)==2] = graded_ori[np.array(task)==1]
+	graded_DISTRACTOR_ori = graded_DISTRACTOR_ori[correct_answer_mask* (~np.isnan(reaction_time))]
+
+
 
 def compute_behavioral_performance(csv_files):
 	''' compute 
