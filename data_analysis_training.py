@@ -35,7 +35,7 @@ else:
 '''fMRI beh >> 1)change sublist, 2)csv_files path, 3)buttons 4) savefig folders 5) locaitons 6) pop out csv_files with 0 7)'''
 
 #data_dir = '/Users/xiaomeng/disks/Aeneas_Raw/2017/visual/Attention/Behavioural/'
-sublist =  ['SL','MS']
+sublist =  ['SL','MS', 'az', 'da', 'fh', 'hf', 'im', 'mw', 'pl', 'rr', 'xy']
 
 def load_beh_data(csv_files):
 	'''extend data over runs, print RT, accuracy for each run'''
@@ -245,6 +245,7 @@ def plot_psychophysics():
 	reaction_time, all_responses, task, button, position_x, position_y, trial_color, trial_ori, trial_stimulus, response, trial_direction = load_beh_data(csv_files)
 
 	responses_mask = create_masks()[8] 
+	correct_answer_mask = create_masks()[9]
 
 	red_task_mask = create_masks()[2]
 	gre_task_mask = create_masks()[3]
@@ -353,7 +354,7 @@ def plot_psychophysics():
 	pl.ylim([0, 1])
 	sn.despine(offset=10)
 
-	pl.show()
+	#pl.show()
 	pl.savefig(figure_dir + 'lab_%s_psychophysics.jpg'%(subname))
 
 	#green
@@ -408,48 +409,52 @@ def plot_psychophysics():
 	#prepare for GLM, convert trial_color into graded_color (the len is full length)
 	#color
 	graded_color = np.zeros((len(trial_color),))
-	graded_color[red_task_mask]= 'red'
-	graded_color[gre_task_mask]= 'gre'
-	for ii, grade in graded_color:
+	graded_color[red_task_mask]= 100 #'red'
+	graded_color[gre_task_mask]= 200 #'gre'
+
+	for ii, grade in enumerate(graded_color):
 		# red
-		if grade =='red':
-			if (trial_color[ii] >= red_bin[0] )* (trial_color[ii] <= red_bin[1]): # don't use for loop, because '>= red_bin[0]' vs.'> red_bin[1]'
+		if grade ==100 :
+			if ( np.log10(np.abs(trial_color))[ii] >= red_bin[0] )* (np.log10(np.abs(trial_color))[ii] <= red_bin[1]): # don't use for loop, because '>= red_bin[0]' vs.'> red_bin[1]'
 				graded_color[ii] = 1 # the first red_bin is graded as bin1, for red
-			elif (trial_color[ii] > red_bin[1] )* (trial_color[ii] <= red_bin[2]):
+			
+			elif ( np.log10(np.abs(trial_color))[ii] > red_bin[1] )* (np.log10(np.abs(trial_color))[ii] <= red_bin[2]):
 				graded_color[ii] = 2
-			elif (trial_color[ii] > red_bin[2] )* (trial_color[ii] <= red_bin[3]):
+			elif ( np.log10(np.abs(trial_color))[ii] > red_bin[2] )* ( np.log10(np.abs(trial_color))[ii] <= red_bin[3]):
 				graded_color[ii] = 3
+		
 		#green
-		elif grade =='gre':
-			if (trial_color[ii] >= gre_bin[0] )* (trial_color[ii] <= gre_bin[1]):
+		elif grade ==200:
+			if ( np.log10(np.abs(trial_color))[ii] >= gre_bin[0] )* ( np.log10(np.abs(trial_color))[ii] <= gre_bin[1]):
 				graded_color[ii] = 1 # the first gre_bin is graded as bin1, for gre
-			elif (trial_color[ii] > gre_bin[1] )* (trial_color[ii] <= gre_bin[2]):
+			elif ( np.log10(np.abs(trial_color))[ii] > gre_bin[1] )* ( np.log10(np.abs(trial_color))[ii] <= gre_bin[2]):
 				graded_color[ii] = 2
-			elif (trial_color[ii] > gre_bin[2] )* (trial_color[ii] <= gre_bin[3]):
+			elif ( np.log10(np.abs(trial_color)) [ii] > gre_bin[2] )* ( np.log10(np.abs(trial_color))[ii] <= gre_bin[3]):
 				graded_color[ii] = 3
+		#shell()
 	#orientation
 	graded_ori = np.zeros((len(trial_ori),))
-	graded_ori[hor_task_mask]= 'hor'
-	graded_ori[ver_task_mask]= 'ver'
-	for ii, grade in graded_ori:
+	graded_ori[hor_task_mask]= 300 #'hor'
+	graded_ori[ver_task_mask]= 400 #'ver'
+	for ii, grade in enumerate(graded_ori):
 		# hor
-		if grade =='hor':
-			if (trial_ori[ii] >= hor_bin[0] )* (trial_ori[ii] <= hor_bin[1]): # don't use for loop, because '>= hor_bin[0]' vs.'> hor_bin[1]'
+		if grade == 300:
+			if ( np.log10(np.abs(trial_ori)) [ii] >= hor_bin[0] )* ( np.log10(np.abs(trial_ori))[ii] <= hor_bin[1]): # don't use for loop, because '>= hor_bin[0]' vs.'> hor_bin[1]'
 				graded_ori[ii] = 1 # the first hor_bin is graded as bin1, for hor
-			elif (trial_ori[ii] > hor_bin[1] )* (trial_ori[ii] <= hor_bin[2]):
+			elif ( np.log10(np.abs(trial_ori)) [ii] > hor_bin[1] )* ( np.log10(np.abs(trial_ori)) [ii] <= hor_bin[2]):
 				graded_ori[ii] = 2
-			elif (trial_ori[ii] > hor_bin[2] )* (trial_ori[ii] <= hor_bin[3]):
+			elif ( np.log10(np.abs(trial_ori)) [ii] > hor_bin[2] )* ( np.log10(np.abs(trial_ori))[ii] <= hor_bin[3]):
 				graded_ori[ii] = 3
 		#ver
-		elif grade =='ver':
-			if (trial_ori[ii] >= ver_bin[0] )* (trial_ori[ii] <= ver_bin[1]):
+		elif grade == 400:
+			if ( np.log10(np.abs(trial_ori)) [ii] >= ver_bin[0] )* ( np.log10(np.abs(trial_ori)) [ii] <= ver_bin[1]):
 				graded_ori[ii] = 1 # the first ver_bin is graded as bin1, for ver
-			elif (trial_ori[ii] > ver_bin[1] )* (trial_ori[ii] <= ver_bin[2]):
+			elif ( np.log10(np.abs(trial_ori)) [ii] > ver_bin[1] )* ( np.log10(np.abs(trial_ori)) [ii] <= ver_bin[2]):
 				graded_ori[ii] = 2
-			elif (trial_ori[ii] > ver_bin[2] )* (trial_ori[ii] <= ver_bin[3]):
+			elif ( np.log10(np.abs(trial_ori) [ii] > ver_bin[2] )* ( np.log10(np.abs(trial_ori)) [ii] <= ver_bin[3]):
 				graded_ori[ii] = 3
 
-
+	shell()	
 	graded_TASKVALUE_color = np.zeros((len(reaction_time),))
 	graded_TASKVALUE_color[np.array(task)==1] = graded_color[np.array(task)==1]
 	graded_TASKVALUE_color = graded_TASKVALUE_color[correct_answer_mask* (~np.isnan(reaction_time))]
@@ -754,14 +759,14 @@ def save_results (subname):
 # loop over the subjects
 for subii, subname in enumerate(sublist):
 
-	#print '[main] Running analysis for No. %s participant %s' % (str(subii+1), subname)
+	print '[main] Running analysis for No. %s participant %s' % (str(subii+1), subname)
 	subject_dir= os.path.join(data_dir,subname)
 	csv_files = glob.glob(subject_dir+'/*.csv')
 	csv_files.sort()
 	#shell()
 
-	if csv_files[0].split('_')[2]=='0':
-		csv_files.pop(0)
+	# if csv_files[0].split('_')[2]=='0':
+	# 	csv_files.pop(0)
 
 	#plot_staircase(csv_files,subname)
 	#save_results(subname)
