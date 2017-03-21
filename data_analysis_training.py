@@ -176,7 +176,7 @@ def plot_staircase(csv_files, subname):
 	f = pl.figure(figsize = (25,15))
 
 	s1 = f.add_subplot(231)
-	pl.plot(color_accuracy)
+	#pl.plot(color_accuracy)
 	pl.plot(red_task_accuracy)
 	pl.plot(gre_task_accuracy)
 	pl.legend(['color', 'red', 'green'], loc ='best', fontsize = 18)
@@ -186,7 +186,7 @@ def plot_staircase(csv_files, subname):
 	s1.set_title('Moving color accuracy', fontsize = 20)
 
 	s2 = f.add_subplot(232)
-	pl.plot(ori_accuracy)
+	#pl.plot(ori_accuracy)
 	pl.plot(hor_task_accuracy)
 	pl.plot(ver_task_accuracy)
 	pl.legend(['orientation', 'horizontal', 'vertical'], loc ='best', fontsize = 18)
@@ -215,8 +215,8 @@ def plot_staircase(csv_files, subname):
 	pl.xticks (y_pos, objects, fontsize = 40) # why doesn't work?
 
 	#pl.ylable('percentage of correct')
-	pl.title( 'accuracy for four conditions', fontsize = 20)
-	pl.ylim([0, 1])
+	pl.title( 'accuracy for four conditions (delete first 50 trials)', fontsize = 20)
+	pl.ylim([0.5, 1])
 	sn.despine(offset=10)
 	#s3.set_title('staircase color')
 
@@ -451,10 +451,11 @@ def plot_psychophysics():
 				graded_ori[ii] = 1 # the first ver_bin is graded as bin1, for ver
 			elif ( np.log10(np.abs(trial_ori)) [ii] > ver_bin[1] )* ( np.log10(np.abs(trial_ori)) [ii] <= ver_bin[2]):
 				graded_ori[ii] = 2
-			elif ( np.log10(np.abs(trial_ori) [ii] > ver_bin[2] )* ( np.log10(np.abs(trial_ori)) [ii] <= ver_bin[3]):
+			elif ( np.log10(np.abs(trial_ori)) [ii] > ver_bin[2] )* ( np.log10(np.abs(trial_ori)) [ii] <= ver_bin[3]):
 				graded_ori[ii] = 3
+				
 
-	shell()	
+	#shell()	
 	graded_TASKVALUE_color = np.zeros((len(reaction_time),))
 	graded_TASKVALUE_color[np.array(task)==1] = graded_color[np.array(task)==1]
 	graded_TASKVALUE_color = graded_TASKVALUE_color[correct_answer_mask* (~np.isnan(reaction_time))]
@@ -768,9 +769,9 @@ for subii, subname in enumerate(sublist):
 	# if csv_files[0].split('_')[2]=='0':
 	# 	csv_files.pop(0)
 
-	#plot_staircase(csv_files,subname)
+	plot_staircase(csv_files,subname)
 	#save_results(subname)
-	plot_psychophysics()
+	#plot_psychophysics()
 
 	
 # # not useful anymore
