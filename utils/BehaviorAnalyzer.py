@@ -3,9 +3,9 @@ import os,glob,datetime
 
 import numpy as np
 import scipy as sp
-import seaborn as sn
-import matplotlib.pylab as pl
-import cPickle as pickle
+
+# import cPickle as pickle
+import pickle
 import pandas as pd
 
 from math import *
@@ -22,11 +22,11 @@ from PupilAnalyzer import PupilAnalyzer
 
 class BehaviorAnalyzer(PupilAnalyzer):
 
-	def __init__(self, subID, csv_filename, h5_filename, raw_folder, **kwargs):
+	def __init__(self, subID, csv_filename, h5_filename, raw_folder, verbosity=0, **kwargs):
 
 		self.default_parameters = {}
 
-		super(BehaviorAnalyzer, self).__init__(subID, h5_filename, raw_folder, **kwargs)
+		super(BehaviorAnalyzer, self).__init__(subID, h5_filename, raw_folder,verbosity=verbosity, **kwargs)
 
 		self.csv_file = csv_filename
 
@@ -39,7 +39,29 @@ class BehaviorAnalyzer(PupilAnalyzer):
 
 		super(BehaviorAnalyzer, self).load_data()
 
-		self.csv_data = pd.read_csv(self.csv_file)
+		if len(self.csv_file)==1:
+			self.csv_data = pd.read_csv(self.csv_file[0])
+		else:
+			self.csv_data_runs = []
+			for ii in range(len(self.csv_file)):
+				if ii>0:
+					self.csv_data = pd.concat([self.csv_data, pd.read_csv(self.csv_file[ii], dtype={'trial_cue':'str', 'trial_stimulus_label': 'str'})], axis=0, ignore_index = True)
+					self.csv_data_runs.append(pd.read_csv(self.csv_file[ii], dtype={'trial_cue':'str', 'trial_stimulus_label': 'str'}))
+				else:
+					self.csv_data = pd.read_csv(self.csv_file[ii], dtype={'trial_cue':'str', 'trial_stimulus_label': 'str'})
+					self.csv_data_runs.append(pd.read_csv(self.csv_file[ii], dtype={'trial_cue':'str', 'trial_stimulus_label': 'str'}))
+
+
+		if 'trial_cue' in self.csv_data.keys():
+			stimulus_types = {'red45': 0,
+							  'red135': 1,
+							  'green45': 2,
+							  'green135': 3}
+
+			self.csv_data['trial_cue_label'] = self.csv_data['trial_cue']
+			self.csv_data['trial_cue'] = np.array([stimulus_types[tc] for tc in self.csv_data['trial_cue_label']], dtype=int)
+
+		
 
 	def recode_trial_types(self):
 		"""
@@ -368,6 +390,24 @@ class BehaviorAnalyzer(PupilAnalyzer):
 	# 						   'trial_correct': trial_correct})
 
 
+	def compute_inverse_efficiency_scores(self, compute_average = False):
+
+		trial_parameters = self.read_trial_data(self.combined_h5_filename)
+
+		ie_scores = {key:[] for key in np.unique(trial_parameters['trial_codes'])}
+
+		for tcode in np.unique(trial_parameters['trial_codes']):
+			
+			rts = trial_parameters['reaction_time'][trial_parameters['trial_codes']==tcode]
+
+			if compute_average:
+				ie_scores[tcode] = np.median(rts / np.mean(trial_parameters['correct_answer'][trial_parameters['trial_codes']==tcode]))
+			else:
+				ie_scores[tcode] = np.array(rts / np.mean(trial_parameters['correct_answer'][trial_parameters['trial_codes']==tcode]))
+
+		return ie_scores
+
+
 	def compute_performance(self):
 		
 		if len(self.events) == 0:
@@ -520,7 +560,7 @@ class BehaviorAnalyzer(PupilAnalyzer):
 	def compute_performance_attended_unattended(self):
 
 
- 		self.load_data()
+		self.load_data()
 
 		performance = []
 		reaction_time = []
@@ -763,6 +803,6 @@ class BehaviorAnalyzer(PupilAnalyzer):
 
 	def store_behavior(self):
 		# Simply store the relevant variables to save speed
-		print '[%s] Storing behavioural data' % (self.__class__.__name__)
+		print('[%s] Storing behavioural data' % (self.__class__.__name__))
 		#pickle.dump([self.task_data,self.events,self.task_performance,self.trial_signals],open(os.path.join(self.data_folder, self.output_filename),'wb'))
 		pickle.dump([self.task_data,self.events,self.task_performance],open(os.path.join(self.data_folder, 'behavior_' + self.output_filename),'wb'))

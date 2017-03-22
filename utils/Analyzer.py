@@ -2,16 +2,17 @@
 
 class Analyzer(object):
 
-	def __init__(self, subID, filename, **kwargs):
+	def __init__(self, subID, filename, verbosity = 0, **kwargs):
 
 		#self.default_parameters = {}
 
 		self.data_file = filename
-
+		self.verbosity = verbosity
 		self.subID = subID
 
 		for k,v in kwargs.items():
-			print '[%s] Setting new value for parameter %s' % (self.__class__.__name__, k)
+			if self.verbosity > 0:
+				print '[%s] Setting new value for parameter %s' % (self.__class__.__name__, k)
 			setattr(self, k, v)
 
 		# Set default values for any parameter that was not passed in
@@ -29,7 +30,8 @@ class Analyzer(object):
 
 			if not hasattr(self, k):
 				setattr(self, k, v)
-				print '[%s] Setting default value for parameter %s' % (self.__class__.__name__, k)
+				if self.verbosity > 0:
+					print '[%s] Setting default value for parameter %s' % (self.__class__.__name__, k)
 				
 
 	def set_output_filename(self):
