@@ -13,20 +13,23 @@ sys.path.append( 'utils' )
 # Martijns analysis tools
 from PupilAnalyzer import PupilAnalyzer # from the file import the method, the file is in the folder named 'utils'
 
-data_folder = '/home/barendregt/Analysis/xiaomeng/Data/'
-figure_dir = '/home/barendregt/Analysis/xiaomeng/'
+# data_folder = '/home/barendregt/Analysis/xiaomeng/Data/'
+# figure_dir = '/home/barendregt/Analysis/xiaomeng/'
+
+data_folder = '/home/xiaomeng/Data/Pre_scan_data/'
+figure_dir = '/home/shared/2017/visual/Attention/eye/'
 
 deconvolution_interval = np.array([-1.5, 4.5])
 down_fs = 100
 
 
-sublist = ['MS', 'SL']
+sublist = ['xy'] #'MS', 'SL']
 
 for subID in sublist:
 	
 	print '[main] Running analysis for %s' % (subID)
 
-	sub_data_folder = data_folder#os.path.join(data_folder, str(subID) + '/')
+	sub_data_folder = os.path.join(data_folder, str(subID) + '/') #data_folder
 
 	h5filename = os.path.join(sub_data_folder, subID + '.h5')
 
@@ -40,7 +43,7 @@ for subID in sublist:
 	## 5 = Stimulus 2
 	## 6 = Response
 	##
-	pa = PupilAnalyzer(subID, h5filename, data_folder, reference_phase = 6, signal_downsample_factor = down_fs, deconvolution_interval = deconvolution_interval) # create an object
+	pa = PupilAnalyzer(subID, h5filename, sub_data_folder, reference_phase = 6, signal_downsample_factor = down_fs, deconvolution_interval = deconvolution_interval) # create an object
 
 	pa.signal_per_trial()
 
