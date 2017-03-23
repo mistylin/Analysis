@@ -35,7 +35,7 @@ else:
 '''fMRI beh >> 1)change sublist, 2)csv_files path, 3)buttons 4) savefig folders 5) locaitons 6) pop out csv_files with 0 7)'''
 
 #data_dir = '/Users/xiaomeng/disks/Aeneas_Raw/2017/visual/Attention/Behavioural/'
-sublist =  [ 'az', 'da', 'fh', 'hf', 'im', 'pl', 'rr', 'xy']  # 'mw' #'SL','MS'- their staircases are not spearated, have problems when converting into graded_color
+sublist =  [ 'az', 'da', 'fh', 'hf', 'im', 'pl', 'rr', 'xy', 'mw']#, 'mb']  # 'mw' #'SL','MS'- their staircases are not spearated, have problems when converting into graded_color
 
 def load_beh_data(csv_files):
 	'''extend data over runs, print RT, accuracy for each run'''
@@ -686,7 +686,7 @@ def save_results (subname):
 		# f.close()
 
 	print '[main] Running analysis for %s'% (subname) #No. %s participant %s' % (str(subii+1), subname)
-	print 'Results 1- GLM' 
+	print 'Results 1.1- GLM' 
 	print '  taskvalue_color, distractor_color, taskvalue_ori, distractor_ori, color_interaction, ori_interaction'
 	print 'betas: %.2f %.2f %.2f %.2f %.2f %.2f' % (betas[1], betas[2], betas[3], betas[4], betas[5], betas[6]) #as the first one is intercept
 	print 't-value: %.2f %.2f %.2f %.2f %.2f %.2f'% (t[0], t[1], t[2], t[3], t[4], t[5])
@@ -694,15 +694,15 @@ def save_results (subname):
 	print 'r_squareds', r_squareds
 
 
-	print 'Results 1.1- GLM-previous' 
+	print 'Results 1.2- GLM-previous' 
 	print '  taskvalue  distractor  interaction'
 	print 'betas1: %.2f %.2f %.2f' % (betas1[1], betas1[2], betas1[3],) # not betas[0], because it's the intercept
 	#print 'betas_new: %.2f %.2f %.2f'%  (betas_new[0], betas_new[1], betas_new[2])
 	print 't-value: %.2f %.2f %.2f'% (t1[0], t1[1], t1[2])
 	print 'p-value: %.2f %.2f %.2f'%  (p1[0], p1[1], p1[2])
 
-	print 'Results 1.2- GLM - task vs. responses' 
-	print '  taskvalue  distractor  interaction'
+	print 'Results 2 - GLM - task vs. responses' 
+	print '  task    responses  interaction'
 	print 'betas1: %.2f %.2f %.2f' % (betas2[1], betas2[2], betas2[3],) # not betas[0], because it's the intercept
 	#print 'betas_new: %.2f %.2f %.2f'%  (betas_new[0], betas_new[1], betas_new[2])
 	print 't-value: %.2f %.2f %.2f'% (t2[0], t2[1], t2[2])
@@ -710,7 +710,7 @@ def save_results (subname):
 	
 	# Color vs Orientation on RT, %correct
 
-	print 'Results 2 - Color vs Ori '
+	print 'Results 3 - Color vs Ori '
 	print 'RT'
 	print 't: %.2f ; p: %.2f' % (t_Col_vs_Ori_RT, p_Col_vs_Ori_RT)
 	print 'Accuracy'
