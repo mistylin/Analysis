@@ -324,7 +324,7 @@ class PupilAnalyzer(Analyzer):
 								return 60
 
 
-	def recombine_signal_blocks(self, reference_phase = 6, force_rebuild = False):
+	def recombine_signal_blocks(self, force_rebuild = False):
 
 		if not hasattr(self, 'signal_downsample_factor'):
 			self.signal_downsample_factor = 10
@@ -355,7 +355,8 @@ class PupilAnalyzer(Analyzer):
 			
 			blocks = self.h5_operator.read_session_data(alias, 'blocks')
 			block_start_times = blocks['block_start_timestamp']
-			this_trial_phase_times = this_trial_phase_times[this_trial_phase_times['trial_phase_index']==reference_phase]
+
+			# this_trial_phase_times[this_trial_phase_times['trial_phase_index']==reference_phase]
 
 			block_event_times = pd.DataFrame()
 
@@ -378,9 +379,10 @@ class PupilAnalyzer(Analyzer):
 				
 				this_phase_times[(this_phase_times >= bs) & (this_phase_times < be)] -= bs
 
-			this_trial_parameters['trial_codes'] = pd.Series(self.recode_trial_code(this_trial_parameters))
-			this_trial_parameters['trial_response_phase_within_run'] = pd.Series(this_phase_times)
-			this_trial_parameters['trial_response_phase_full_signal'] = pd.Series(this_phase_times + prev_signal_size)	
+			#this_trial_parameters['trial_codes'] = pd.Series(self.recode_trial_code(this_trial_parameters))
+			for phase_index in np.unique(this_trial_phase_times['trial_phase_index']):
+				this_trial_parameters['trial_phase_%i_within_run'%phase_index] = pd.Series(this_phase_times[this_phase_times['trial_phase_index']==phase_index])
+				this_trial_parameters['trial_phase_%i_full_signal'%phase_index] = pd.Series(this_phase_times[this_phase_times['trial_phase_index']==phase_index] + prev_signal_size)	
 			
 			if ii > 0:
 
@@ -423,7 +425,7 @@ class PupilAnalyzer(Analyzer):
 
 
 
-	def signal_per_trial(self, only_correct = True):
+	def signal_per_trial(self, reference_phase = 6, with_rt = False, only_correct = True):
 
 		trial_start_offset = 0
 
@@ -439,7 +441,12 @@ class PupilAnalyzer(Analyzer):
 		else:
 			selected_trials = np.array(np.ones((trial_parameters.shape[0],1)), dtype=bool)			
 
-		for tii,(ts,te) in enumerate(zip(trial_parameters['trial_response_phase_full_signal'][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[0], trial_parameters['trial_response_phase_full_signal'][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[1])):
+		if with_rt:
+			signal_intervals = trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)			
+		else:
+			signal_intervals = trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)
+
+		for tii,(ts,te) in enumerate(signal_intervals):
 			if (ts > 0) & (te < recorded_pupil_signal.size):
 				self.trial_signals.append(sp.signal.decimate(recorded_pupil_signal[int(ts):int(te)], self.signal_downsample_factor, 1))
 

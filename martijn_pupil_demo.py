@@ -42,10 +42,18 @@ for subID in sublist:
 	## 4 = ISI
 	## 5 = Stimulus 2
 	## 6 = Response
-	##
-	pa = PupilAnalyzer(subID, h5filename, sub_data_folder, reference_phase = 6, signal_downsample_factor = down_fs, deconvolution_interval = deconvolution_interval) # create an object
+	## 
+	pa = PupilAnalyzer(subID, h5filename, sub_data_folder, signal_downsample_factor = down_fs, deconvolution_interval = deconvolution_interval) # create an object
 
-	pa.signal_per_trial()
+	##
+	## Example function calls:
+	## reference_phase = which trial phase to time-lock to
+	## with_rt = add reaction time or not (default is not)
+	##
+	## pa.signal_per_trial(reference_phase = 3) is equivalent to:
+	## pa.signal_per_trial(reference_phase = 3, with_rt = False)
+	##
+	pa.signal_per_trial(reference_phase = 6, with_rt = True)
 
 	trial_signal_sub_mean = np.mean(pa.trial_signals, axis =0) 
 
