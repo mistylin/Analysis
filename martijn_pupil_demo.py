@@ -43,6 +43,10 @@ for subID in sublist:
 	## 5 = Stimulus 2
 	## 6 = Response
 	## 
+
+	## 6 = Response phase - where the question mark 
+	## 7 = Button press
+	### while right now 6 = button press
 	pa = PupilAnalyzer(subID, h5filename, sub_data_folder, signal_downsample_factor = down_fs, deconvolution_interval = deconvolution_interval) # create an object
 
 	##

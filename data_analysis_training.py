@@ -36,7 +36,7 @@ else:
 
 #data_dir = '/Users/xiaomeng/disks/Aeneas_Raw/2017/visual/Attention/Behavioural/'
 sublist =  [ 'az', 'da', 'fh', 'hf', 'im', 'pl', 'rr', 'xy', 'mw']#, 'mb']  # 'mw' #'SL','MS'- their staircases are not spearated, have problems when converting into graded_color
-
+#['xy']
 def load_beh_data(csv_files):
 	'''extend data over runs, print RT, accuracy for each run'''
 	#print ' RT  &  accuracy '
@@ -99,7 +99,7 @@ def create_masks():
 	wrong_task_mask = np.array(((np.array(task)==2)*((np.array(button)=='s')+(np.array(button)=='f')))+((np.array(task)==1)*((np.array(button)=='j')+(np.array(button)=='l')))) # sfjl
 
 	# responses_mask(correct+incorrect): delete nanvalues and invalid values(wrong task)!!
-	responses_mask = np.array((np.array(all_responses)==1) + ((np.array(all_responses)==0)* right_task_mask)) 
+	responses_mask = np.array((np.array(all_responses)==1) + ((np.array(all_responses)==0) * right_task_mask)) 
 
 	correct_answer_mask = np.array(np.array(all_responses)==1) 
 	incorrect_answer_mask = np.array((np.array(all_responses)==0) * (~np.array(wrong_task_mask)))
@@ -149,7 +149,7 @@ def plot_staircase(csv_files, subname):
 	red_task_n_responses = np.arange(1, len(red_task_responses)+1)
 	red_task_cum_responses = np.cumsum(red_task_responses)
 	red_task_accuracy = red_task_cum_responses/red_task_n_responses
-
+	#shell()
 	gre_task_responses = np.array(all_responses)[responses_mask * gre_task_mask]
 	gre_task_n_responses = np.arange(1, len(gre_task_responses)+1)
 	gre_task_cum_responses = np.cumsum(gre_task_responses)
@@ -169,15 +169,15 @@ def plot_staircase(csv_files, subname):
 	trial_color = load_beh_data(csv_files)[6]
 	trial_ori = load_beh_data(csv_files)[7]
 
-	red_staircase = np.abs(trial_color[correct_answer_mask * red_task_mask])
-	gre_staircase = np.abs(trial_color[correct_answer_mask * gre_task_mask])
-	hor_staircase = np.abs(trial_ori[correct_answer_mask * hor_task_mask])
-	ver_staircase = np.abs(trial_ori[correct_answer_mask * ver_task_mask])
+	# red_staircase = np.abs(trial_color[correct_answer_mask * red_task_mask])
+	# gre_staircase = np.abs(trial_color[correct_answer_mask * gre_task_mask])
+	# hor_staircase = np.abs(trial_ori[correct_answer_mask * hor_task_mask])
+	# ver_staircase = np.abs(trial_ori[correct_answer_mask * ver_task_mask])
 
-	# red_staircase = np.abs(trial_color[responses_mask * red_task_mask])
-	# gre_staircase = np.abs(trial_color[responses_mask * gre_task_mask])
-	# hor_staircase = np.abs(trial_ori[responses_mask * hor_task_mask])
-	# ver_staircase = np.abs(trial_ori[responses_mask * ver_task_mask])
+	red_staircase = np.abs(trial_color[responses_mask * red_task_mask])
+	gre_staircase = np.abs(trial_color[responses_mask * gre_task_mask])
+	hor_staircase = np.abs(trial_ori[responses_mask * hor_task_mask])
+	ver_staircase = np.abs(trial_ori[responses_mask * ver_task_mask])
 
 	#plot accuracy & staircase
 	f = pl.figure(figsize = (25,15))
@@ -186,7 +186,7 @@ def plot_staircase(csv_files, subname):
 	#pl.plot(color_accuracy)
 	pl.plot(red_task_accuracy)
 	pl.plot(gre_task_accuracy)
-	pl.legend(['color', 'red', 'green'], loc ='best', fontsize = 18)
+	pl.legend(['red', 'green'], loc ='best', fontsize = 18)
 	pl.ylim([0, 1])
 	pl.axhline(0.79,color='k',ls='--')
 	sn.despine(offset=10)
@@ -196,7 +196,7 @@ def plot_staircase(csv_files, subname):
 	#pl.plot(ori_accuracy)
 	pl.plot(hor_task_accuracy)
 	pl.plot(ver_task_accuracy)
-	pl.legend(['orientation', 'horizontal', 'vertical'], loc ='best', fontsize = 18)
+	pl.legend(['horizontal', 'vertical'], loc ='best', fontsize = 18)
 	pl.ylim([0, 1])
 	pl.axhline(0.79,color='k',ls='--')
 	sn.despine(offset=10)
@@ -573,8 +573,10 @@ def compute_behavioral_performance(csv_files):
 	t = [betas.squeeze().dot(contrast) / SE for contrast in np.array([[0,1,0,0,0,0,0], [0,0,1,0,0,0,0], [0,0,0,1,0,0,0], [0,0,0,0,1,0,0], [0,0,0,0,0,1,0], [0,0,0,0,0,0,1] ])]
 	p = scipy.stats.t.sf(np.abs(t), df)*2
 
-	fitted_data = betas[0]+ betas[1]*graded_TASKVALUE_color[:,np.newaxis]+ betas[2]*graded_DISTRACTOR_color[:,np.newaxis] +betas[3]*graded_TASKVALUE_ori[:,np.newaxis]+ betas[4]*graded_DISTRACTOR_ori[:,np.newaxis]+ betas[5]*graded_TASKVALUE_color[:,np.newaxis]* graded_DISTRACTOR_color[:,np.newaxis] + betas[6]* graded_TASKVALUE_ori[:,np.newaxis]* graded_DISTRACTOR_ori[:,np.newaxis]
-	r_squareds = 1.0 - np.sum((fitted_data - RT_correct_log)**2, axis = -1) / np.sum(RT_correct_log**2, axis = -1)
+	#fitted_data = betas[0]+ betas[1]*graded_TASKVALUE_color[:,np.newaxis]+ betas[2]*graded_DISTRACTOR_color[:,np.newaxis] +betas[3]*graded_TASKVALUE_ori[:,np.newaxis]+ betas[4]*graded_DISTRACTOR_ori[:,np.newaxis]+ betas[5]*graded_TASKVALUE_color[:,np.newaxis]* graded_DISTRACTOR_color[:,np.newaxis] + betas[6]* graded_TASKVALUE_ori[:,np.newaxis]* graded_DISTRACTOR_ori[:,np.newaxis]
+	# r_squareds = 1.0 - np.sum((fitted_data - RT_correct_log)**2, axis = -1) / np.sum(RT_correct_log**2, axis = -1)
+
+	r_squared = 1.0 - ((X.dot(betas)-RT_correct_log)**2).sum(axis=-1) / (RT_correct_log**2).sum(axis=-1)
 
 	# GLM-previous
 	# taskvalue, distractor, interaction
@@ -843,8 +845,8 @@ for subii, subname in enumerate(sublist):
 	# if csv_files[0].split('_')[2]=='0':
 	# 	csv_files.pop(0)
 
-	#plot_staircase(csv_files,subname)
-	save_results(subname)
+	plot_staircase(csv_files,subname)
+	#save_results(subname)
 	#plot_psychophysics()
 	#compute_behavioral_performance(csv_files)
 
