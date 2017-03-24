@@ -467,21 +467,31 @@ def plot_psychophysics():
 	# shell()
 	graded_TASKVALUE_color = np.zeros((len(reaction_time),))
 	graded_TASKVALUE_color[np.array(task)==1] = graded_color[np.array(task)==1]
+	graded_TASKVALUE = np.zeros((len(reaction_time),))
+	graded_TASKVALUE [np.array(task)==1] = graded_color[np.array(task)==1]
 	graded_TASKVALUE_color = graded_TASKVALUE_color[correct_answer_mask* (~np.isnan(reaction_time))]
 
 	graded_TASKVALUE_ori = np.zeros((len(reaction_time),))
 	graded_TASKVALUE_ori[np.array(task)==2] = graded_ori[np.array(task)==2]
+	graded_TASKVALUE [np.array(task)==2] = graded_color[np.array(task)==2]
 	graded_TASKVALUE_ori = graded_TASKVALUE_ori[correct_answer_mask* (~np.isnan(reaction_time))]
+
+	graded_TASKVALUE = graded_TASKVALUE[correct_answer_mask* (~np.isnan(reaction_time))]
 
 	graded_DISTRACTOR_color = np.zeros((len(reaction_time),))
 	graded_DISTRACTOR_color[np.array(task)==1] = graded_color[np.array(task)==2]
+	graded_DISTRACTOR = np.zeros((len(reaction_time),))
+	graded_DISTRACTOR [np.array(task)==1] = graded_color[np.array(task)==2]
 	graded_DISTRACTOR_color = graded_DISTRACTOR_color[correct_answer_mask* (~np.isnan(reaction_time))]
 
 	graded_DISTRACTOR_ori = np.zeros((len(reaction_time),))
 	graded_DISTRACTOR_ori[np.array(task)==2] = graded_ori[np.array(task)==1]
+	graded_DISTRACTOR [np.array(task)==2] = graded_color[np.array(task)==1]
 	graded_DISTRACTOR_ori = graded_DISTRACTOR_ori[correct_answer_mask* (~np.isnan(reaction_time))]
 
-	return graded_TASKVALUE_color, graded_TASKVALUE_ori, graded_DISTRACTOR_color, graded_DISTRACTOR_ori 
+	graded_DISTRACTOR = graded_DISTRACTOR[correct_answer_mask* (~np.isnan(reaction_time))]
+
+	return graded_TASKVALUE_color, graded_TASKVALUE_ori, graded_DISTRACTOR_color, graded_DISTRACTOR_ori, graded_TASKVALUE, graded_DISTRACTOR
 
 def compute_behavioral_performance(csv_files):
 	''' compute 
@@ -489,7 +499,7 @@ def compute_behavioral_performance(csv_files):
 	2) RT for different condiitons 
 	(correct response, ,wrong response, wrong task, wrong direction)'''
 
-	graded_TASKVALUE_color, graded_TASKVALUE_ori, graded_DISTRACTOR_color, graded_DISTRACTOR_ori = plot_psychophysics()
+	graded_TASKVALUE_color, graded_TASKVALUE_ori, graded_DISTRACTOR_color, graded_DISTRACTOR_ori, graded_TASKVALUE, graded_DISTRACTOR = plot_psychophysics()
 
 	reaction_time, all_responses, task, button, position_x, position_y, trial_color, trial_ori, trial_stimulus, response, trial_direction = load_beh_data(csv_files)
 
@@ -549,7 +559,7 @@ def compute_behavioral_performance(csv_files):
 	# d_prime_ori = (z_hit_ori- z_FA_ori)/np.sqrt(2)
 
 	#shell()
-
+	# GLM graded but separate color and orientation > taskvalue, graded distractor, interaction
 	# select correct RTs, use log, things to be done>> use d' to replace design matrix!!
 	RT_correct_log = np.log10(RT_correct)
 	# X contains intercept, taskvalue_color, distructor color, taskvalue_ori, distructor ori, color interaciton, ori interaction
@@ -576,6 +586,17 @@ def compute_behavioral_performance(csv_files):
 	t1 = [betas1.squeeze().dot(contrast1) / SE1 for contrast1 in np.array([ [0,1,0,0], [0,0,1,0], [0,0,0,1] ])]
 	p1 = scipy.stats.t.sf(np.abs(t1), df1)*2
 
+	# GLM-graded combined
+	# taskvalue, distractor, interaction
+	X2 = np.hstack([np.ones((len(RT_correct_log),1)), graded_TASKVALUE[:,np.newaxis], graded_DISTRACTOR[:,np.newaxis], graded_TASKVALUE[:,np.newaxis]*graded_DISTRACTOR[:,np.newaxis]])
+	betas2 = np.linalg.lstsq(X2, RT_correct_log)[0]
+	#betas_new = np.linalg.pinv(X).dot(RT)
+	SE2 = np.sqrt(np.sum((X2.dot(betas2) - RT_correct_log)**2)/(RT_correct_log.size - X2.shape[1]))
+	df2= RT_correct_log.size - X2.shape[1]
+	t2 = [betas2.squeeze().dot(contrast2) / SE2 for contrast2 in np.array([ [0,1,0,0], [0,0,1,0], [0,0,0,1] ])]
+	p2 = scipy.stats.t.sf(np.abs(t2), df2)*2
+
+
 	# Color vs Orientation on RT, %correct
 	t_Col_vs_Ori_RT, p_Col_vs_Ori_RT = scipy.stats.ttest_ind(RT_color, RT_ori, equal_var=False, nan_policy='omit')
 	t_Col_vs_Ori_Acc, p_Col_vs_Ori_Acc = scipy.stats.ttest_ind(Accuracy_color, Accuracy_ori, equal_var=False, nan_policy='omit')
@@ -592,13 +613,13 @@ def compute_behavioral_performance(csv_files):
 	task_valid = np.array(task[responses_mask])
 	responses_valid = np.array(all_responses[responses_mask])
 
-	X2 = np.hstack([np.ones((len(RT_right_task_log),1)), task_valid[:,np.newaxis], responses_valid[:,np.newaxis], task_valid[:,np.newaxis]*responses_valid[:,np.newaxis]])
-	betas2 = np.linalg.lstsq(X2, RT_right_task_log)[0]
+	X3 = np.hstack([np.ones((len(RT_right_task_log),1)), task_valid[:,np.newaxis], responses_valid[:,np.newaxis], task_valid[:,np.newaxis]*responses_valid[:,np.newaxis]])
+	betas3 = np.linalg.lstsq(X3, RT_right_task_log)[0]
 	#betas_new = np.linalg.pinv(X).dot(RT)
-	SE2 = np.sqrt(np.sum((X2.dot(betas2) - RT_right_task_log)**2)/(RT_right_task_log.size - X2.shape[1]))
-	df2= RT_right_task_log.size - X2.shape[1]
-	t2 = [betas2.squeeze().dot(contrast2) / SE2 for contrast2 in np.array([[0,1,0,0], [0,0,1,0], [0,0,0,1] ])]
-	p2 = scipy.stats.t.sf(np.abs(t2), df2)*2
+	SE3 = np.sqrt(np.sum((X3.dot(betas3) - RT_right_task_log)**2)/(RT_right_task_log.size - X3.shape[1]))
+	df3= RT_right_task_log.size - X3.shape[1]
+	t3 = [betas3.squeeze().dot(contrast3) / SE3 for contrast3 in np.array([[0,1,0,0], [0,0,1,0], [0,0,0,1] ])]
+	p3 = scipy.stats.t.sf(np.abs(t3), df3)*2
 
 	# # Correct vs Incorrect task vs Incorrect direction on RT
 	# F_answers_RT, p_answers_RT = scipy.stats.f_oneway(RT_correct, RT_wrong_task, RT_wrong_direction)
@@ -606,7 +627,7 @@ def compute_behavioral_performance(csv_files):
 	# cor_vs_dir= scipy.stats.ttest_ind(RT_correct, RT_wrong_direction, equal_var=False, nan_policy='omit')
 	# task_vs_dir = scipy.stats.ttest_ind(RT_wrong_task, RT_wrong_direction, equal_var=False, nan_policy='omit')
 
-	return betas, t, p, r_squareds, betas1, t1, p1, betas2, t2, p2, t_Col_vs_Ori_RT, p_Col_vs_Ori_RT, t_Col_vs_Ori_Acc, p_Col_vs_Ori_Acc, t_cor_vs_incor_RT, p_cor_vs_incor_RT, t_righ_vs_wro_task_RT, p_righ_vs_wro_task_RT, RT_color, RT_ori, Accuracy_color, Accuracy_ori, RT_correct, RT_incorrect, RT_right_task, RT_wrong_task 
+	return betas, t, p, r_squareds, betas1, t1, p1, betas2, t2, p2, betas3, t3, p3, t_Col_vs_Ori_RT, p_Col_vs_Ori_RT, t_Col_vs_Ori_Acc, p_Col_vs_Ori_Acc, t_cor_vs_incor_RT, p_cor_vs_incor_RT, t_righ_vs_wro_task_RT, p_righ_vs_wro_task_RT, RT_color, RT_ori, Accuracy_color, Accuracy_ori, RT_correct, RT_incorrect, RT_right_task, RT_wrong_task 
 
 # 	# average across runs should changes names!!! adding 'means'!!!
 # 	RT_mean_sub = np.nanmean(np.array(reaction_time))
@@ -677,7 +698,7 @@ def compute_behavioral_performance(csv_files):
 def save_results (subname):
 	# save results into a txt file
 	#pl.savefig(figure_dir + 'scanner/staircase_plots/%s_color_ori_staircase_plot.pdf'%(subname))
-	betas, t, p, r_squareds, betas1, t1, p1, betas2, t2, p2, t_Col_vs_Ori_RT, p_Col_vs_Ori_RT, t_Col_vs_Ori_Acc, p_Col_vs_Ori_Acc, t_cor_vs_incor_RT, p_cor_vs_incor_RT, t_righ_vs_wro_task_RT, p_righ_vs_wro_task_RT, RT_color, RT_ori, Accuracy_color, Accuracy_ori, RT_correct, RT_incorrect, RT_right_task, RT_wrong_task = compute_behavioral_performance(csv_files)
+	betas, t, p, r_squareds, betas1, t1, p1, betas2, t2, p2, betas3, t3, p3, t_Col_vs_Ori_RT, p_Col_vs_Ori_RT, t_Col_vs_Ori_Acc, p_Col_vs_Ori_Acc, t_cor_vs_incor_RT, p_cor_vs_incor_RT, t_righ_vs_wro_task_RT, p_righ_vs_wro_task_RT, RT_color, RT_ori, Accuracy_color, Accuracy_ori, RT_correct, RT_incorrect, RT_right_task, RT_wrong_task = compute_behavioral_performance(csv_files)
 
 	sys.stdout = open(figure_dir + 'lab_%s_results.txt'%(subname), 'w')
 
@@ -686,30 +707,39 @@ def save_results (subname):
 		# f.close()
 
 	print '[main] Running analysis for %s'% (subname) #No. %s participant %s' % (str(subii+1), subname)
-	print 'Results 1.1- GLM' 
+	print 'Results 1.1- GLM - graded but separate color from ori' 
 	print '  taskvalue_color, distractor_color, taskvalue_ori, distractor_ori, color_interaction, ori_interaction'
-	print 'betas: %.2f %.2f %.2f %.2f %.2f %.2f' % (betas[1], betas[2], betas[3], betas[4], betas[5], betas[6]) #as the first one is intercept
-	print 't-value: %.2f %.2f %.2f %.2f %.2f %.2f'% (t[0], t[1], t[2], t[3], t[4], t[5])
-	print 'p-value: %.2f %.2f %.2f %.2f %.2f %.2f'%  (p[0], p[1], p[2], p[3], p[4], p[5])
+	print 'betas: %.2f	%.2f	%.2f	%.2f	%.2f	%.2f' % (betas[1], betas[2], betas[3], betas[4], betas[5], betas[6]) #as the first one is intercept
+	print 't-value: %.2f	%.2f	%.2f	%.2f	%.2f	%.2f'% (t[0], t[1], t[2], t[3], t[4], t[5])
+	print 'p-value: %.2f	%.2f	%.2f	%.2f	%.2f	%.2f'%  (p[0], p[1], p[2], p[3], p[4], p[5])
 	print 'r_squareds', r_squareds
 
-
+	print ''
 	print 'Results 1.2- GLM-previous' 
 	print '  taskvalue  distractor  interaction'
-	print 'betas1: %.2f %.2f %.2f' % (betas1[1], betas1[2], betas1[3],) # not betas[0], because it's the intercept
+	print 'betas1: %.2f	%.2f	%.2f' % (betas1[1], betas1[2], betas1[3],) # not betas[0], because it's the intercept
 	#print 'betas_new: %.2f %.2f %.2f'%  (betas_new[0], betas_new[1], betas_new[2])
-	print 't-value: %.2f %.2f %.2f'% (t1[0], t1[1], t1[2])
-	print 'p-value: %.2f %.2f %.2f'%  (p1[0], p1[1], p1[2])
+	print 't-value: %.2f	%.2f	%.2f'% (t1[0], t1[1], t1[2])
+	print 'p-value: %.2f	%.2f	%.2f'%  (p1[0], p1[1], p1[2])
 
+	print ''
+	print 'Results 1.3- GLM-graded' 
+	print '  taskvalue_graded  distractor_graded  interaction_graded'
+	print 'betas1: %.2f	%.2f	%.2f' % (betas2[1], betas2[2], betas2[3],) # not betas[0], because it's the intercept
+	#print 'betas_new: %.2f %.2f %.2f'%  (betas_new[0], betas_new[1], betas_new[2])
+	print 't-value: %.2f	%.2f	%.2f'% (t2[0], t2[1], t2[2])
+	print 'p-value: %.2f	%.2f	%.2f'%  (p2[0], p2[1], p2[2])
+
+	print ''
 	print 'Results 2 - GLM - task vs. responses' 
 	print '  task    responses  interaction'
-	print 'betas1: %.2f %.2f %.2f' % (betas2[1], betas2[2], betas2[3],) # not betas[0], because it's the intercept
+	print 'betas1: %.2f	%.2f	%.2f' % (betas3[1], betas3[2], betas3[3],) # not betas[0], because it's the intercept
 	#print 'betas_new: %.2f %.2f %.2f'%  (betas_new[0], betas_new[1], betas_new[2])
-	print 't-value: %.2f %.2f %.2f'% (t2[0], t2[1], t2[2])
-	print 'p-value: %.2f %.2f %.2f'%  (p2[0], p2[1], p2[2])
+	print 't-value: %.2f	%.2f	%.2f'% (t3[0], t3[1], t3[2])
+	print 'p-value: %.2f	%.2f	%.2f'%  (p3[0], p3[1], p3[2])
 	
 	# Color vs Orientation on RT, %correct
-
+	print ''
 	print 'Results 3 - Color vs Ori '
 	print 'RT'
 	print 't: %.2f ; p: %.2f' % (t_Col_vs_Ori_RT, p_Col_vs_Ori_RT)
@@ -717,11 +747,12 @@ def save_results (subname):
 	print 't: %.2f ; p: %.2f' % (t_Col_vs_Ori_Acc, p_Col_vs_Ori_Acc)
 
 	# Correct vs Incorrect task vs Incorrect direction on RT
-
-	print 'Results 3 - Correct vs Incorrect answers on RT'
+	print ''
+	print 'Results 4 - Correct vs Incorrect answers on RT'
 	print 't: %.2f ; p: %.2f' % (t_cor_vs_incor_RT, p_cor_vs_incor_RT)
 
-	print 'Results 4 - Right vs Wrong tasks on RT'
+	print ''
+	print 'Results 5 - Right vs Wrong tasks on RT'
 	print 't: %.2f ; p: %.2f' % (t_righ_vs_wro_task_RT, p_righ_vs_wro_task_RT)
 
 
