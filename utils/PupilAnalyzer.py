@@ -381,9 +381,15 @@ class PupilAnalyzer(Analyzer):
 
 			#this_trial_parameters['trial_codes'] = pd.Series(self.recode_trial_code(this_trial_parameters))		
 			for phase_index in np.unique(this_trial_phase_times['trial_phase_index']):
+# <<<<<<< HEAD
 				this_trial_parameters['trial_phase_%i_within_run'%phase_index] = pd.Series(this_phase_times[np.array(this_trial_phase_times['trial_phase_index']==phase_index, dtype=bool)])
 				this_trial_parameters['trial_phase_%i_full_signal'%phase_index] = pd.Series(this_phase_times[np.array(this_trial_phase_times['trial_phase_index']==phase_index, dtype=bool)] + prev_signal_size)
 
+# =======
+# 				this_trial_parameters['trial_phase_%i_within_run'%phase_index] = pd.Series(this_phase_times[np.array(this_phase_times['trial_phase_index']==phase_index, dtype=bool)])
+# 				this_trial_parameters['trial_phase_%i_full_signal'%phase_index] = pd.Series(this_phase_times[np.array(this_phase_times['trial_phase_index']==phase_index, dtype=bool)] + prev_signal_size)	
+			
+# >>>>>>> origin/martijn
 			if ii > 0:
 
 				# Kick out duplicate trials (do we need to do this actually??)
