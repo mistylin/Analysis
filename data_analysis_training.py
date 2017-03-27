@@ -35,7 +35,7 @@ else:
 '''fMRI beh >> 1)change sublist, 2)csv_files path, 3)buttons 4) savefig folders 5) locaitons 6) pop out csv_files with 0 7)'''
 
 #data_dir = '/Users/xiaomeng/disks/Aeneas_Raw/2017/visual/Attention/Behavioural/'
-sublist =  [ 'az', 'da', 'fh', 'hf', 'im', 'pl', 'rr', 'xy', 'mw']#, 'mb']  # 'mw' #'SL','MS'- their staircases are not spearated, have problems when converting into graded_color
+sublist = ['im'] #[ 'az', 'da', 'fh', 'hf', 'im', 'pl', 'rr', 'xy', 'mw', 'mb', 'as','vk']  # 'mw' #'SL','MS'- their staircases are not spearated, have problems when converting into graded_color
 #['xy']
 def load_beh_data(csv_files):
 	'''extend data over runs, print RT, accuracy for each run'''
@@ -77,7 +77,7 @@ def load_beh_data(csv_files):
 		trial_direction.extend(['trial_direction'])
 
 		# print RT_run, accuracy_run
-
+	
 	return np.array(reaction_time), np.array(all_responses), np.array(task), np.array(button), np.array(position_x), np.array(position_y), np.array(trial_color), np.array(trial_ori), np.array(trial_stimulus), np.array(response), np.array(trial_direction)
 
 
@@ -189,6 +189,7 @@ def plot_staircase(csv_files, subname):
 	pl.legend(['red', 'green'], loc ='best', fontsize = 18)
 	pl.ylim([0, 1])
 	pl.axhline(0.79,color='k',ls='--')
+	pl.axhline(0.71,color='k',ls='--')
 	sn.despine(offset=10)
 	s1.set_title('Moving color accuracy', fontsize = 20)
 
@@ -199,6 +200,7 @@ def plot_staircase(csv_files, subname):
 	pl.legend(['horizontal', 'vertical'], loc ='best', fontsize = 18)
 	pl.ylim([0, 1])
 	pl.axhline(0.79,color='k',ls='--')
+	pl.axhline(0.71,color='k',ls='--')
 	sn.despine(offset=10)
 	s2.set_title('Moving orientation accuracy', fontsize = 20)
 	#s1.set_yaxis
@@ -219,6 +221,7 @@ def plot_staircase(csv_files, subname):
 	#pl.errorbar(y_pos, y_values, yerr = yerr, fmt='-o')
 
 	pl.axhline(0.79,color='k',ls='--')
+	pl.axhline(0.71,color='k',ls='--')
 	pl.xticks (y_pos, objects, fontsize = 40) # why doesn't work?
 
 	#pl.ylable('percentage of correct')
@@ -303,7 +306,7 @@ def plot_psychophysics():
 	red_min = red_staircase_all.min()
 	red_max = red_staircase_all.max()
 
-	boundaries = 4 #actual bins will be 6-1
+	boundaries = 3 #actual bins will be 6-1
 	red_bin = np.linspace(red_min, red_max, boundaries, endpoint=True) # give 4 boundaries, thereby 3 bins
 
 	red_bin_mask = []
@@ -335,34 +338,35 @@ def plot_psychophysics():
 	# ACC_red_bin4 = red_task_responses [red_bin4_mask]
 	# ACC_red_bin5 = red_task_responses [red_bin5_mask]
 
-	f = pl.figure(figsize = (15,5))
-	# color vs. ori on RT
-	#s1 = f.add_subplot(141)
+	## plot psychophysics
+	# f = pl.figure(figsize = (15,5))
+	# # color vs. ori on RT
+	# #s1 = f.add_subplot(141)
 	
-	#objects = (np.mean([red_bin[0], red_bin[1]]),np.mean([red_bin[1],red_bin[2]]),np.mean([red_bin[2],red_bin[3]]), np.mean([red_bin[3],red_bin[4]]), np.mean([red_bin[4],red_bin[5]]))
+	# #objects = (np.mean([red_bin[0], red_bin[1]]),np.mean([red_bin[1],red_bin[2]]),np.mean([red_bin[2],red_bin[3]]), np.mean([red_bin[3],red_bin[4]]), np.mean([red_bin[4],red_bin[5]]))
 
-	y_pos = np.arange(len(objects))
-	y_values = np.array([np.mean(ACC_red_bin[0]), np.mean(ACC_red_bin[1]), np.mean(ACC_red_bin[2])])
-	sd = np.array([np.std(ACC_red_bin[0]), np.std(ACC_red_bin[1]), np.std(ACC_red_bin[2])])
-	n = np.array([np.array(ACC_red_bin[0]).shape[0], np.array(ACC_red_bin[1]).shape[0], np.array(ACC_red_bin[2]).shape[0] ])
-	yerr = (sd/np.sqrt(n.squeeze())) 
+	# y_pos = np.arange(len(objects))
+	# y_values = np.array([np.mean(ACC_red_bin[0]), np.mean(ACC_red_bin[1]), np.mean(ACC_red_bin[2])])
+	# sd = np.array([np.std(ACC_red_bin[0]), np.std(ACC_red_bin[1]), np.std(ACC_red_bin[2])])
+	# n = np.array([np.array(ACC_red_bin[0]).shape[0], np.array(ACC_red_bin[1]).shape[0], np.array(ACC_red_bin[2]).shape[0] ])
+	# yerr = (sd/np.sqrt(n.squeeze())) 
 	
-	pl.errorbar(y_pos, y_values, yerr = yerr)
-	#pl.bar(y_pos, y_values, yerr = yerr, align = 'center', alpha = 0.5)
-	pl.xticks (y_pos, objects, fontsize = 40) # why doesn't work?
+	# pl.errorbar(y_pos, y_values, yerr = yerr)
+	# #pl.bar(y_pos, y_values, yerr = yerr, align = 'center', alpha = 0.5)
+	# pl.xticks (y_pos, objects, fontsize = 40) # why doesn't work?
 
-	pl.title('red_bin')#, fontsize = 20)
-	pl.ylim([0, 1])
-	sn.despine(offset=10)
+	# pl.title('red_bin')#, fontsize = 20)
+	# pl.ylim([0, 1])
+	# sn.despine(offset=10)
 
-	#pl.show()
-	pl.savefig(figure_dir + 'lab_%s_psychophysics.jpg'%(subname))
+	# #pl.show()
+	# pl.savefig(figure_dir + 'lab_%s_psychophysics.jpg'%(subname))
 
 	#green
 	gre_min = gre_staircase_all.min()
 	gre_max = gre_staircase_all.max()
 
-	boundaries = 4 #actual bins will be 6-1
+	boundaries = 3 #actual bins will be 6-1
 	gre_bin = np.linspace(gre_min, gre_max, boundaries, endpoint=True) # give 4 boundaries, thereby 3 bins
 
 	gre_bin_mask = []
@@ -378,7 +382,7 @@ def plot_psychophysics():
 	hor_min = hor_staircase_all.min()
 	hor_max = hor_staircase_all.max()
 
-	boundaries = 4 #actual bins will be 6-1
+	boundaries = 3#actual bins will be 6-1
 	hor_bin = np.linspace(hor_min, hor_max, boundaries, endpoint=True) # give 4 boundaries, thereby 3 bins
 
 	hor_bin_mask = []
@@ -394,7 +398,7 @@ def plot_psychophysics():
 	ver_min = ver_staircase_all.min()
 	ver_max = ver_staircase_all.max()
 
-	boundaries = 4 #actual bins will be 6-1
+	boundaries = 3 #actual bins will be 6-1
 	ver_bin = np.linspace(ver_min, ver_max, boundaries, endpoint=True) # give 4 boundaries, thereby 3 bins
 
 	ver_bin_mask = []
@@ -429,8 +433,8 @@ def plot_psychophysics():
 			
 			elif ( np.abs(trial_color)[ii] > red_bin[1] )* (np.abs(trial_color)[ii] <= red_bin[2]):
 				graded_color[ii] = 2
-			elif ( np.abs(trial_color)[ii] > red_bin[2] )* ( np.abs(trial_color)[ii] <= red_bin[3]):
-				graded_color[ii] = 3
+			# elif ( np.abs(trial_color)[ii] > red_bin[2] )* ( np.abs(trial_color)[ii] <= red_bin[3]):
+			# 	graded_color[ii] = 3
 		
 		#green
 		elif grade ==200:
@@ -438,8 +442,8 @@ def plot_psychophysics():
 				graded_color[ii] = 1 # the first gre_bin is graded as bin1, for gre
 			elif ( np.abs(trial_color)[ii] > gre_bin[1] )* ( np.abs(trial_color)[ii] <= gre_bin[2]):
 				graded_color[ii] = 2
-			elif ( np.abs(trial_color) [ii] > gre_bin[2] )* ( np.abs(trial_color)[ii] <= gre_bin[3]):
-				graded_color[ii] = 3
+			# elif ( np.abs(trial_color) [ii] > gre_bin[2] )* ( np.abs(trial_color)[ii] <= gre_bin[3]):
+			# 	graded_color[ii] = 3
 		#shell()
 	#orientation
 	graded_ori = np.zeros((len(trial_ori),))
@@ -452,19 +456,19 @@ def plot_psychophysics():
 				graded_ori[ii] = 1 # the first hor_bin is graded as bin1, for hor
 			elif ( np.abs(trial_ori) [ii] > hor_bin[1] )* ( np.abs(trial_ori) [ii] <= hor_bin[2]):
 				graded_ori[ii] = 2
-			elif ( np.abs(trial_ori) [ii] > hor_bin[2] )* ( np.abs(trial_ori)[ii] <= hor_bin[3]):
-				graded_ori[ii] = 3
+			# elif ( np.abs(trial_ori) [ii] > hor_bin[2] )* ( np.abs(trial_ori)[ii] <= hor_bin[3]):
+			# 	graded_ori[ii] = 3
 		#ver
 		elif grade == 400:
 			if ( np.abs(trial_ori) [ii] >= ver_bin[0] )* ( np.abs(trial_ori) [ii] <= ver_bin[1]):
 				graded_ori[ii] = 1 # the first ver_bin is graded as bin1, for ver
 			elif ( np.abs(trial_ori) [ii] > ver_bin[1] )* ( np.abs(trial_ori) [ii] <= ver_bin[2]):
 				graded_ori[ii] = 2
-			elif ( np.abs(trial_ori) [ii] > ver_bin[2] )* ( np.abs(trial_ori) [ii] <= ver_bin[3]):
-				graded_ori[ii] = 3
+			# elif ( np.abs(trial_ori) [ii] > ver_bin[2] )* ( np.abs(trial_ori) [ii] <= ver_bin[3]):
+			# 	graded_ori[ii] = 3
 				
-
 	# shell()
+	# Prepare for GLM, but task value, not dummy variables
 	graded_TASKVALUE_color = np.zeros((len(reaction_time),))
 	graded_TASKVALUE_color[np.array(task)==1] = graded_color[np.array(task)==1]
 	graded_TASKVALUE = np.zeros((len(reaction_time),))
@@ -476,7 +480,7 @@ def plot_psychophysics():
 	graded_TASKVALUE [np.array(task)==2] = graded_color[np.array(task)==2]
 	graded_TASKVALUE_ori = graded_TASKVALUE_ori[correct_answer_mask* (~np.isnan(reaction_time))]
 
-	graded_TASKVALUE = graded_TASKVALUE[correct_answer_mask* (~np.isnan(reaction_time))]
+	graded_TASKVALUE_s = graded_TASKVALUE[correct_answer_mask* (~np.isnan(reaction_time))]
 
 	graded_DISTRACTOR_color = np.zeros((len(reaction_time),))
 	graded_DISTRACTOR_color[np.array(task)==1] = graded_color[np.array(task)==2]
@@ -489,9 +493,41 @@ def plot_psychophysics():
 	graded_DISTRACTOR [np.array(task)==2] = graded_color[np.array(task)==1]
 	graded_DISTRACTOR_ori = graded_DISTRACTOR_ori[correct_answer_mask* (~np.isnan(reaction_time))]
 
-	graded_DISTRACTOR = graded_DISTRACTOR[correct_answer_mask* (~np.isnan(reaction_time))]
+	graded_DISTRACTOR_s = graded_DISTRACTOR[correct_answer_mask* (~np.isnan(reaction_time))]
 
-	return graded_TASKVALUE_color, graded_TASKVALUE_ori, graded_DISTRACTOR_color, graded_DISTRACTOR_ori, graded_TASKVALUE, graded_DISTRACTOR
+	# do dummy
+	# LowTask_LowDistrctor
+	LT_LD = np.zeros((len(reaction_time),))
+	for ii, value in enumerate(LT_LD):
+		if (graded_TASKVALUE[ii] == 1) * (graded_DISTRACTOR[ii] ==1):
+			LT_LD[ii] =1
+	LT_LD = LT_LD [correct_answer_mask* (~np.isnan(reaction_time))]
+
+	#LowTask_HightDistractor
+	LT_HD = np.zeros((len(reaction_time),))
+	for ii, value in enumerate(LT_HD):
+		if (graded_TASKVALUE[ii] == 1) * (graded_DISTRACTOR[ii] ==2):
+			LT_HD[ii] =1
+	LT_HD = LT_HD [correct_answer_mask* (~np.isnan(reaction_time))]
+
+	# HighTask_LowDistractor
+	HT_LD = np.zeros((len(reaction_time),))
+	for ii, value in enumerate(HT_LD):
+		if (graded_TASKVALUE[ii] == 2) * (graded_DISTRACTOR[ii] ==1):
+			HT_LD[ii] =1
+	HT_LD = HT_LD [correct_answer_mask* (~np.isnan(reaction_time))]
+
+	# HighTask_HighDistractor
+	HT_HD = np.zeros((len(reaction_time),))
+	for ii, value in enumerate(LT_LD):
+		if (graded_TASKVALUE[ii] == 2) * (graded_DISTRACTOR[ii] ==2):
+			HT_HD[ii] =1
+	HT_HD = HT_HD [correct_answer_mask* (~np.isnan(reaction_time))]
+
+
+
+
+	return graded_TASKVALUE_color, graded_TASKVALUE_ori, graded_DISTRACTOR_color, graded_DISTRACTOR_ori, graded_TASKVALUE, graded_DISTRACTOR, graded_TASKVALUE_s, graded_DISTRACTOR_s,LT_LD, LT_HD, HT_LD, HT_HD
 
 def compute_behavioral_performance(csv_files):
 	''' compute 
@@ -499,13 +535,13 @@ def compute_behavioral_performance(csv_files):
 	2) RT for different condiitons 
 	(correct response, ,wrong response, wrong task, wrong direction)'''
 
-	graded_TASKVALUE_color, graded_TASKVALUE_ori, graded_DISTRACTOR_color, graded_DISTRACTOR_ori, graded_TASKVALUE, graded_DISTRACTOR = plot_psychophysics()
+	graded_TASKVALUE_color, graded_TASKVALUE_ori, graded_DISTRACTOR_color, graded_DISTRACTOR_ori, graded_TASKVALUE, graded_DISTRACTOR, graded_TASKVALUE_s, graded_DISTRACTOR_s, LT_LD, LT_HD, HT_LD, HT_HD = plot_psychophysics()
 
 	reaction_time, all_responses, task, button, position_x, position_y, trial_color, trial_ori, trial_stimulus, response, trial_direction = load_beh_data(csv_files)
 
 	color_task_mask, ori_task_mask, red_task_mask, gre_task_mask, hor_task_mask, ver_task_mask, right_task_mask, wrong_task_mask, responses_mask, correct_answer_mask, incorrect_answer_mask, top_left_mask, top_right_mask, bottom_left_mask, bottom_right_mask, red_stimulus_mask, gre_stimulus_mask, hor_stimulus_mask, ver_stimulus_mask = create_masks()
 
-	RT_color = np.array(reaction_time)[color_task_mask* (~np.isnan(reaction_time))] # without nan values
+	RT_color = np.array(reaction_time)[color_task_mask* (~np.isnan(reaction_time))] # without nan values, but with invalid
 	RT_ori = np.array(reaction_time)[ori_task_mask* (~np.isnan(reaction_time))] # without nan values
 	Accuracy_color = np.array(all_responses)[color_task_mask* (~np.isnan(reaction_time))] # without nan values
 	Accuracy_ori = np.array(all_responses)[ori_task_mask* (~np.isnan(reaction_time))] # without nan values
@@ -558,11 +594,10 @@ def compute_behavioral_performance(csv_files):
 
 	# d_prime_ori = (z_hit_ori- z_FA_ori)/np.sqrt(2)
 
-	#shell()
 	# GLM graded but separate color and orientation > taskvalue, graded distractor, interaction
 	# select correct RTs, use log, things to be done>> use d' to replace design matrix!!
 	RT_correct_log = np.log10(RT_correct)
-	# X contains intercept, taskvalue_color, distructor color, taskvalue_ori, distructor ori, color interaciton, ori interaction
+	# X contains intercept, taskvalue_color, distractor color, taskvalue_ori, distractor ori, color interaciton, ori interaction
 	X= np.hstack([np.ones((len(RT_correct_log),1)), graded_TASKVALUE_color[:,np.newaxis], graded_DISTRACTOR_color[:,np.newaxis], graded_TASKVALUE_ori[:,np.newaxis], graded_DISTRACTOR_ori[:,np.newaxis], graded_TASKVALUE_color[:,np.newaxis]* graded_DISTRACTOR_color[:,np.newaxis], graded_TASKVALUE_ori[:,np.newaxis]* graded_DISTRACTOR_ori[:,np.newaxis]
 ])
 	#(betas, _sse, _r, _svs )
@@ -572,32 +607,41 @@ def compute_behavioral_performance(csv_files):
 	df= RT_correct_log.size - X.shape[1]
 	t = [betas.squeeze().dot(contrast) / SE for contrast in np.array([[0,1,0,0,0,0,0], [0,0,1,0,0,0,0], [0,0,0,1,0,0,0], [0,0,0,0,1,0,0], [0,0,0,0,0,1,0], [0,0,0,0,0,0,1] ])]
 	p = scipy.stats.t.sf(np.abs(t), df)*2
-
 	#fitted_data = betas[0]+ betas[1]*graded_TASKVALUE_color[:,np.newaxis]+ betas[2]*graded_DISTRACTOR_color[:,np.newaxis] +betas[3]*graded_TASKVALUE_ori[:,np.newaxis]+ betas[4]*graded_DISTRACTOR_ori[:,np.newaxis]+ betas[5]*graded_TASKVALUE_color[:,np.newaxis]* graded_DISTRACTOR_color[:,np.newaxis] + betas[6]* graded_TASKVALUE_ori[:,np.newaxis]* graded_DISTRACTOR_ori[:,np.newaxis]
 	# r_squareds = 1.0 - np.sum((fitted_data - RT_correct_log)**2, axis = -1) / np.sum(RT_correct_log**2, axis = -1)
+	r_squared = 1.0 - ((X.dot(betas)-RT_correct_log)**2).sum(axis=0) / (RT_correct_log**2).sum(axis=0)
 
-	r_squared = 1.0 - ((X.dot(betas)-RT_correct_log)**2).sum(axis=-1) / (RT_correct_log**2).sum(axis=-1)
-
-	# GLM-previous
+	# GLM-continuous
 	# taskvalue, distractor, interaction
 	X1 = np.hstack([np.ones((len(RT_correct_log),1)), TASKVALUE[:,np.newaxis], DISTRACTOR[:,np.newaxis], TASKVALUE[:,np.newaxis]*DISTRACTOR[:,np.newaxis]])
 	betas1 = np.linalg.lstsq(X1, RT_correct_log)[0]
-	#betas_new = np.linalg.pinv(X).dot(RT)
 	SE1 = np.sqrt(np.sum((X1.dot(betas1) - RT_correct_log)**2)/(RT_correct_log.size - X1.shape[1]))
 	df1= RT_correct_log.size - X1.shape[1]
 	t1 = [betas1.squeeze().dot(contrast1) / SE1 for contrast1 in np.array([ [0,1,0,0], [0,0,1,0], [0,0,0,1] ])]
 	p1 = scipy.stats.t.sf(np.abs(t1), df1)*2
+	r_squared1 = 1.0 - ((X1.dot(betas1)-RT_correct_log)**2).sum(axis=0) / (RT_correct_log**2).sum(axis=0)
 
 	# GLM-graded combined
 	# taskvalue, distractor, interaction
-	X2 = np.hstack([np.ones((len(RT_correct_log),1)), graded_TASKVALUE[:,np.newaxis], graded_DISTRACTOR[:,np.newaxis], graded_TASKVALUE[:,np.newaxis]*graded_DISTRACTOR[:,np.newaxis]])
+	X2 = np.hstack([np.ones((len(RT_correct_log),1)), graded_TASKVALUE_s[:,np.newaxis], graded_DISTRACTOR_s[:,np.newaxis], graded_TASKVALUE_s[:,np.newaxis]*graded_DISTRACTOR_s[:,np.newaxis]])
 	betas2 = np.linalg.lstsq(X2, RT_correct_log)[0]
 	#betas_new = np.linalg.pinv(X).dot(RT)
 	SE2 = np.sqrt(np.sum((X2.dot(betas2) - RT_correct_log)**2)/(RT_correct_log.size - X2.shape[1]))
 	df2= RT_correct_log.size - X2.shape[1]
 	t2 = [betas2.squeeze().dot(contrast2) / SE2 for contrast2 in np.array([ [0,1,0,0], [0,0,1,0], [0,0,0,1] ])]
 	p2 = scipy.stats.t.sf(np.abs(t2), df2)*2
+	r_squared2 = 1.0 - ((X2.dot(betas2)-RT_correct_log)**2).sum(axis=0) / (RT_correct_log**2).sum(axis=0)
 
+	#GLM- use dummy variables
+	X4 = np.hstack([ LT_LD[:,np.newaxis], LT_HD[:,np.newaxis], HT_LD[:,np.newaxis], HT_HD[:,np.newaxis]])
+	betas4 = np.linalg.lstsq(X4, RT_correct_log)[0]
+	SE4 = np.sqrt(np.sum((X4.dot(betas4) - RT_correct_log)**2)/(RT_correct_log.size - X4.shape[1]))
+	df4= RT_correct_log.size - X4.shape[1]
+	# main effect of task[-1,-1,1,1]; main effect of distractor[-1,1,-1,1]; interaction [1,-1,-1,1]; simple effect[-1, 1, 0, 0]; [0,0,-1,1]
+	t4 = [betas4.squeeze().dot(contrast4) / SE4 for contrast4 in np.array([ [-1,-1,1,1], [-1,1,-1,1], [1,-1,-1,1], [-1, 1, 0, 0], [0,0,-1,1] ])]
+	p4 = scipy.stats.t.sf(np.abs(t4), df4)*2
+
+	# fig = interaction_plot(graded_TASKVALUE_s, graded_DISTRACTOR_s, )
 
 	# Color vs Orientation on RT, %correct
 	t_Col_vs_Ori_RT, p_Col_vs_Ori_RT = scipy.stats.ttest_ind(RT_color, RT_ori, equal_var=False, nan_policy='omit')
@@ -622,6 +666,7 @@ def compute_behavioral_performance(csv_files):
 	df3= RT_right_task_log.size - X3.shape[1]
 	t3 = [betas3.squeeze().dot(contrast3) / SE3 for contrast3 in np.array([[0,1,0,0], [0,0,1,0], [0,0,0,1] ])]
 	p3 = scipy.stats.t.sf(np.abs(t3), df3)*2
+	r_squared3 = 1.0 - ((X3.dot(betas3)-RT_right_task_log)**2).sum(axis=0) / (RT_right_task_log**2).sum(axis=0)
 
 	# # Correct vs Incorrect task vs Incorrect direction on RT
 	# F_answers_RT, p_answers_RT = scipy.stats.f_oneway(RT_correct, RT_wrong_task, RT_wrong_direction)
@@ -629,7 +674,7 @@ def compute_behavioral_performance(csv_files):
 	# cor_vs_dir= scipy.stats.ttest_ind(RT_correct, RT_wrong_direction, equal_var=False, nan_policy='omit')
 	# task_vs_dir = scipy.stats.ttest_ind(RT_wrong_task, RT_wrong_direction, equal_var=False, nan_policy='omit')
 
-	return betas, t, p, r_squareds, betas1, t1, p1, betas2, t2, p2, betas3, t3, p3, t_Col_vs_Ori_RT, p_Col_vs_Ori_RT, t_Col_vs_Ori_Acc, p_Col_vs_Ori_Acc, t_cor_vs_incor_RT, p_cor_vs_incor_RT, t_righ_vs_wro_task_RT, p_righ_vs_wro_task_RT, RT_color, RT_ori, Accuracy_color, Accuracy_ori, RT_correct, RT_incorrect, RT_right_task, RT_wrong_task 
+	return betas, t, p, r_squared, betas1, t1, p1, r_squared1, betas2, t2, p2, r_squared2, betas3, t3, p3, r_squared3, betas4, t4, p4,t_Col_vs_Ori_RT, p_Col_vs_Ori_RT, t_Col_vs_Ori_Acc, p_Col_vs_Ori_Acc, t_cor_vs_incor_RT, p_cor_vs_incor_RT, t_righ_vs_wro_task_RT, p_righ_vs_wro_task_RT, RT_color, RT_ori, Accuracy_color, Accuracy_ori, RT_correct, RT_incorrect, RT_right_task, RT_wrong_task 
 
 # 	# average across runs should changes names!!! adding 'means'!!!
 # 	RT_mean_sub = np.nanmean(np.array(reaction_time))
@@ -700,7 +745,7 @@ def compute_behavioral_performance(csv_files):
 def save_results (subname):
 	# save results into a txt file
 	#pl.savefig(figure_dir + 'scanner/staircase_plots/%s_color_ori_staircase_plot.pdf'%(subname))
-	betas, t, p, r_squareds, betas1, t1, p1, betas2, t2, p2, betas3, t3, p3, t_Col_vs_Ori_RT, p_Col_vs_Ori_RT, t_Col_vs_Ori_Acc, p_Col_vs_Ori_Acc, t_cor_vs_incor_RT, p_cor_vs_incor_RT, t_righ_vs_wro_task_RT, p_righ_vs_wro_task_RT, RT_color, RT_ori, Accuracy_color, Accuracy_ori, RT_correct, RT_incorrect, RT_right_task, RT_wrong_task = compute_behavioral_performance(csv_files)
+	betas, t, p, r_squared, betas1, t1, p1, r_squared1, betas2, t2, p2, r_squared2, betas3, t3, p3, r_squared3, betas4, t4, p4,t_Col_vs_Ori_RT, p_Col_vs_Ori_RT, t_Col_vs_Ori_Acc, p_Col_vs_Ori_Acc, t_cor_vs_incor_RT, p_cor_vs_incor_RT, t_righ_vs_wro_task_RT, p_righ_vs_wro_task_RT, RT_color, RT_ori, Accuracy_color, Accuracy_ori, RT_correct, RT_incorrect, RT_right_task, RT_wrong_task = compute_behavioral_performance(csv_files)
 
 	sys.stdout = open(figure_dir + 'lab_%s_results.txt'%(subname), 'w')
 
@@ -709,40 +754,52 @@ def save_results (subname):
 		# f.close()
 
 	print '[main] Running analysis for %s'% (subname) #No. %s participant %s' % (str(subii+1), subname)
-	print 'Results 1.1- GLM - graded but separate color from ori' 
+	print ''
+	print 'Results 1.1- GLM-continuous' 
+	print '  taskvalue  distractor  interaction'
+	print 'betas: %.2f	%.2f	%.2f' % (betas1[1], betas1[2], betas1[3],) # not betas[0], because it's the intercept
+	#print 'betas_new: %.2f %.2f %.2f'%  (betas_new[0], betas_new[1], betas_new[2])
+	print 't-value: %.2f	%.2f	%.2f'% (t1[0], t1[1], t1[2])
+	print 'p-value: %.2f	%.2f	%.2f'%  (p1[0], p1[1], p1[2])
+	print 'r_squared', r_squared1
+
+	print ''
+	print 'Results 1.2- GLM-graded' 
+	print '  taskvalue_graded  distractor_graded  interaction_graded'
+	print 'betas: %.2f	%.2f	%.2f' % (betas2[1], betas2[2], betas2[3],) # not betas[0], because it's the intercept
+	#print 'betas_new: %.2f %.2f %.2f'%  (betas_new[0], betas_new[1], betas_new[2])
+	print 't-value: %.2f	%.2f	%.2f'% (t2[0], t2[1], t2[2])
+	print 'p-value: %.2f	%.2f	%.2f'%  (p2[0], p2[1], p2[2])
+	print 'r_squared', r_squared2
+
+	print ''
+	print 'Results 1.3 - GLM - dummy - graded taskvalue vs. distractor' 
+	print '  task    distractor  interaction  simple_lowtask  simple_hightask'
+	#print 'betas: %.2f	%.2f	%.2f' % (betas4[0],betas4[1], betas4[2], betas4[3]) # not betas[0], because it's the intercept
+	#print 'betas_new: %.2f %.2f %.2f'%  (betas_new[0], betas_new[1], betas_new[2])
+	print 't-value: %.2f	%.2f	%.2f	%.2f	%.2f'% (t4[0], t4[1], t4[2], t4[3], t4[4])
+	print 'p-value: %.2f	%.2f	%.2f	%.2f	%.2f'%  (p4[0], p4[1], p4[2], p4[3], p4[4])
+
+	print ''
+	print 'Results 1.4- GLM - graded but separate color from ori' 
 	print '  taskvalue_color, distractor_color, taskvalue_ori, distractor_ori, color_interaction, ori_interaction'
 	print 'betas: %.2f	%.2f	%.2f	%.2f	%.2f	%.2f' % (betas[1], betas[2], betas[3], betas[4], betas[5], betas[6]) #as the first one is intercept
 	print 't-value: %.2f	%.2f	%.2f	%.2f	%.2f	%.2f'% (t[0], t[1], t[2], t[3], t[4], t[5])
 	print 'p-value: %.2f	%.2f	%.2f	%.2f	%.2f	%.2f'%  (p[0], p[1], p[2], p[3], p[4], p[5])
-	print 'r_squareds', r_squareds
-
-	print ''
-	print 'Results 1.2- GLM-previous' 
-	print '  taskvalue  distractor  interaction'
-	print 'betas1: %.2f	%.2f	%.2f' % (betas1[1], betas1[2], betas1[3],) # not betas[0], because it's the intercept
-	#print 'betas_new: %.2f %.2f %.2f'%  (betas_new[0], betas_new[1], betas_new[2])
-	print 't-value: %.2f	%.2f	%.2f'% (t1[0], t1[1], t1[2])
-	print 'p-value: %.2f	%.2f	%.2f'%  (p1[0], p1[1], p1[2])
-
-	print ''
-	print 'Results 1.3- GLM-graded' 
-	print '  taskvalue_graded  distractor_graded  interaction_graded'
-	print 'betas1: %.2f	%.2f	%.2f' % (betas2[1], betas2[2], betas2[3],) # not betas[0], because it's the intercept
-	#print 'betas_new: %.2f %.2f %.2f'%  (betas_new[0], betas_new[1], betas_new[2])
-	print 't-value: %.2f	%.2f	%.2f'% (t2[0], t2[1], t2[2])
-	print 'p-value: %.2f	%.2f	%.2f'%  (p2[0], p2[1], p2[2])
+	print 'r_squared', r_squared
 
 	print ''
 	print 'Results 2 - GLM - task vs. responses' 
 	print '  task    responses  interaction'
-	print 'betas1: %.2f	%.2f	%.2f' % (betas3[1], betas3[2], betas3[3],) # not betas[0], because it's the intercept
+	print 'betas: %.2f	%.2f	%.2f' % (betas3[1], betas3[2], betas3[3],) # not betas[0], because it's the intercept
 	#print 'betas_new: %.2f %.2f %.2f'%  (betas_new[0], betas_new[1], betas_new[2])
 	print 't-value: %.2f	%.2f	%.2f'% (t3[0], t3[1], t3[2])
 	print 'p-value: %.2f	%.2f	%.2f'%  (p3[0], p3[1], p3[2])
-	
+	print 'r_squared', r_squared3
+
 	# Color vs Orientation on RT, %correct
 	print ''
-	print 'Results 3 - Color vs Ori '
+	print 'Results 4 - Color vs Ori '
 	print 'RT'
 	print 't: %.2f ; p: %.2f' % (t_Col_vs_Ori_RT, p_Col_vs_Ori_RT)
 	print 'Accuracy'
@@ -750,11 +807,11 @@ def save_results (subname):
 
 	# Correct vs Incorrect task vs Incorrect direction on RT
 	print ''
-	print 'Results 4 - Correct vs Incorrect answers on RT'
+	print 'Results 5 - Correct vs Incorrect answers on RT'
 	print 't: %.2f ; p: %.2f' % (t_cor_vs_incor_RT, p_cor_vs_incor_RT)
 
 	print ''
-	print 'Results 5 - Right vs Wrong tasks on RT'
+	print 'Results 6 - Right vs Wrong tasks on RT'
 	print 't: %.2f ; p: %.2f' % (t_righ_vs_wro_task_RT, p_righ_vs_wro_task_RT)
 
 
@@ -845,8 +902,8 @@ for subii, subname in enumerate(sublist):
 	# if csv_files[0].split('_')[2]=='0':
 	# 	csv_files.pop(0)
 
-	plot_staircase(csv_files,subname)
-	#save_results(subname)
+	#plot_staircase(csv_files,subname)
+	save_results(subname)
 	#plot_psychophysics()
 	#compute_behavioral_performance(csv_files)
 

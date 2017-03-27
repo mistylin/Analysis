@@ -57,7 +57,7 @@ for subID in sublist:
 	## pa.signal_per_trial(reference_phase = 3) is equivalent to:
 	## pa.signal_per_trial(reference_phase = 3, with_rt = False)
 	##
-	pa.signal_per_trial(reference_phase = 6, with_rt = True)
+	pa.signal_per_trial(reference_phase = 3, with_rt = False)
 
 	trial_signal_sub_mean = np.mean(pa.trial_signals, axis =0) 
 
