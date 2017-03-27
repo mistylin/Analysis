@@ -72,7 +72,7 @@ class PupilAnalyzer(Analyzer):
 		# if self.combined_data is None:
 
 		if (not os.path.isfile(self.combined_h5_filename)) or force_rebuild: 
-			self.recombine_signal_blocks(reference_phase = self.reference_phase, force_rebuild = force_rebuild)
+			self.recombine_signal_blocks(force_rebuild = force_rebuild)
 
 			#self.combined_data = tables.open_file(self.combined_h5_filename, mode = 'r')
 
@@ -381,8 +381,8 @@ class PupilAnalyzer(Analyzer):
 
 			#this_trial_parameters['trial_codes'] = pd.Series(self.recode_trial_code(this_trial_parameters))
 			for phase_index in np.unique(this_trial_phase_times['trial_phase_index']):
-				this_trial_parameters['trial_phase_%i_within_run'%phase_index] = pd.Series(this_phase_times[this_phase_times['trial_phase_index']==phase_index])
-				this_trial_parameters['trial_phase_%i_full_signal'%phase_index] = pd.Series(this_phase_times[this_phase_times['trial_phase_index']==phase_index] + prev_signal_size)	
+				this_trial_parameters['trial_phase_%i_within_run'%phase_index] = pd.Series(this_phase_times[np.array(this_phase_times['trial_phase_index']==phase_index, dtype=bool)])
+				this_trial_parameters['trial_phase_%i_full_signal'%phase_index] = pd.Series(this_phase_times[np.array(this_phase_times['trial_phase_index']==phase_index, dtype=bool)] + prev_signal_size)	
 			
 			if ii > 0:
 
