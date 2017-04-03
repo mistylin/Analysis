@@ -448,9 +448,9 @@ class PupilAnalyzer(Analyzer):
 			selected_trials = np.array(np.ones((trial_parameters.shape[0],1)), dtype=bool)			
 
 		if with_rt:
-			signal_intervals = trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)			
+			signal_intervals = zip(trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.signal_sample_frequency) + ((self.deconvolution_interval[0]-trial_start_offset)*self.signal_sample_frequency), trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.signal_sample_frequency) + ((self.deconvolution_interval[1]-trial_start_offset)*self.signal_sample_frequency))
 		else:
-			signal_intervals = trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)
+			signal_intervals = zip(trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((self.deconvolution_interval[0]-trial_start_offset)*self.signal_sample_frequency), trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((self.deconvolution_interval[1]-trial_start_offset)*self.signal_sample_frequency))
 
 		for tii,(ts,te) in enumerate(signal_intervals):
 			if (ts > 0) & (te < recorded_pupil_signal.size):

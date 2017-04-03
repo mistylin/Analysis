@@ -23,7 +23,7 @@ deconvolution_interval = np.array([-1.5, 4.5])
 down_fs = 100
 
 
-sublist = ['xy'] #'MS', 'SL']
+sublist = [ 'az', 'da', 'fh', 'hf', 'im', 'pl', 'rr', 'xy', 'mw', 'mb', 'as','vk']  #'MS', 'SL']
 
 for subID in sublist:
 	

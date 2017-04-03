@@ -28,6 +28,7 @@ run_on_aeneas = True
 if run_on_aeneas:
 	data_dir = '/home/xiaomeng/Data/Pre_scan_data/'
 	figure_dir = '/home/shared/2017/visual/Attention/behaviour/'
+	# figure_dir = '/home/xiaomeng/Data/Pre_scan_data/'
 else:
 	data_dir = '/Users/xiaomeng/disks/Aeneas_Home/Data/Pre_scan_data/'
 	figure_dir = '/Users/xiaomeng/disks/Aeneas_Shared/2017/visual/Attention/behaviour/'
@@ -35,7 +36,7 @@ else:
 '''fMRI beh >> 1)change sublist, 2)csv_files path, 3)buttons 4) savefig folders 5) locaitons 6) pop out csv_files with 0 7)'''
 
 #data_dir = '/Users/xiaomeng/disks/Aeneas_Raw/2017/visual/Attention/Behavioural/'
-sublist = ['im'] #[ 'az', 'da', 'fh', 'hf', 'im', 'pl', 'rr', 'xy', 'mw', 'mb', 'as','vk']  # 'mw' #'SL','MS'- their staircases are not spearated, have problems when converting into graded_color
+sublist = ["xy"] #[ 'az', 'da', 'fh', 'hf', 'im', 'pl', 'rr', 'xy', 'mw', 'mb', 'as','vk']  # 'mw' #'SL','MS'- their staircases are not spearated, have problems when converting into graded_color
 #['xy']
 def load_beh_data(csv_files):
 	'''extend data over runs, print RT, accuracy for each run'''
@@ -902,8 +903,8 @@ for subii, subname in enumerate(sublist):
 	# if csv_files[0].split('_')[2]=='0':
 	# 	csv_files.pop(0)
 
-	#plot_staircase(csv_files,subname)
-	save_results(subname)
+	plot_staircase(csv_files,subname)
+	# save_results(subname)
 	#plot_psychophysics()
 	#compute_behavioral_performance(csv_files)
 
