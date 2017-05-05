@@ -22,7 +22,14 @@ trial_order = pickle.load(open(filename_beh, 'rb'))[1]
 # Load fMRI data
 data_dir_fmri = '/home/shared/2017/visual/OriColorMapper/preproc/sub-002/psc/'
 filename_fmri = data_dir_fmri + 'sub-002_task-fullfield_run-2_bold_brain_B0_volreg_sg_psc.nii.gz' # 'iv.nii.gz'
-fmri_data = nib.load(filename_fmri).get_data().reshape((112*112*51,286))
+unmasked_fmri_data = nib.load(filename_fmri).get_data()
+
+# Load V1 mask
+data_dir_masks = '/home/shared/2017/visual/OriColorMapper/preproc/sub-002/masks/dc/'
+lhV1 = np.array(nib.load(os.path.join(data_dir_masks, 'lh.V1_vol_dil.nii.gz')).get_data(), dtype=bool)
+rhV1 = np.array(nib.load(os.path.join(data_dir_masks, 'rh.V1_vol_dil.nii.gz')).get_data(), dtype=bool)
+
+fmri_data = np.vstack([unmasked_fmri_data[lhV1,:], unmasked_fmri_data[rhV1,:]])
 # shape of fmri: (112,112,51,286) --> two dimensional matrix
 
 
