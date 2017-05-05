@@ -1,4 +1,4 @@
-from __future__ import division
+# from __future__ import division
 import os,sys,glob
 
 import numpy as np
@@ -26,8 +26,8 @@ unmasked_fmri_data = nib.load(filename_fmri).get_data()
 
 # Load V1 mask
 data_dir_masks = '/home/shared/2017/visual/OriColorMapper/preproc/sub-002/masks/dc/'
-lhV1 = np.array(nib.load(os.path.join(data_dir_masks, 'lh.V1_vol_dil.nii.gz')).get_data(), dtype=bool)
-rhV1 = np.array(nib.load(os.path.join(data_dir_masks, 'rh.V1_vol_dil.nii.gz')).get_data(), dtype=bool)
+lhV1 = np.array(nib.load(os.path.join(data_dir_masks, 'lh.V1.thresh_vol_dil.nii.gz')).get_data(), dtype=bool)
+rhV1 = np.array(nib.load(os.path.join(data_dir_masks, 'rh.V1.thresh_vol_dil.nii.gz')).get_data(), dtype=bool)
 
 fmri_data = np.vstack([unmasked_fmri_data[lhV1,:], unmasked_fmri_data[rhV1,:]])
 # shape of fmri: (112,112,51,286) --> two dimensional matrix
