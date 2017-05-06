@@ -38,6 +38,7 @@ else:
 #data_dir = '/Users/xiaomeng/disks/Aeneas_Raw/2017/visual/Attention/Behavioural/'
 sublist = ["xy"] #[ 'az', 'da', 'fh', 'hf', 'im', 'pl', 'rr', 'xy', 'mw', 'mb', 'as','vk']  # 'mw' #'SL','MS'- their staircases are not spearated, have problems when converting into graded_color
 #['xy']
+
 def load_beh_data(csv_files):
 	'''extend data over runs, print RT, accuracy for each run'''
 	#print ' RT  &  accuracy '
