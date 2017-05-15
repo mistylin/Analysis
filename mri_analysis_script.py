@@ -17,6 +17,7 @@ from matplotlib.gridspec import GridSpec
 from scipy import ndimage
 
 from scipy.stats.stats import pearsonr
+import pandas as pd
 
 def roate_90_clockwise ( myarray ):
 
@@ -272,7 +273,7 @@ data_dir_beh = '/home/shared/2017/visual/OriColorMapper/bids_converted/'
 # get fullfield files
 
 data_type = 'psc'#'tf' #'psc'
-each_run = True #False
+each_run = False #True #False
 
 for subii, sub in enumerate(sublist):
 
@@ -285,7 +286,7 @@ for subii, sub in enumerate(sublist):
 	fmri_files = glob.glob(subject_dir_fmri  + '/' + data_type + '/*.nii.gz')
 	fmri_files.sort()
 
-	moco_files = glob.glob(subject_dir_fmri + '/mcf/parameter_matrix' + '/*.1D')
+	moco_files = glob.glob(subject_dir_fmri + '/mcf/parameter_info' + '/*.1D')
 	moco_files.sort()
 
 	#respiration&heart rate
@@ -340,9 +341,9 @@ for subii, sub in enumerate(sublist):
 
 		file_pairs = zip (target_files_fmri, target_files_beh, target_files_moco)
 
-		for ii, file_pair in enumerate(file_pairs):
+		for fileii, file_pair in enumerate(file_pairs):
 			
-			run_nr = ii
+			run_nr = fileii
 
 			filename_fmri = file_pair[0]
 			filename_beh = file_pair[1]
@@ -376,20 +377,21 @@ for subii, sub in enumerate(sublist):
 
 		## Load motion correction parameters
 
-			unmasked_moco_params = nib.load(filename_moco).get_data()
-			# shape should be (6, timepoints)
-
-
-			shell()
-			#tutorial-- moco_params = np.load(os.path.join(datafolder,'motion_correction_parameters.npy'))
-			design_matrix = np.vstack([np.ones(np.shape(data)[0]),regressors_of_interest,moco_params.T])
+			moco_params = pd.read_csv(filename_moco, delim_whitespace=True, header = None)
+			#nib.load(filename_moco).get_data()
+			# shape (286,6)
 
 
 			# convolve events with hrf, to get model_BOLD_timecourse
 			TR = 0.945 #ms
 			model_BOLD_timecourse = fftconvolve(events, hrf(np.arange(0,30)* TR)[:,np.newaxis],'full')[:fmri_data.shape[1],:]
 
-			design_matrix = np.hstack([np.ones((fmri_data.shape[1],1)), model_BOLD_timecourse])
+			design_matrix = np.hstack([np.ones((fmri_data.shape[1],1)), model_BOLD_timecourse, moco_params])
+
+			#shell()
+			#tutorial-- moco_params = np.load(os.path.join(datafolder,'motion_correction_parameters.npy'))
+			#tutorial-- design_matrix = np.vstack([np.ones(np.shape(data)[0]),regressors_of_interest,moco_params.T])
+
 
 
 
@@ -418,7 +420,7 @@ for subii, sub in enumerate(sublist):
 			#voxels = [(100, index_100), (75,index_75), (50, index_50),(25,index_25)] 
 
 
-			beta_run = betas.T[:, 1:]
+			beta_run = betas.T[:, 1:65]
 
 			if run_nr == 0:
 				beta_lists = beta_run
@@ -429,7 +431,7 @@ for subii, sub in enumerate(sublist):
 
 
 			# plot figures
-			for ii, voxel in enumerate(voxels):
+			for voxelii, voxel in enumerate(voxels):
 
 
 				f = plt.figure(figsize = (12,12))
@@ -449,7 +451,8 @@ for subii, sub in enumerate(sublist):
 
 				s2=f.add_subplot(gs[3:,0:-2]) # First row, second column
 				
-				beta_matrix = betas[1:, voxel[0]].reshape(8,8)
+				#shell()
+				beta_matrix = betas[1:65, voxel[0]].reshape(8,8)
 				#plt.plot(beta_matrix) #, cmap= plt.cm.ocean)
 				plt.imshow(beta_matrix, cmap= plt.cm.ocean, interpolation = None)
 				plt.colorbar()
@@ -479,11 +482,11 @@ for subii, sub in enumerate(sublist):
 				#plt.plot(roatated_a)
 
 
-				# plt.savefig( '%s_100_%s_GLM.jpg'%(subname,str(voxel[0]ii)))
+				# plt.savefig( '%s_100_%s_GLM.jpg'%(subname,str(voxel[0]voxelii)))
 				
-				f.savefig( '%s_%s_run%s_best%s_#%s_r2_%s_GLM.png'%(subname, data_type, str(run_nr), str(20-ii), str(voxel[0]), str(voxel[1])))
+				f.savefig( '%s_%s_run%s_best%s_#%s_r2_%s_GLM_moco.png'%(subname, data_type, str(run_nr), str(20-voxelii), str(voxel[0]), str(voxel[1])))
 
-				print "plotting figures"
+				print "plotting_run%s_best%s"%(str(run_nr), str(20-voxelii))
 
 				plt.close()
 
@@ -516,7 +519,7 @@ for subii, sub in enumerate(sublist):
 
 
 		plt.hist(np.array(rs)[~np.isnan(rs)])
-		plt.savefig( '%s_%s_r_between_runs_hist_GLM.jpg'%(subname, data_type))
+		plt.savefig( '%s_%s_r_between_runs_hist_GLM_moco.jpg'%(subname, data_type))
 
 
 		plt.close()
@@ -537,7 +540,7 @@ for subii, sub in enumerate(sublist):
 
 		## version 1 - Load fmri data
 		fmri_data = []#np.array( [[None] * number_of_voxels]).T
-		for ii, filename_fmri in enumerate(target_files_fmri):
+		for fileii, filename_fmri in enumerate(target_files_fmri):
 			unmasked_fmri_data = nib.load(filename_fmri).get_data()
 			fmri_data_run = np.vstack([unmasked_fmri_data[lhV1,:], unmasked_fmri_data[rhV1,:]])
 
@@ -547,7 +550,7 @@ for subii, sub in enumerate(sublist):
 			# Z scored fmri_data, but with the same name
 				fmri_data_run = (fmri_data_run - np.nanmean(fmri_data_run, axis = 1)[:, np.newaxis]) / np.nanstd(fmri_data_run, axis = 1)[:, np.newaxis]
 			
-			if ii == 0:
+			if fileii == 0:
 				fmri_data = fmri_data_run
 			else:
 				fmri_data = np.hstack([fmri_data, fmri_data_run])
@@ -557,7 +560,7 @@ for subii, sub in enumerate(sublist):
 
 		## Load stimuli order (events)
 		events = []
-		for ii, filename_beh in enumerate(target_files_beh):
+		for fileii, filename_beh in enumerate(target_files_beh):
 			trial_order_run = pickle.load(open(filename_beh, 'rb'))[1]
 
 			#create events with 1
@@ -570,11 +573,21 @@ for subii, sub in enumerate(sublist):
 			events_run = np.hstack([np.array(tmp_trial_order_run == stim, dtype=int) for stim in np.arange(1,number_of_stimuli+1)])
 			# events_run shape: (286, 64)	
 
-			if ii == 0:
+			if fileii == 0:
 				events = events_run
 			else:
 				events = np.vstack([events, events_run])
 				# events shape: (1144,64)
+
+		moco_params = []
+		for fileii, filename_moco in enumerate(target_files_moco):
+			moco_params_run = pd.read_csv(filename_moco, delim_whitespace=True, header = None)
+			# moco_params_run shape: (286, 6)
+
+			if fileii == 0:
+				moco_params = moco_params_run
+			else:
+				moco_params = np.vstack([moco_params, moco_params_run])
 
 
 	#----------------------------------------------------------------------------------------------------------
@@ -583,7 +596,7 @@ for subii, sub in enumerate(sublist):
 		TR = 0.945 #ms
 		model_BOLD_timecourse = fftconvolve(events, hrf(np.arange(0,30)* TR)[:,np.newaxis],'full')[:fmri_data.shape[1],:]
 
-		design_matrix = np.hstack([np.ones((fmri_data.shape[1],1)), model_BOLD_timecourse])
+		design_matrix = np.hstack([np.ones((fmri_data.shape[1],1)), model_BOLD_timecourse, moco_params])
 
 
 
@@ -623,7 +636,7 @@ for subii, sub in enumerate(sublist):
 
 
 		# plot figures
-		for ii, voxel in enumerate(voxels):
+		for voxelii, voxel in enumerate(voxels):
 
 
 			f = plt.figure(figsize = (12,12))
@@ -643,9 +656,9 @@ for subii, sub in enumerate(sublist):
 
 			s2=f.add_subplot(gs[3:,0:-2]) # First row, second column
 			
-			beta_matrix = betas[1:, voxel[0]].reshape(8,8)
+			beta_matrix = betas[1:65, voxel[0]].reshape(8,8)
 			#plt.plot(beta_matrix) #, cmap= plt.cm.ocean)
-			plt.imshow(beta_matrix, cmap= plt.cm.ocean, interpolation = None)
+			plt.imshow(beta_matrix, cmap= plt.cm.ocean, interpolation = "bicubic") #'bilinear' #"bicubic"
 			plt.colorbar()
 				#plt.pcolor(betas[1:, voxel[0]],cmap=plt.cm.Reds)
 			#sn.despine(offset=10)
@@ -673,13 +686,14 @@ for subii, sub in enumerate(sublist):
 			#plt.plot(roatated_a)
 
 
-			# plt.savefig( '%s_100_%s_GLM.jpg'%(subname,str(voxel[0]ii)))
+			# plt.savefig( '%s_100_%s_GLM.jpg'%(subname,str(voxel[0]voxelii)))
 			
-			f.savefig( '%s_%s_best%s_#%s_r2_%s_GLM.png'%(subname, data_type, str(20-ii), str(voxel[0]), str(voxel[1])))
+			f.savefig( '%s_%s_best%s_#%s_r2_%s_GLM_moco.png'%(subname, data_type, str(20-voxelii), str(voxel[0]), str(voxel[1])))
 
 			print "plotting figures"
 
 			plt.close()
+
 
 # #----------------------------------------------------------------------------------------------------------	
 
