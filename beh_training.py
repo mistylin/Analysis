@@ -36,7 +36,7 @@ else:
 '''fMRI beh >> 1)change sublist, 2)csv_files path, 3)buttons 4) savefig folders 5) locaitons 6) pop out csv_files with 0 7)'''
 
 #data_dir = '/Users/xiaomeng/disks/Aeneas_Raw/2017/visual/Attention/Behavioural/'
-sublist = ["xy"] #[ 'az', 'da', 'fh', 'hf', 'im', 'pl', 'rr', 'xy', 'mw', 'mb', 'as','vk']  # 'mw' #'SL','MS'- their staircases are not spearated, have problems when converting into graded_color
+sublist = ["iv"] #[ 'az', 'da', 'fh', 'hf', 'im', 'pl', 'rr', 'xy', 'mw', 'mb', 'as','vk']  # 'mw' #'SL','MS'- their staircases are not spearated, have problems when converting into graded_color
 #['xy']
 
 def load_beh_data(csv_files):
@@ -598,14 +598,19 @@ def compute_behavioral_performance(csv_files):
 
 	# GLM graded but separate color and orientation > taskvalue, graded distractor, interaction
 	# select correct RTs, use log, things to be done>> use d' to replace design matrix!!
-	RT_correct_log = np.log10(RT_correct)
+	
+	shell()
+	RT_correct_log = np.log10(RT_correct) # shape:(230,)
 	# X contains intercept, taskvalue_color, distractor color, taskvalue_ori, distractor ori, color interaciton, ori interaction
 	X= np.hstack([np.ones((len(RT_correct_log),1)), graded_TASKVALUE_color[:,np.newaxis], graded_DISTRACTOR_color[:,np.newaxis], graded_TASKVALUE_ori[:,np.newaxis], graded_DISTRACTOR_ori[:,np.newaxis], graded_TASKVALUE_color[:,np.newaxis]* graded_DISTRACTOR_color[:,np.newaxis], graded_TASKVALUE_ori[:,np.newaxis]* graded_DISTRACTOR_ori[:,np.newaxis]
-])
+]) # shape: (230,7)
 	#(betas, _sse, _r, _svs )
-	betas = np.linalg.lstsq(X, RT_correct_log)[0]
+	betas = np.linalg.lstsq(X, RT_correct_log)[0] #shape:7
 	#betas_new = np.linalg.pinv(X).dot(RT)
 	SE = np.sqrt(np.sum((X.dot(betas) - RT_correct_log)**2)/(RT_correct_log.size - X.shape[1]))
+	#ValueError: shapes (286,65) and (1,65) not aligned: 65 (dim 1) != 1 (dim 0)
+
+
 	df= RT_correct_log.size - X.shape[1]
 	t = [betas.squeeze().dot(contrast) / SE for contrast in np.array([[0,1,0,0,0,0,0], [0,0,1,0,0,0,0], [0,0,0,1,0,0,0], [0,0,0,0,1,0,0], [0,0,0,0,0,1,0], [0,0,0,0,0,0,1] ])]
 	p = scipy.stats.t.sf(np.abs(t), df)*2
@@ -904,10 +909,10 @@ for subii, subname in enumerate(sublist):
 	# if csv_files[0].split('_')[2]=='0':
 	# 	csv_files.pop(0)
 
-	plot_staircase(csv_files,subname)
+	#plot_staircase(csv_files,subname)
 	# save_results(subname)
 	#plot_psychophysics()
-	#compute_behavioral_performance(csv_files)
+	compute_behavioral_performance(csv_files)
 
 	
 # # not useful anymore

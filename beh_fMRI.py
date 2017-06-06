@@ -282,6 +282,7 @@ def compute_behavioral_performance(csv_files):
 	t = [betas.squeeze().dot(contrast) / SE for contrast in np.array([[0,1,0,0],[0,0,1,0], [0,0,0,1]])]
 	p = scipy.stats.t.sf(np.abs(t), df)*2
 
+	shell()
 	# print '[main] Running analysis for %s'% (subname) #No. %s participant %s' % (str(subii+1), subname)
 	#shell ()
 
@@ -499,7 +500,7 @@ for subii, subname in enumerate(sublist):
 	if csv_files[0].split('_')[2]=='0':
 		csv_files.pop(0)
 
-	plot_staircase(csv_files,subname)
+	#plot_staircase(csv_files,subname)
 	save_results(subname)
 
 
