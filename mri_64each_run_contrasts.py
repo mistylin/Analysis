@@ -48,7 +48,7 @@ def roate_90_clockwise ( myarray ):
 # rh = np.array(nib.load(os.path.join(data_dir_masks, 'rh.V1.thresh_vol_dil.nii.gz')).get_data(), dtype=bool)
 
 
-sublist = [('sub-002', True, False)]#[ ('sub-001', False, True) ]# , , [('sub-002', True, False)]
+sublist = [ ('sub-001', False, True) ]#[ ('sub-001', False, True) ]# , , [('sub-002', True, False)], [('sub-004', True, False)]
 #sublist = ['sub-001','sub-002']
 
 
@@ -67,6 +67,7 @@ data_dir_fixation = '/home/shared/2017/visual/OriColorMapper/raw/'
 data_type = 'tf'#'tf' #'psc'
 each_run = True #False #True #False
 ROI = 'V1' # 'V4'
+regression = 'RidgeCV' #'GLM' #'RidgeCV'
 
 for subii, sub in enumerate(sublist):
 
@@ -149,9 +150,12 @@ for subii, sub in enumerate(sublist):
 # #----------------------------------------------------------------------------------------------------------
 	#if each_run == True: 
 
-	beta_lists = []
 
 	file_pairs = zip (target_files_fmri, target_files_beh, target_files_moco, target_files_fixation)
+
+	t_median = []
+
+	r_squareds_mean = []
 
 	for fileii, file_pair in enumerate(file_pairs):
 		
@@ -199,7 +203,7 @@ for subii, sub in enumerate(sublist):
 		# shape (286,6)
 
 	# ## Load fixation task parameters
-		shell()
+
 		fixation_order_run = pickle.load(open(filename_fixation, 'rb'))
 		eventArray = fixation_order_run['eventArray']  # a list of lists
 
@@ -256,66 +260,51 @@ for subii, sub in enumerate(sublist):
 		design_matrix = np.hstack([np.ones((fmri_data.shape[1],1)), model_BOLD_timecourse, moco_params, key_press])
 		# shape: (286,71--1+64+6)
 
-	# GLM to get betas
-		print 'start GLM fitting'
-		betas, _sse, _r, _svs = np.linalg.lstsq(design_matrix, fmri_data.T )
-		# betas shape (65, 9728--number of voxels)
-
-		
-	# RidgeCV to get betas
-
-		# ridge_fit = RidgeCV(alphas = np.linspace(1,50,50) , fit_intercept = False, normalize = True )
-		# ridge_fit = RidgeCV(alphas = [3] , fit_intercept = False, normalize = True )
-
-		# ridge_fit.fit(design_matrix, fmri_data.T)
-		
-		# alpha = ridge_fit.alpha_
-		# print alpha
-		# # range--1000: alpha = 607.0 (16:58 - 17:03 --5 min)
-		# # range--800: alpha = 607.0 (19:55-19:56 -1 min
-		# # range --610: alpha = 607.0
-		print 'finish GLM'
 		n_voxels = fmri_data.shape[0]
 		n_TRs = fmri_data.shape[1]
 		n_regressors = design_matrix.shape[1]
 		df = (n_TRs-n_regressors)
 
-		#results = np.zeros((n_voxels,3))
-		# r_squareds =  np.zeros((n_voxels, 1))
-		# alphas =  np.zeros((n_voxels, 1))
-		# betas = np.zeros((n_voxels, 65))
-		r_squareds = 1.0 - ((design_matrix.dot(betas).T -fmri_data)**2).sum(axis=1) / (fmri_data**2).sum(axis=1)
+	# GLM to get betas
+		if regression == 'GLM': #'RidgeCV'
+			print 'start GLM fitting'
+			betas, _sse, _r, _svs = np.linalg.lstsq(design_matrix, fmri_data.T )
+		# betas shape (65, 9728--number of voxels)
+		# _sse shape (10508)
+
+			r_squareds = 1.0 - ((design_matrix.dot(betas).T -fmri_data)**2).sum(axis=1) / (fmri_data**2).sum(axis=1)
+
+			betas = betas.T #(10508,72)
+			print 'finish GLM'
+
+		elif regression == 'RidgeCV':
+			# ridge_fit = RidgeCV(alphas = np.linspace(1,50,50) , fit_intercept = False, normalize = True )
+			ridge_fit = RidgeCV(alphas = [0.5] , fit_intercept = False, normalize = True )
+
+			results = np.zeros((n_voxels,3))
+			r_squareds =  np.zeros((n_voxels, ))
+			alphas =  np.zeros((n_voxels, 1))
+			betas = np.zeros((n_voxels, n_regressors ))
+			_sse = np.zeros((n_voxels, ))
+
+			for x in range(n_voxels):
+				ridge_fit.fit(design_matrix, fmri_data[x, :])
+				print x, ridge_fit.score(design_matrix, fmri_data[x,:]), ridge_fit.alpha_ #, ridge_fit.coef_.T
+
+				# results[x] = [ridge_fit.score(design_matrix, fmri_data[x,:]), ridge_fit.alpha_, ridge_fit.coef_.T]	#ridge_fit.fit(design_matrix, fmri_data.T)
+
+				r_squareds[x] = ridge_fit.score(design_matrix, fmri_data[x,:])
+				alphas[x] = ridge_fit.alpha_
+				betas[x] = ridge_fit.coef_.T
+
+				_sse[x] = np.sqrt(np.sum((design_matrix.dot(betas[x]) - fmri_data[x,:])**2)/df)
+
+
+		r_squareds_mean.append(r_squareds) 
 
 		t = np.zeros((n_voxels, 64))
 		p = np.zeros((n_voxels, 64))
 
-		# shell()
-
-		# dm_ni = design_matrix[:,1:]
-
-		# for x in range(n_voxels):
-		# 	# ridge_fit.fit(design_matrix, fmri_data[x, :])
-		# 	# print x, ridge_fit.score(design_matrix, fmri_data[x,:]), ridge_fit.alpha_ #, ridge_fit.coef_.T
-
-		# 	#results[x] = [ridge_fit.score(design_matrix, fmri_data[x,:]), ridge_fit.alpha_, ridge_fit.coef_.T]	#ridge_fit.fit(design_matrix, fmri_data.T)
-
-		# 	# r_squareds[x] = ridge_fit.score(design_matrix, fmri_data[x,:])
-		# 	# alphas[x] = ridge_fit.alpha_
-		# 	# betas[x] = ridge_fit.coef_.T
-
-		# 	SE = _sse[x]
-		# 	# np.sqrt(np.sum((design_matrix.dot(betas[x]) - fmri_data[x,:])**2)/df)
-
-		# 	for i in range(8):
-		# 		a = np.ones(8) * -1/7.0
-		# 		a[i] = 1
-		# 		c = np.repeat(a, 8, axis = 0) #.reshape(8,8)
-				
-		# 		design_var = c.dot(np.linalg.pinv(dm_ni.T.dot(dm_ni))).dot(c.T)
-		# 		SE_c = np.sqrt(SE * design_var)
-
-		# 		t_color[x,i] = betas[1:,x].dot(c) / SE_c
-		# 		p_color[x,i] = scipy.stats.t.sf(np.abs(t_color[x,i]), df)*2
 
 		for i in range(64):
 			# a = np.ones(8) * -1/7.0
@@ -330,88 +319,104 @@ for subii, sub in enumerate(sublist):
 			design_var = c.dot(np.linalg.pinv(design_matrix.T.dot(design_matrix))).dot(c.T)
 			SE_c = np.sqrt(_sse * design_var)
 
-			t[:,i] = betas.T.dot(c) / SE_c
+
+
+			t[:,i] = betas.dot(c) / SE_c  # SE_c (10508,)
 			p[:,i] = scipy.stats.t.sf(np.abs(t[:,i]), df)*2
 
 
-
-		# t_color_z = (t_color - np.nanmean(t_color, axis = 1)[:, np.newaxis]) / np.nanstd(t_color, axis =1 )[:, np.newaxis]
-		# betas_z = (betas - np.nanmean(betas, axis = 1)[:, np.newaxis]) / np.nanstd(betas, axis = 1)[:, np.newaxis]
+		t_median.append(t)
 
 
-		shell()
+#sub004 --- t shape: (5677, 64), (5673, 64), (5694, 64), (5712, 64), (5705, 64)
+# sub001 --- t.shape: V1 --the same: (10655,64)
+
+
+		
 		# betas = np.array(betas) # shape: (10655,96)
 		# betas = betas.T
 		# betas shape: (97, 10655); fmri_data.shape: (10655,858); fmri_data_run.shape (10655,286)
 		# average across channels? or voxels? voxels. because want to compare between voxels. fmri_data: average across time points, keep voxels intact. becuase we want to compare different runs--times.
 
 		#fmri_data_run = (fmri_data_run - np.nanmean(fmri_data_run, axis = 1)[:, np.newaxis]) / np.nanstd(fmri_data_run, axis = 1)[:, np.newaxis]
-		betas_z = (betas - np.nanmean(betas, axis = 1)[:, np.newaxis]) / np.nanstd(betas, axis = 1)[:, np.newaxis]
-
-		order = np.argsort(r_squareds)
-
-		#voxels.sort -- best 20 the first argument
-
-		voxels_all = sorted( zip(order, r_squareds) , key = lambda tup: tup [1] )
-
-		voxels = voxels_all[-20:]
-
-		#voxels = [(100, index_100), (75,index_75), (50, index_50),(25,index_25)] 
-
-
-		# beta_run = betas.T[:, 1:65]
-
-		# if run_nr == 0:
-		# 	beta_lists = beta_run
-
-		# else:
-		# 	beta_lists = np.concatenate((beta_lists, beta_run), axis=1)
-
-
-		# shell()
-		# plot figures
-		# t_to_be_avaraged = []
-
-		for voxelii, voxel in enumerate(voxels):
-			
-			f = plt.figure(figsize = (12,12))
-
-			gs=GridSpec(6,6) # (2,3)2 rows, 3 columns
-
-			# 1. first plot -- time series
-			s1=f.add_subplot(gs[0:2,:]) # First row, first column
-			plt.plot(fmri_data[voxel[0], :])
-			plt.plot(design_matrix.dot(betas[:, voxel[0]]))
-
-			# plot(design_matrix.dot(betas).T[ra])
-
-
-			# 2. t values matrix
-			s2=f.add_subplot(gs[3:,0:-2]) # First row, second column
-			t_matrix = t [voxel[0]].reshape(8,8)
-			
-			plt.imshow( t_matrix , cmap= plt.cm.ocean, interpolation = "None")
-			plt.colorbar()
-
-
-			# 3. tuning curves over color and orientation dimensions
-			s3=f.add_subplot(gs[2,0:-2]) # First row, third column
-			plt.plot(t_matrix .max(axis = 0))
-
 	
-			s4 =f.add_subplot(gs[3:,-2]) # Second row, span all columns
-			roate_90_clockwise( t_matrix.max(axis = 1) )
 
-			plt.close()
+	t_median = np.median(np.array(t_median), axis = 0)
+	# ValueError: operands could not be broadcast together with shapes (5705,64) (5712,64)
 
-			f.savefig( '%s_%s_%s_run%s_best%s_#%s_tValues_%s.png'%(subname, data_type, ROI, str(run_nr), str(20-voxelii), str(voxel[0]), str(voxel[1])))
+	r_squareds_mean = np.mean(np.array(r_squareds_mean), axis = 0) 
+	# ValueError: operands could not be broadcast together with shapes (5677,) (5673,) 
 
-			print "plotting_run%s_best%s"%(str(run_nr), str(20-voxelii))
+
+	# betas_z = (betas - np.nanmean(betas, axis = 1)[:, np.newaxis]) / np.nanstd(betas, axis = 1)[:, np.newaxis]
+
+	order = np.argsort(r_squareds_mean)
+
+	#voxels.sort -- best 20 the first argument
+
+	voxels_all = sorted( zip(order, r_squareds_mean) , key = lambda tup: tup [1] )
+
+	voxels = voxels_all[-20:]
+
+	#voxels = [(100, index_100), (75,index_75), (50, index_50),(25,index_25)] 
+
+
+	# beta_run = betas.T[:, 1:65]
+
+	# if run_nr == 0:
+	# 	beta_lists = beta_run
+
+	# else:
+	# 	beta_lists = np.concatenate((beta_lists, beta_run), axis=1)
+
+
+	# shell()
+	# plot figures
+	shell()
+
+	for voxelii, voxel in enumerate(voxels):
+		
+		f = plt.figure(figsize = (12,12))
+
+		gs=GridSpec(6,6) # (2,3)2 rows, 3 columns
+
+		# # 1. first plot -- time series
+		# s1=f.add_subplot(gs[0:2,:]) # First row, first column
+		# plt.plot(fmri_data[voxel[0], :])
+		# plt.plot(design_matrix.dot(betas[:, voxel[0]]))
+
+		# plot(design_matrix.dot(betas).T[ra])
+
+
+		# 2. t values matrix
+		s2=f.add_subplot(gs[3:,0:-2]) # First row, second column
+		t_matrix = t_median [voxel[0]].reshape(8,8)
+		
+		plt.imshow( t_matrix , cmap= plt.cm.ocean, interpolation = "None")
+		plt.colorbar()
+
+
+		# 3. tuning curves over color and orientation dimensions
+		s3=f.add_subplot(gs[2,0:-2]) #  upper tuning
+		plt.plot(t_matrix .max(axis = 0)) # ---orientation
+		s3.set_title('orientation', fontsize = 10)
+
+
+
+		s4 =f.add_subplot(gs[3:,-2]) # Second row, span all columns
+		roate_90_clockwise( t_matrix.max(axis = 1) )
+		s4.set_title('color', fontsize = 10)
+
+
+		plt.close()
+
+		f.savefig( '%s_%s_%s_%s_best%s_#%s_tValues_%s.png'%(subname, data_type, ROI, regression, str(20-voxelii), str(voxel[0]), str(voxel[1])))
+
+		print "plotting_best%s"%(str(20-voxelii))
 
 			# t_to_be_avaraged.append (t_color[ voxel[0] ])
 
-		# t_to_be_avaraged = np.array(t_to_be_avaraged).reshape(20, 8)
-		# t_20 = np.mean(t_to_be_avaraged, axis = 0)
+
 		
 		# f1 = plt.figure(figsize = (8,6))
 
