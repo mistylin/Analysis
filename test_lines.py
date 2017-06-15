@@ -62,3 +62,20 @@ def plot_point(point, angle, length):
      ax.plot([x, endx], [y, endy])
 
      fig.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

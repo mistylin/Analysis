@@ -120,7 +120,7 @@ for subii, sub in enumerate(sublist):
 	beta_list = []
 
 	for filepairii in np.arange(file_pairs_all.shape[0]):
-
+		shell()
 		file_pairs = file_pairs_all[~(np.arange(file_pairs_all.shape[0]) == filepairii)]
 
 		print 'get into the appdend procedure'

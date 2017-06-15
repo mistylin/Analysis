@@ -859,6 +859,7 @@ def save_results (subname):
 	y_values = np.array([np.mean(Accuracy_color), np.mean(Accuracy_ori)])
 	sd = np.array([np.std(Accuracy_color), np.std(Accuracy_ori)])
 	n = np.array([np.array(Accuracy_color).shape[0], np.array(Accuracy_ori).shape[0] ])
+	shell()
 	yerr = (sd/np.sqrt(n.squeeze()))*1.96
 	pl.bar(y_pos, y_values, yerr = yerr, align = 'center', alpha = 0.5)
 	pl.xticks (y_pos, objects, fontsize = 40) # why doesn't work?
