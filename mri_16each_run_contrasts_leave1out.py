@@ -53,21 +53,21 @@ sublist = [ ('sub-004', True, False), ('sub-001', False, True), ('sub-003', Fals
 #sublist = ['sub-001','sub-002']
 
 
-data_dir_fmri = '/home/shared/2017/visual/OriColorMapper/preproc/'
+data_dir_fmri = '/home/barendregt/disks/Aeneas_Shared/2017/visual/OriColorMapper/preproc/'#'/home/shared/2017/visual/OriColorMapper/preproc/'
 #	data_dir_fmri = '/home/shared/2017/visual/OriColorMapper/preproc/sub-002/psc/'
-data_dir_beh = '/home/shared/2017/visual/OriColorMapper/bids_converted/'
+data_dir_beh = '/home/barendregt/disks/Aeneas_Shared/2017/visual/OriColorMapper/bids_converted/'#/home/shared/2017/visual/OriColorMapper/bids_converted/'
 #	data_dir_beh = '/home/shared/2017/visual/OriColorMapper/bids_converted/sub-002/func/'
 #/Users/xiaomeng/subjects/XY_01052017/mri/brainmask.mgz  #or T1.mgz
-data_dir_fixation = '/home/shared/2017/visual/OriColorMapper/raw/'
+data_dir_fixation = '/home/barendregt/disks/Aeneas_Shared/2017/visual/OriColorMapper/raw/'#/home/shared/2017/visual/OriColorMapper/raw/'
 
 # get fullfield files
 # sub-002_task-location_run-1_bold_brain_B0_volreg_sg.nii.gz
 # sub-002_task-fullfield_run-2.pickle
 # sub-002_task-fullfield_output_run-2.pickle ---output files
 
-data_type = 'tf'#'tf' #'psc'
+data_type = 'psc'#'tf'#'tf' #'psc'
 each_run = True #False #True #False
-ROI = 'V4' # 'V4'
+ROI = 'V1' # 'V4'
 regression = 'RidgeCV' #'GLM' #'RidgeCV'
 # type_contrasts = 'full' # 'ori', 'color', 'full'
 position_cen = 2 #'nan' #2 4  #'nan'
@@ -130,19 +130,19 @@ for subii, sub in enumerate(sublist):
 
 	target_condition = 'task-fullfield'
 	for fmri_file in fmri_files:
-		if fmri_file.split('_')[1]== target_condition:
+		if os.path.split(fmri_file)[1].split('_')[1]== target_condition:
 			target_files_fmri.append(fmri_file)
 
 	for beh_file in beh_files:
-		if beh_file.split('_')[2]== target_condition:
+		if os.path.split(beh_file)[1].split('_')[1]== target_condition:
 			target_files_beh.append(beh_file)
 
 	for moco_file in moco_files:
-		if moco_file.split('_')[2]== target_condition:
+		if os.path.split(moco_file)[1].split('_')[1]== target_condition:
 			target_files_moco.append(moco_file)
 
 	for fixation_file in fixation_files:
-		if fixation_file.split('_')[1]== target_condition:
+		if os.path.split(fixation_file)[1].split('_')[1]== target_condition:
 			target_files_fixation.append(fixation_file)
 
 # #----------------------------------------------------------------------------------------------------------		
@@ -165,18 +165,20 @@ for subii, sub in enumerate(sublist):
 		n_all_voxels = fmri_data.shape[0] # 5728, 5728, 5728, 5728
 		print 'n_all_voxels:', n_all_voxels 
 
-		if data_type == 'tf':
-			## name it with fmri_data, in fact it's for each run, namely(fmri_data_run)
-			fmri_data = (fmri_data - np.nanmean(fmri_data, axis = 1)[:, np.newaxis]) / np.nanstd(fmri_data, axis = 1)[:, np.newaxis]
-			#fmri_data shape: (5728, 286)
-			'finish normalization fmri data!'
-		elif data_type == 'psc':
-			print 'psc data type, normalization not needed!'
+		# if data_type == 'tf':
+		# 	## name it with fmri_data, in fact it's for each run, namely(fmri_data_run)
+		# 	fmri_data = (fmri_data - np.nanmean(fmri_data, axis = 1)[:, np.newaxis]) / np.nanstd(fmri_data, axis = 1)[:, np.newaxis]
+		# 	#fmri_data shape: (5728, 286)
+		# 	'finish normalization fmri data!'
+		# elif data_type == 'psc':
+		# 	print 'psc data type, normalization not needed!'
 		
-		nan_voxels_run = np.unique(np.argwhere(np.isnan(fmri_data))[:,0])
-		nan_voxels.extend(nan_voxels_run)
+		# nan_voxels_run = 
+		nan_voxels.extend(np.argwhere(fmri_data.sum(axis=1)==0).flatten())
 
 	voxel_list =[]
+
+	print 'found %i nan voxels'%len(nan_voxels)
 
 	for i in range(n_all_voxels):
 		if i not in nan_voxels:
@@ -189,33 +191,34 @@ for subii, sub in enumerate(sublist):
 	file_pairs_all = np.array(zip (target_files_fmri, target_files_beh, target_files_moco, target_files_fixation))
 	
 	# t_runs = [] 
+	r_squareds_runs = []
 	r_squareds_selection_runs = []
 	betas_z_ori_runs = []
 	betas_z_col_runs = []
 	# for fileii, file_pair in enumerate(file_pairs):
 		
-	for fileii, file_pair in enumerate(file_pairs_all):
+	for fileii, (filename_fmri, filename_beh, filename_moco, filename_fixation) in enumerate(file_pairs_all):
 		# if fileii == run_nr_leftOut			
 
-		filename_fmri = file_pair[0]
-		filename_beh = file_pair[1]
-		filename_moco = file_pair[2]
-		filename_fixation = file_pair[3]
+		# filename_fmri = file_pair[0]
+		# filename_beh = file_pair[1]
+		# filename_moco = file_pair[2]
+		# filename_fixation = file_pair[3]
 	
 	## Load fmri data--run
 		unmasked_fmri_data = nib.load(filename_fmri).get_data()
-		fmri_data = np.vstack([unmasked_fmri_data[lh,:], unmasked_fmri_data[rh,:]])
+		fmri_data = np.vstack([unmasked_fmri_data[lh,:], unmasked_fmri_data[rh,:]])[voxel_list,:]
 		# another way to flatten ---- e.g. moco_params.reshape(-1, moco_params.shape[-1])
 
 		# Z scored fmri_data, but with the same name
-		if data_type == 'tf':
-			#fmri_data = (fmri_data -fmri_data.mean()) / fmri_data.std()
-			## name it with fmri_data, in fact it's for each run, namely(fmri_data_run)
-			fmri_data = (fmri_data - np.nanmean(fmri_data, axis = 1)[:, np.newaxis]) / np.nanstd(fmri_data, axis = 1)[:, np.newaxis]
+		# if data_type == 'tf':
+		# 	#fmri_data = (fmri_data -fmri_data.mean()) / fmri_data.std()
+		# 	## name it with fmri_data, in fact it's for each run, namely(fmri_data_run)
+		# 	fmri_data = (fmri_data - np.nanmean(fmri_data, axis = 1)[:, np.newaxis]) / np.nanstd(fmri_data, axis = 1)[:, np.newaxis]
 			#fmri_data shape: (5728, 286)
 
 
-		fmri_data = fmri_data[voxel_list,:]
+		# fmri_data = fmri_data[voxel_list,:]
 		# fmri_data = fmri_data[np.isnan(fmri_data).sum(axis=1)==0,:]
 
 
@@ -228,8 +231,10 @@ for subii, sub in enumerate(sublist):
 		trial_order_col = np.zeros((len(trial_order_run),))
 
 		for ii, stim_nr in enumerate(trial_order_run) :
+			# if (stim_nr >= (8*ii) ) * (stim_nr < (8*(ii+1)))  :
+			# 	trial_order_col[ii] = ii+1
 			if (stim_nr >= 0 ) * (stim_nr < (8*1))  :
-				trial_order_col[ii] = 1
+				trial_order_col[ii] = 1			
 			elif (stim_nr >= (8*1)) and (stim_nr < (8*2)) :
 				trial_order_col[ii] = 2
 			elif (stim_nr >= (8*2)) and (stim_nr < (8*3)) :
@@ -263,36 +268,41 @@ for subii, sub in enumerate(sublist):
 
 		for ii, stim_nr in enumerate(trial_order_run):
 
-			if stim_nr in np.arange(0, 64, 8):
-				trial_order_ori[ii] = 1
+			if stim_nr < 64:
+				trial_order_ori[ii] = stim_nr % 8 + 1
+			else:
+				trial_order_ori[ii] = 0
 
-			elif stim_nr in np.arange(1, 64, 8):
-				trial_order_ori[ii] = 2
+			# if stim_nr in np.arange(0, 64, 8):
+			# 	trial_order_ori[ii] = 1
 
-			elif stim_nr in np.arange(2, 64, 8):
-				trial_order_ori[ii] = 3
+			# elif stim_nr in np.arange(1, 64, 8):
+			# 	trial_order_ori[ii] = 2
 
-			elif stim_nr in np.arange(3, 64, 8):
-				trial_order_ori[ii] = 4
+			# elif stim_nr in np.arange(2, 64, 8):
+			# 	trial_order_ori[ii] = 3
+
+			# elif stim_nr in np.arange(3, 64, 8):
+			# 	trial_order_ori[ii] = 4
 				
-			elif stim_nr in np.arange(4, 64, 8):
-				trial_order_ori[ii] = 5
+			# elif stim_nr in np.arange(4, 64, 8):
+			# 	trial_order_ori[ii] = 5
 
-			elif stim_nr in np.arange(5, 64, 8):
-				trial_order_ori[ii] = 6
+			# elif stim_nr in np.arange(5, 64, 8):
+			# 	trial_order_ori[ii] = 6
 
-			elif stim_nr in np.arange(6, 64, 8):
-				trial_order_ori[ii] = 7
+			# elif stim_nr in np.arange(6, 64, 8):
+			# 	trial_order_ori[ii] = 7
 
-			elif stim_nr in np.arange(7, 64, 8):
-				trial_order_ori[ii] = 8
+			# elif stim_nr in np.arange(7, 64, 8):
+			# 	trial_order_ori[ii] = 8
 
 		trial_order_ori = trial_order_ori[:, np.newaxis]
 
 		#create events with 1
-		empty_start = 15
-		empty_end = 15
-		number_of_stimuli = 8  # 64
+		# empty_start = 15
+		# empty_end = 15
+		# number_of_stimuli = 8  # 64
 
 		tmp_trial_order_ori  = np.zeros((fmri_data.shape[1],1))
 		#15 + 256( 2* 128) +15 =286, (286,1)
@@ -306,7 +316,7 @@ for subii, sub in enumerate(sublist):
 
 		moco_params = pd.read_csv(filename_moco, delim_whitespace=True, header = None)
 		# nib.load(filename_moco).get_data()
-		# shape (286,6)
+		# shape (286,1)///(286,6)
 
 	# ## Load fixation task parameters
 
@@ -327,26 +337,30 @@ for subii, sub in enumerate(sublist):
 
 		trial_order_run = pickle.load(open(filename_beh, 'rb'))[1]
 		trial_order_di = np.squeeze(trial_order_run[:]+1)
-		for ii, stim in enumerate(trial_order_di):
-			if stim >64:
-				trial_order_di[ii] = 0
+		trial_order_di[trial_order_di<=64] = 1
+		trial_order_di[trial_order_di>64] = 0
+		# for ii, stim in enumerate(trial_order_di):
+		# 	if stim >64:
+		# 		trial_order_di[ii] = 0
+		# 	else:
+		# 		trial_order_di[ii] = 1
 
-		trial_order_di = trial_order_di[:, np.newaxis]
+		#trial_order_di = trial_order_di[:, np.newaxis]
 		stim_regressor  = np.zeros((fmri_data.shape[1],1))
 		#15 + 256( 2* 128) +15 =286
-		stim_regressor[empty_start:-empty_end:2] = trial_order_di # [:,np.newaxis]+1
+		stim_regressor[empty_start:-empty_end:2] = trial_order_di[:, np.newaxis] # [:,np.newaxis]+1
 
 
 	# convolve events with hrf, to get model_BOLD_timecourse
 		TR = 0.945 #ms
 		model_BOLD_timecourse = fftconvolve(events, hrf(np.arange(0,30)* TR)[:,np.newaxis],'full')[:fmri_data.shape[1],:]
 
-		design_matrix = np.hstack([np.ones((fmri_data.shape[1],1)), model_BOLD_timecourse, moco_params, key_press])
+		design_matrix = np.hstack([model_BOLD_timecourse, moco_params, key_press]) #np.ones((fmri_data.shape[1],1)), 
 		# shape: (286,71--1+64+6)
 
 		# for r_squareds selection
 		model_BOLD_timecourse_selection = fftconvolve(stim_regressor, hrf(np.arange(0,30)* TR)[:,np.newaxis],'full')[:fmri_data.shape[1],:]
-		design_matrix_selection = np.hstack([np.ones((fmri_data.shape[1],1)), model_BOLD_timecourse_selection, moco_params, key_press]) # 
+		design_matrix_selection = np.hstack([model_BOLD_timecourse_selection, moco_params, key_press]) # np.ones((fmri_data.shape[1],1)), 
 
 
 		n_voxels = fmri_data.shape[0]
@@ -370,15 +384,16 @@ for subii, sub in enumerate(sublist):
 
 		elif regression == 'RidgeCV':
 			# ridge_fit = RidgeCV(alphas = np.linspace(1,50,50) , fit_intercept = False, normalize = True )
-			alpha_range = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0]
+			alpha_range = [0.001,0.01,1,10,100,1000]#[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0]
 			# alpha_range = [0.5]
-			ridge_fit = RidgeCV(alphas = alpha_range , fit_intercept = False, normalize = True )
+			ridge_fit = RidgeCV(alphas = alpha_range , fit_intercept = True, normalize = True)
 			
-			ridge_fit_selection = RidgeCV(alphas = alpha_range , fit_intercept = False, normalize = True )
+			ridge_fit_selection = RidgeCV(alphas = alpha_range , fit_intercept = True, normalize = True)
 
 			results = np.zeros((n_voxels,3))
 			r_squareds =  np.zeros((n_voxels, ))
 			alphas =  np.zeros((n_voxels, 1))
+			intercept =  np.zeros((n_voxels, 1))
 			betas = np.zeros((n_voxels, n_regressors ))
 			betas_z_col = np.zeros((n_voxels, number_of_stimuli ))
 			betas_z_ori = np.zeros((n_voxels, number_of_stimuli ))
@@ -396,6 +411,7 @@ for subii, sub in enumerate(sublist):
 				r_squareds[x] = ridge_fit.score(design_matrix, fmri_data[x,:])
 				alphas[x] = ridge_fit.alpha_
 				betas[x, :] = ridge_fit.coef_.T
+				intercept[x,:] = ridge_fit.intercept_
 				_sse[x] = np.sqrt(np.sum((design_matrix.dot(betas[x]) - fmri_data[x,:])**2)/df)
 				betas_z_ori [x, :] = (betas[x, 1:9] - np.mean(betas[x, 1:9])) / np.std(betas[x, 1:9])
 				betas_z_col [x, :] = (betas[x, 9:17] - np.mean(betas[x, 9:17])) / np.std(betas[x, 9:17])
@@ -414,6 +430,7 @@ for subii, sub in enumerate(sublist):
 			print 'finish RidgeCV'
 
 		r_squareds_selection_runs.append(r_squareds_selection) 
+		r_squareds_runs.append(r_squareds)
 		betas_z_ori_runs.append(betas_z_ori)
 		betas_z_col_runs.append(betas_z_col)
 
@@ -453,7 +470,7 @@ for subii, sub in enumerate(sublist):
 
 # #-----------------------------------------------------------------
 #6.21 figure as Brouwer paper:
-	betas_z_ori_across_voxels = np.mean (betas_z_ori_runs, axis = 1)
+	betas_z_ori_across_voxels = np.mean (betas_z_ori_runs[r_squareds ~= 0], axis = 1)
 	betas_z_col_across_voxels = np.mean (betas_z_col_runs, axis = 1)
 
 	betas_z_ori_across_runs = np.mean( betas_z_ori_across_voxels , axis = 0)
