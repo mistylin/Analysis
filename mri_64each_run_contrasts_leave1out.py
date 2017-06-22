@@ -363,8 +363,7 @@ for subii, sub in enumerate(sublist):
 		# elif type_contrasts == 'full':
 	### prepare t_pre_index
 		if position_cen == 2: 
-			t_oriBestVox = np.zeros((n_best, 9))
-			t_colBestVox = np.zeros((n_best, 9))
+
 			
 			for voxelii, voxelIndex in enumerate(voxel_indices_bestVox):					
 
@@ -527,8 +526,8 @@ for subii, sub in enumerate(sublist):
 		t_col_mean = np.mean(t_col_mean_iterations, axis = 0)
 
 
-		t_oriBestVox_mean = np.mean(t_oriBestVox, axis = 0)
-		t_colBestVox_mean = np.mean(t_colBestVox, axis = 0)
+		# t_oriBestVox_mean = np.mean(t_oriBestVox, axis = 0)
+		# t_colBestVox_mean = np.mean(t_colBestVox, axis = 0)
 
 		sd = np.array([np.std(t_ori_mean_iterations, axis = 0), np.std(t_col_mean_iterations, axis = 0)])
 		n = len(run_nr_all)
