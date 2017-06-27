@@ -43,16 +43,13 @@ def rotate_90_clockwise ( myarray ):
 ##-------------------------------------------------------------------------------------------------------
  # without def 
 
-
 # # Load V1 mask
 # data_dir_masks = '/home/shared/2017/visual/OriColorMapper/preproc/sub-002/masks/dc/'
 # lh = np.array(nib.load(os.path.join(data_dir_masks, 'lh.V1.thresh_vol_dil.nii.gz')).get_data(), dtype=bool)
 # rh = np.array(nib.load(os.path.join(data_dir_masks, 'rh.V1.thresh_vol_dil.nii.gz')).get_data(), dtype=bool)
 
 
-sublist = [ ('sub-004', True, False), ('sub-001', False, True), ('sub-003', False, True), ]#, ('sub-001', False, True), ('sub-003', False, True)]#[('sub-001', False, True) ] [('sub-002', True, False)], [('sub-004', True, False)] [('sub-003', False, True) ]
-#sublist = ['sub-001','sub-002']
-
+sublist = [ ('sub-004', True, False), ('sub-001', False, True), ('sub-003', False, True), ]#[('sub-001', False, True) ] [('sub-002', True, False)], [('sub-004', True, False)] [('sub-003', False, True) ]
 
 data_dir_fmri = '/home/shared/2017/visual/OriColorMapper/preproc/'#'/home/barendregt/disks/Aeneas_Shared/2017/visual/OriColorMapper/preproc/'#'
 #	data_dir_fmri = '/home/shared/2017/visual/OriColorMapper/preproc/sub-002/psc/'
@@ -69,11 +66,10 @@ data_dir_fixation = '/home/shared/2017/visual/OriColorMapper/raw/'#/home/barendr
 data_type = 'psc'#'tf'#'tf' #'psc'
 each_run = True #False #True #False
 ROI = 'V1' # 'V4'
-regression = 'RidgeCV' #'GLM' #'RidgeCV'
-# type_contrasts = 'full' # 'ori', 'color', 'full'
+regression = 'RidgeCV' # can't use GLM, as it's not completed. GLM' #'RidgeCV' 
 position_cen = 2 #'nan' #2 4  #'nan'
-
-
+z_score = True
+select_100 = False
 
 for subii, sub in enumerate(sublist):
 
@@ -83,6 +79,8 @@ for subii, sub in enumerate(sublist):
 	
 	print '[main] Running analysis for %s' % (str(subname))
 	print ROI, regression, position_cen
+	print 'z_score', z_score
+	print 'select_100', select_100
 	# '%s_%s_%s_%s_tValues_overVoxels.png'%(subname, ROI, data_type, regression)
 	subject_dir_fmri= os.path.join(data_dir_fmri,subname)
 
@@ -91,8 +89,6 @@ for subii, sub in enumerate(sublist):
 
 	moco_files = glob.glob(subject_dir_fmri + '/mcf/parameter_info' + '/*.1D')
 	moco_files.sort()
-
-	#respiration&heart rate
 		
 	if retinotopic == True:
 		if ROI == 'V1':
@@ -106,12 +102,12 @@ for subii, sub in enumerate(sublist):
 	else: 
 		if ROI == 'V1':
 			if exvivo == True:
-				lh = np.array(nib.load(os.path.join(subject_dir_fmri,'masks/dc/lh.V1_exvivo.thresh_vol_dil.nii.gz')).get_data(), dtype=bool)
-				rh = np.array(nib.load(os.path.join(subject_dir_fmri,'masks/dc/rh.V1_exvivo.thresh_vol_dil.nii.gz')).get_data(), dtype=bool)
+				lh = np.array(nib.load(os.path.join(subject_dir_fmri,'masks/dc/lh.V1_exvivo_vol_dil.nii.gz')).get_data(), dtype=bool) #'masks/dc/lh.V1_exvivo.thresh_vol_dil.nii.gz'
+				rh = np.array(nib.load(os.path.join(subject_dir_fmri,'masks/dc/rh.V1_exvivo_vol_dil.nii.gz')).get_data(), dtype=bool) #'masks/dc/rh.V1_exvivo.thresh_vol_dil.nii.gz'
 			
 			else:
-				lh = np.array(nib.load(os.path.join(subject_dir_fmri,'masks/dc/lh.V1.thresh_vol_dil.nii.gz')).get_data(), dtype=bool)
-				rh = np.array(nib.load(os.path.join(subject_dir_fmri,'masks/dc/rh.V1.thresh_vol_dil.nii.gz')).get_data(), dtype=bool)
+				lh = np.array(nib.load(os.path.join(subject_dir_fmri,'masks/dc/lh.V1_vol_dil.nii.gz')).get_data(), dtype=bool)
+				rh = np.array(nib.load(os.path.join(subject_dir_fmri,'masks/dc/rh.V1_vol_dil.nii.gz')).get_data(), dtype=bool)
 		else:
 			print 'ROIs not found. Redefine ROIs!'
 
@@ -122,6 +118,8 @@ for subii, sub in enumerate(sublist):
 
 	subject_dir_fixation = os.path.join(data_dir_fixation, subname)
 	fixation_files = glob.glob(subject_dir_fixation +'/output' +'/*.pickle')
+	# for new-standard data
+	# fixation_files = glob.glob(subject_dir_fixation + '/*.pickle')
 	fixation_files.sort()
 
 	target_files_fmri = []
@@ -145,17 +143,18 @@ for subii, sub in enumerate(sublist):
 	for fixation_file in fixation_files:
 		if os.path.split(fixation_file)[1].split('_')[1]== target_condition:
 			target_files_fixation.append(fixation_file)
+	# for new-standard data
+	# for fixation_file in fixation_files:
+	# 	if (os.path.split(fixation_file)[1].split('_')[0]== params)*(os.path.split(fixation_file)[1].split('_')[1]== target_condition):
+	# 		target_files_fixation.append(fixation_file)
 
 # #----------------------------------------------------------------------------------------------------------		
 # #----------------------------------------------------------------------------------------------------------
 ###
-###
 ###     load data for each run !!!
-###
 ###
 # #----------------------------------------------------------------------------------------------------------		
 # #----------------------------------------------------------------------------------------------------------
-	#if each_run == True: 
 
 	# #check nan values	
 	nan_voxels = []
@@ -174,7 +173,6 @@ for subii, sub in enumerate(sublist):
 		# elif data_type == 'psc':
 		# 	print 'psc data type, normalization not needed!'
 		
-		# nan_voxels_run = 
 		nan_voxels.extend(np.argwhere(fmri_data.sum(axis=1)==0).flatten())
 
 	voxel_list =[]
@@ -187,7 +185,6 @@ for subii, sub in enumerate(sublist):
 	print 'finish checking nan values'
 
 
-
 	## Load all types of data
 	file_pairs_all = np.array(zip (target_files_fmri, target_files_beh, target_files_moco, target_files_fixation))
 	
@@ -198,10 +195,8 @@ for subii, sub in enumerate(sublist):
 	betas_z_col_runs = []
 	betas_ori_runs = []
 	betas_col_runs = []
-	# for fileii, file_pair in enumerate(file_pairs):
-		
-	for fileii, (filename_fmri, filename_beh, filename_moco, filename_fixation) in enumerate(file_pairs_all):
-		# if fileii == run_nr_leftOut			
+	# for fileii, file_pair in enumerate(file_pairs):	
+	for fileii, (filename_fmri, filename_beh, filename_moco, filename_fixation) in enumerate(file_pairs_all):		
 
 		# filename_fmri = file_pair[0]
 		# filename_beh = file_pair[1]
@@ -220,10 +215,8 @@ for subii, sub in enumerate(sublist):
 		# 	fmri_data = (fmri_data - np.nanmean(fmri_data, axis = 1)[:, np.newaxis]) / np.nanstd(fmri_data, axis = 1)[:, np.newaxis]
 			#fmri_data shape: (5728, 286)
 
-
 		# fmri_data = fmri_data[voxel_list,:]
 		# fmri_data = fmri_data[np.isnan(fmri_data).sum(axis=1)==0,:]
-
 
 
 	## Load stimuli order (events)-run
@@ -274,30 +267,6 @@ for subii, sub in enumerate(sublist):
 			else:
 				trial_order_ori[ii] = 0
 
-			# if stim_nr in np.arange(0, 64, 8):
-			# 	trial_order_ori[ii] = 1
-
-			# elif stim_nr in np.arange(1, 64, 8):
-			# 	trial_order_ori[ii] = 2
-
-			# elif stim_nr in np.arange(2, 64, 8):
-			# 	trial_order_ori[ii] = 3
-
-			# elif stim_nr in np.arange(3, 64, 8):
-			# 	trial_order_ori[ii] = 4
-				
-			# elif stim_nr in np.arange(4, 64, 8):
-			# 	trial_order_ori[ii] = 5
-
-			# elif stim_nr in np.arange(5, 64, 8):
-			# 	trial_order_ori[ii] = 6
-
-			# elif stim_nr in np.arange(6, 64, 8):
-			# 	trial_order_ori[ii] = 7
-
-			# elif stim_nr in np.arange(7, 64, 8):
-			# 	trial_order_ori[ii] = 8
-
 		trial_order_ori = trial_order_ori[:, np.newaxis]
 
 		#create events with 1
@@ -310,13 +279,11 @@ for subii, sub in enumerate(sublist):
 		events = np.hstack([events_ori, events_col])  # orientation + col
 
 	## Load motion correction parameters
-
 		moco_params = pd.read_csv(filename_moco, delim_whitespace=True, header = None)
 		# nib.load(filename_moco).get_data()
 		# shape (286,1)///(286,6)
 
 	# ## Load fixation task parameters
-
 		fixation_order_run = pickle.load(open(filename_fixation, 'rb'))
 		eventArray = fixation_order_run['eventArray']  # a list of lists
 
@@ -331,7 +298,6 @@ for subii, sub in enumerate(sublist):
 					key_press[n_event] = 1
 
 	### Load stimulus regressor
-
 		trial_order_run = pickle.load(open(filename_beh, 'rb'))[1]
 		trial_order_di = np.squeeze(trial_order_run[:]+1)
 		trial_order_di[trial_order_di<=64] = 1
@@ -341,7 +307,6 @@ for subii, sub in enumerate(sublist):
 		# 		trial_order_di[ii] = 0
 		# 	else:
 		# 		trial_order_di[ii] = 1
-
 		#trial_order_di = trial_order_di[:, np.newaxis]
 		stim_regressor  = np.zeros((fmri_data.shape[1],1))
 		#15 + 256( 2* 128) +15 =286
@@ -422,12 +387,6 @@ for subii, sub in enumerate(sublist):
 				ridge_fit_selection.fit(design_matrix_selection, fmri_data[x,:])
 				r_squareds_selection[x] = ridge_fit_selection.score(design_matrix_selection, fmri_data[x,:])
 
-# Do I need to z-core betas per voxel twice? Namely across eight orientation regressors and eight color regressors separately, without betas of other nuisance regressors and intercept?
-	# betas shape: (97, 10655); fmri_data.shape: (10655,858); fmri_data_run.shape (10655,286)
-	# average across channels? or voxels? voxels. because want to compare between voxels. fmri_data: average across time points, keep voxels intact. becuase we want to compare different runs--times.
-
-	#fmri_data_run = (fmri_data_run - np.nanmean(fmri_data_run, axis = 1)[:, np.newaxis]) / np.nanstd(fmri_data_run, axis = 1)[:, np.newaxis]
-	# betas_z = (betas - np.nanmean(betas, axis = 1)[:, np.newaxis]) / np.nanstd(betas, axis = 1)[:, np.newaxis]
 
 			print 'finish RidgeCV'
 
@@ -439,7 +398,6 @@ for subii, sub in enumerate(sublist):
 
 		betas_ori_runs.append(betas_ori_per_run)
 		betas_col_runs.append(betas_col_per_run)
-
 
 	betas_z_ori_runs = np.array(betas_z_ori_runs)
 	betas_z_col_runs = np.array(betas_z_col_runs)
@@ -571,30 +529,12 @@ for subii, sub in enumerate(sublist):
 # #--------------------------------------------------------------------
 # start of leave-one-run-out-procedure.
 	print 'prepare preference, & a set of tunings for leftout runs. '
-# # prepare preference, & a set of tunings for leftout runs. 
-
-	#if z_score = False:
-	# beta_ori_pos_mean_iterations_bestVox = np.zeros((len(run_nr_all), 9)) 
-	# beta_col_pos_mean_iterations_bestVox = np.zeros((len(run_nr_all), 9))
-	# beta_ori_neg_mean_iterations_bestVox = np.zeros((len(run_nr_all), 9)) 
-	# beta_col_neg_mean_iterations_bestVox = np.zeros((len(run_nr_all), 9))
-
-	if position_cen == 'nan': 
-		beta_ori_pos_cate_mean_iterations = np.zeros((len(run_nr_all), 8,9)) 
-		beta_col_pos_cate_mean_iterations = np.zeros((len(run_nr_all), 8,9)) 
-		beta_ori_neg_cate_mean_iterations = np.zeros((len(run_nr_all), 8,9)) 
-		beta_col_neg_cate_mean_iterations = np.zeros((len(run_nr_all), 8,9)) 
-	else:
-		beta_ori_pos_mean_iterations_reliVox = np.zeros((len(run_nr_all), 9)) 
-		beta_col_pos_mean_iterations_reliVox = np.zeros((len(run_nr_all), 9))
-		beta_ori_neg_mean_iterations_reliVox = np.zeros((len(run_nr_all), 9)) 
-		beta_col_neg_mean_iterations_reliVox = np.zeros((len(run_nr_all), 9))
+## prepare preference, & a set of tunings for leftout runs. 
 
 	# get voxel_indices_reliVox 
 	voxel_indices_reliVox = np.squeeze(np.where(np.mean(r_squareds_selection_runs, axis = 0) > 0.05)) #3100 voxels in total left, out of 5000+
 	n_reli = voxel_indices_reliVox.shape[0]
-	
-	select_100 = False
+	# select 100 best voxels among reliable voxels
 	if select_100 == True:
 		if n_reli >= 100:
 			r_squareds_selection_mean = np.mean(r_squareds_selection_runs, axis = 0) 
@@ -605,661 +545,586 @@ for subii, sub in enumerate(sublist):
 			voxel_indices_reliVox = np.array(voxels)[:,0]
 			n_reli = voxel_indices_reliVox.shape[0]
 
-	beta_pre_ori_pos_indices_reliVox = np.zeros((n_reli, 1))
-	beta_pre_col_pos_indices_reliVox = np.zeros((n_reli, 1)) 
-	beta_pre_ori_neg_indices_reliVox = np.zeros((n_reli, 1))
-	beta_pre_col_neg_indices_reliVox = np.zeros((n_reli, 1))
+	if z_score == False:
 
-	# # get voxel_indices_bestVox 
-	# r_squareds_selection_mean = np.mean(r_squareds_selection_runs[run_nr_rest], axis = 0) 
-	# order = np.argsort(r_squareds_selection_mean)
-	# voxels_all = sorted( zip(order, r_squareds_selection_mean) , key = lambda tup: tup [1] )
-	# n_best = 100 # n_voxels #100
-	# voxels = voxels_all[-n_best:]
-	# voxel_indices_bestVox = np.array(voxels)[:,0]
-	# beta_pre_ori_pos_indices_bestVox = np.zeros((n_best, 1))
-	# beta_pre_col_pos_indices_bestVox = np.zeros((n_best, 1)) 
-	# beta_pre_ori_neg_indices_bestVox = np.zeros((n_best, 1))
-	# beta_pre_col_neg_indices_bestVox = np.zeros((n_best, 1))
-	shell()
-	for filepairii in run_nr_all :
-	
-		run_nr_leftOut = filepairii
-		run_nr_rest = run_nr_all[~(run_nr_all == run_nr_leftOut)]
-	
-		betas_ori_pos_mean = np.nanmean(betas_ori_pos[run_nr_rest], axis = 0)
-		betas_ori_neg_mean = np.nanmean(betas_ori_neg[run_nr_rest], axis = 0)
-		betas_col_pos_mean = np.nanmean(betas_col_pos[run_nr_rest], axis = 0)
-		betas_col_neg_mean = np.nanmean(betas_col_neg[run_nr_rest], axis = 0)
+		beta_pre_ori_pos_indices_reliVox = np.zeros((n_reli, 1))
+		beta_pre_col_pos_indices_reliVox = np.zeros((n_reli, 1)) 
+		beta_pre_ori_neg_indices_reliVox = np.zeros((n_reli, 1))
+		beta_pre_col_neg_indices_reliVox = np.zeros((n_reli, 1))
 
-	### prepare preference indices
-	# position_cen =2 and 'nan' are the same!
-		# typeVox = [voxel_indices_bestVox, voxel_indices_reliVox]
-		# typeVoxStr = ['voxel_indices_bestVox', 'voxel_indices_reliVox']
-		# for typeIndice, typeii in enumerate(typeVox): 
-		for voxelii, voxelIndex in enumerate(voxel_indices_reliVox):
+		if position_cen == 'nan': 
+			beta_ori_pos_cate_mean_iterations = np.zeros((len(run_nr_all), 8,9)) 
+			beta_col_pos_cate_mean_iterations = np.zeros((len(run_nr_all), 8,9)) 
+			beta_ori_neg_cate_mean_iterations = np.zeros((len(run_nr_all), 8,9)) 
+			beta_col_neg_cate_mean_iterations = np.zeros((len(run_nr_all), 8,9)) 
+		else:
+			beta_ori_pos_mean_iterations_reliVox = np.zeros((len(run_nr_all), 9)) 
+			beta_col_pos_mean_iterations_reliVox = np.zeros((len(run_nr_all), 9))
+			beta_ori_neg_mean_iterations_reliVox = np.zeros((len(run_nr_all), 9)) 
+			beta_col_neg_mean_iterations_reliVox = np.zeros((len(run_nr_all), 9))
 
-			voxelIndex = int(voxelIndex)
-
-			beta_pre_ori_pos = betas_ori_pos_mean [voxelIndex]
-			beta_pre_ori_neg = betas_ori_neg_mean [voxelIndex]
-			beta_pre_col_pos = betas_col_pos_mean [voxelIndex]
-			beta_pre_col_neg = betas_col_neg_mean [voxelIndex]
-
-			#  the centers are green / vertical already.--4 (0-4) position
-			# beta_ori_cen = np.roll(beta_pre_ori, 1)
-			# beta_col_cen = np.roll(beta_pre_col, )  
-
-			beta_pre_ori_pos_index = [i for i, j in enumerate(beta_pre_ori_pos) if j == np.nanmax(beta_pre_ori_pos) ]
-			beta_pre_col_pos_index = [i for i, j in enumerate(beta_pre_col_pos) if j == np.nanmax(beta_pre_col_pos) ]
-
-			beta_pre_ori_neg_index = [i for i, j in enumerate(beta_pre_ori_neg) if j == np.nanmin(beta_pre_ori_neg) ]
-			beta_pre_col_neg_index = [i for i, j in enumerate(beta_pre_col_neg) if j == np.nanmin(beta_pre_col_neg) ]
-
-			if len(beta_pre_ori_pos_index) != 1:
-				beta_pre_ori_pos_index = beta_pre_ori_pos_index[0]
-				print voxelIndex,'more than one preferred ori pos'
-			if len(beta_pre_col_pos_index) != 1:
-				beta_pre_col_pos_index = beta_pre_col_pos_index[0]
-				print voxelIndex,'more than one preferred color pos'
-			if len(beta_pre_ori_neg_index) != 1:
-				beta_pre_ori_neg_index = beta_pre_ori_neg_index[0]
-				print voxelIndex,'more than one preferred ori neg'
-			if len(beta_pre_col_neg_index) != 1:
-				beta_pre_col_neg_index = beta_pre_col_neg_index[0]
-				print voxelIndex,'more than one preferred color neg'				
-			
-			# if typeIndice == typeVoxStr.index('voxel_indices_bestVox'):
-			# 	beta_pre_ori_pos_indices_bestVox[voxelii ] = beta_pre_ori_pos_index  #0
-			# 	beta_pre_col_pos_indices_bestVox[voxelii ] = beta_pre_col_pos_index
-			# 	beta_pre_ori_neg_indices_bestVox[voxelii ] = beta_pre_ori_neg_index
-			# 	beta_pre_col_neg_indices_bestVox[voxelii ] = beta_pre_col_neg_index  #6 --852
-			
-			# elif typeIndice == typeVoxStr.index('voxel_indices_reliVox'):
-			beta_pre_ori_pos_indices_reliVox[voxelii ] = beta_pre_ori_pos_index  #6 --5635
-			beta_pre_col_pos_indices_reliVox[voxelii ] = beta_pre_col_pos_index
-			beta_pre_ori_neg_indices_reliVox[voxelii ] = beta_pre_ori_neg_index
-			beta_pre_col_neg_indices_reliVox[voxelii ] = beta_pre_col_neg_index  #0 --5635
-
-#---------------------------------------------------------
-	### a set of tunings for the specific leftout run. 
-
-		betas_ori_pos_leftOut = betas_ori_pos [run_nr_leftOut]
-		betas_ori_neg_leftOut = betas_ori_neg [run_nr_leftOut]
-		betas_col_pos_leftOut = betas_col_pos [run_nr_leftOut]
-		betas_col_neg_leftOut = betas_col_neg [run_nr_leftOut]
+		for filepairii in run_nr_all :
 		
-		if position_cen == 2:
-			beta_ori_pos_reliVox = np.zeros((n_reli, 9))
-			beta_col_pos_reliVox = np.zeros((n_reli, 9))
-			beta_ori_neg_reliVox = np.zeros((n_reli, 9))
-			beta_col_neg_reliVox = np.zeros((n_reli, 9))
+			run_nr_leftOut = filepairii
+			run_nr_rest = run_nr_all[~(run_nr_all == run_nr_leftOut)]
+		
+			betas_ori_pos_mean = np.nanmean(betas_ori_pos[run_nr_rest], axis = 0)
+			betas_ori_neg_mean = np.nanmean(betas_ori_neg[run_nr_rest], axis = 0)
+			betas_col_pos_mean = np.nanmean(betas_col_pos[run_nr_rest], axis = 0)
+			betas_col_neg_mean = np.nanmean(betas_col_neg[run_nr_rest], axis = 0)
 
-			# beta_ori_pos_BestVox = np.zeros((n_best, 9))
-			# beta_col_pos_BestVox = np.zeros((n_best, 9))
-			# beta_ori_neg_BestVox = np.zeros((n_best, 9))
-			# beta_col_neg_BestVox = np.zeros((n_best, 9))		
-
+		### prepare preference indices
+		# position_cen =2 and 'nan' are the same!
 			# typeVox = [voxel_indices_bestVox, voxel_indices_reliVox]
 			# typeVoxStr = ['voxel_indices_bestVox', 'voxel_indices_reliVox']
-			# for typeIndice, typeii in enumerate(typeVox): 		
-			for nrii, voxelIndex in enumerate(voxel_indices_reliVox):
+			# for typeIndice, typeii in enumerate(typeVox): 
+			for voxelii, voxelIndex in enumerate(voxel_indices_reliVox):
 
 				voxelIndex = int(voxelIndex)
-				beta_ori_pos =  betas_ori_pos_leftOut [voxelIndex]
-				beta_ori_neg =  betas_ori_neg_leftOut [voxelIndex]
-				beta_col_pos =  betas_col_pos_leftOut [voxelIndex]
-				beta_col_neg =  betas_col_neg_leftOut [voxelIndex]
+
+				beta_pre_ori_pos = betas_ori_pos_mean [voxelIndex]
+				beta_pre_ori_neg = betas_ori_neg_mean [voxelIndex]
+				beta_pre_col_pos = betas_col_pos_mean [voxelIndex]
+				beta_pre_col_neg = betas_col_neg_mean [voxelIndex]
+
+				#  the centers are green / vertical already.--4 (0-4) position
+				# beta_ori_cen = np.roll(beta_pre_ori, 1)
+				# beta_col_cen = np.roll(beta_pre_col, )  
+
+				beta_pre_ori_pos_index = [i for i, j in enumerate(beta_pre_ori_pos) if j == np.nanmax(beta_pre_ori_pos) ]
+				beta_pre_col_pos_index = [i for i, j in enumerate(beta_pre_col_pos) if j == np.nanmax(beta_pre_col_pos) ]
+
+				beta_pre_ori_neg_index = [i for i, j in enumerate(beta_pre_ori_neg) if j == np.nanmin(beta_pre_ori_neg) ]
+				beta_pre_col_neg_index = [i for i, j in enumerate(beta_pre_col_neg) if j == np.nanmin(beta_pre_col_neg) ]
+
+				if len(beta_pre_ori_pos_index) != 1:
+					beta_pre_ori_pos_index = beta_pre_ori_pos_index[0]
+					print voxelIndex,'more than one preferred ori pos'
+				if len(beta_pre_col_pos_index) != 1:
+					beta_pre_col_pos_index = beta_pre_col_pos_index[0]
+					print voxelIndex,'more than one preferred color pos'
+				if len(beta_pre_ori_neg_index) != 1:
+					beta_pre_ori_neg_index = beta_pre_ori_neg_index[0]
+					print voxelIndex,'more than one preferred ori neg'
+				if len(beta_pre_col_neg_index) != 1:
+					beta_pre_col_neg_index = beta_pre_col_neg_index[0]
+					print voxelIndex,'more than one preferred color neg'				
 				
-				# if typeIndice == typeVoxStr.index('voxel_indices_bestVox'): 
-				# elif typeIndice == typeVoxStr.index('voxel_indices_reliVox'):
-				beta_pre_ori_pos_current_index = beta_pre_ori_pos_indices_reliVox [nrii]
-				beta_pre_ori_neg_current_index = beta_pre_ori_neg_indices_reliVox[nrii] 				
-				beta_pre_col_pos_current_index = beta_pre_col_pos_indices_reliVox[nrii]
-				beta_pre_col_neg_current_index = beta_pre_col_neg_indices_reliVox[nrii] 
+				
+				beta_pre_ori_pos_indices_reliVox[voxelii ] = beta_pre_ori_pos_index  #6 --5635
+				beta_pre_col_pos_indices_reliVox[voxelii ] = beta_pre_col_pos_index
+				beta_pre_ori_neg_indices_reliVox[voxelii ] = beta_pre_ori_neg_index
+				beta_pre_col_neg_indices_reliVox[voxelii ] = beta_pre_col_neg_index  #0 --5635
 
-				# center --- always move the peaks to the position_cen, 'x axis will be relative positions'
-				# so the labels of x-axis are not the actual values (ori/color), but the relative position on the axis.
-				beta_ori_pos_cen = np.roll(beta_ori_pos, int(position_cen-beta_pre_ori_pos_current_index[0]) )
-				beta_ori_neg_cen = np.roll(beta_ori_neg, int(position_cen-beta_pre_ori_neg_current_index[0]) )
-				beta_col_pos_cen = np.roll(beta_col_pos, int(position_cen-beta_pre_col_pos_current_index[0]) )
-				beta_col_neg_cen = np.roll(beta_col_neg, int(position_cen-beta_pre_col_neg_current_index[0]) )				
+	#---------------------------------------------------------
+	### a set of tunings for the specific leftout run. 
 
-				# make it circlar
-				beta_ori_pos_cir = np.hstack((beta_ori_pos_cen, beta_ori_pos_cen[0]))
-				beta_ori_neg_cir = np.hstack((beta_ori_neg_cen, beta_ori_neg_cen[0]))
-				beta_col_pos_cir = np.hstack((beta_col_pos_cen, beta_col_pos_cen[0]))
-				beta_col_neg_cir = np.hstack((beta_col_neg_cen, beta_col_neg_cen[0]))
+			betas_ori_pos_leftOut = betas_ori_pos [run_nr_leftOut]
+			betas_ori_neg_leftOut = betas_ori_neg [run_nr_leftOut]
+			betas_col_pos_leftOut = betas_col_pos [run_nr_leftOut]
+			betas_col_neg_leftOut = betas_col_neg [run_nr_leftOut]
 			
-				# if typeIndice == typeVoxStr.index('voxel_indices_bestVox'):
-				# 	beta_ori_pos_BestVox[nrii,:] = beta_ori_pos_cir
-				# 	beta_col_pos_BestVox[nrii,:] = beta_col_pos_cir
-				# 	beta_ori_neg_BestVox[nrii,:] = beta_ori_neg_cir
-				# 	beta_col_neg_BestVox[nrii,:] = beta_col_neg_cir
-				# elif typeIndice == typeVoxStr.index('voxel_indices_reliVox'):
-				beta_ori_pos_reliVox[nrii,:] = beta_ori_pos_cir
-				beta_col_pos_reliVox[nrii,:] = beta_col_pos_cir
-				beta_ori_neg_reliVox[nrii,:] = beta_ori_neg_cir
-				beta_col_neg_reliVox[nrii,:] = beta_col_neg_cir
+			if position_cen == 2:
+				beta_ori_pos_reliVox = np.zeros((n_reli, 9))
+				beta_col_pos_reliVox = np.zeros((n_reli, 9))
+				beta_ori_neg_reliVox = np.zeros((n_reli, 9))
+				beta_col_neg_reliVox = np.zeros((n_reli, 9))
+ 		
+				for nrii, voxelIndex in enumerate(voxel_indices_reliVox):
 
-			# if typeIndice == typeVoxStr.index('voxel_indices_bestVox'):
-			# 	beta_ori_pos_BestVox_mean = np.nanmean(beta_ori_pos_BestVox, axis = 0)
-			# 	beta_col_pos_BestVox_mean = np.nanmean(beta_col_pos_BestVox, axis = 0)
-			# 	beta_ori_neg_BestVox_mean = np.nanmean(beta_ori_neg_BestVox, axis = 0)
-			# 	beta_col_neg_BestVox_mean = np.nanmean(beta_col_neg_BestVox, axis = 0)
-				
-			# 	beta_ori_pos_mean_iterations_bestVox [filepairii,:] = beta_ori_pos_BestVox_mean
-			# 	beta_col_pos_mean_iterations_bestVox [filepairii,:] = beta_col_pos_BestVox_mean
-			# 	beta_ori_neg_mean_iterations_bestVox [filepairii,:] = beta_ori_neg_BestVox_mean
-			# 	beta_col_neg_mean_iterations_bestVox [filepairii,:] = beta_col_neg_BestVox_mean
-
-			# elif typeIndice == typeVoxStr.index('voxel_indices_reliVox'):
-			beta_ori_pos_reliVox_mean = np.nanmean(beta_ori_pos_reliVox, axis = 0)
-			beta_col_pos_reliVox_mean = np.nanmean(beta_col_pos_reliVox, axis = 0)
-			beta_ori_neg_reliVox_mean = np.nanmean(beta_ori_neg_reliVox, axis = 0)
-			beta_col_neg_reliVox_mean = np.nanmean(beta_col_neg_reliVox, axis = 0)
-
-			beta_ori_pos_mean_iterations_reliVox [filepairii,:] = beta_ori_pos_reliVox_mean
-			beta_col_pos_mean_iterations_reliVox [filepairii,:] = beta_col_pos_reliVox_mean
-			beta_ori_neg_mean_iterations_reliVox [filepairii,:] = beta_ori_neg_reliVox_mean
-			beta_col_neg_mean_iterations_reliVox [filepairii,:] = beta_col_neg_reliVox_mean	
-
-		elif position_cen == 'nan': 
-
-			beta_ori_pos_reliVox_0 = []
-			beta_col_pos_reliVox_0 = []
-			beta_ori_pos_reliVox_1 = []
-			beta_col_pos_reliVox_1 = []
-			beta_ori_pos_reliVox_2 = []
-			beta_col_pos_reliVox_2 = []
-			beta_ori_pos_reliVox_3 = []
-			beta_col_pos_reliVox_3 = []
-			beta_ori_pos_reliVox_4 = []
-			beta_col_pos_reliVox_4 = []
-			beta_ori_pos_reliVox_5 = []
-			beta_col_pos_reliVox_5 = []
-			beta_ori_pos_reliVox_6 = []
-			beta_col_pos_reliVox_6 = []
-			beta_ori_pos_reliVox_7 = []
-			beta_col_pos_reliVox_7 = []
-
-			beta_ori_pos_cate = [beta_ori_pos_reliVox_0, beta_ori_pos_reliVox_1, beta_ori_pos_reliVox_2, beta_ori_pos_reliVox_3, beta_ori_pos_reliVox_4, beta_ori_pos_reliVox_5, beta_ori_pos_reliVox_6, beta_ori_pos_reliVox_7]
-			beta_col_pos_cate = [beta_col_pos_reliVox_0, beta_col_pos_reliVox_1, beta_col_pos_reliVox_2, beta_col_pos_reliVox_3, beta_col_pos_reliVox_4, beta_col_pos_reliVox_5, beta_col_pos_reliVox_6, beta_col_pos_reliVox_7]
-
-			beta_ori_neg_reliVox_0 = []
-			beta_col_neg_reliVox_0 = []
-			beta_ori_neg_reliVox_1 = []
-			beta_col_neg_reliVox_1 = []
-			beta_ori_neg_reliVox_2 = []
-			beta_col_neg_reliVox_2 = []
-			beta_ori_neg_reliVox_3 = []
-			beta_col_neg_reliVox_3 = []
-			beta_ori_neg_reliVox_4 = []
-			beta_col_neg_reliVox_4 = []
-			beta_ori_neg_reliVox_5 = []
-			beta_col_neg_reliVox_5 = []
-			beta_ori_neg_reliVox_6 = []
-			beta_col_neg_reliVox_6 = []
-			beta_ori_neg_reliVox_7 = []
-			beta_col_neg_reliVox_7 = []
-
-			beta_ori_neg_cate = [beta_ori_neg_reliVox_0, beta_ori_neg_reliVox_1, beta_ori_neg_reliVox_2, beta_ori_neg_reliVox_3, beta_ori_neg_reliVox_4, beta_ori_neg_reliVox_5, beta_ori_neg_reliVox_6, beta_ori_neg_reliVox_7]
-			beta_col_neg_cate = [beta_col_neg_reliVox_0, beta_col_neg_reliVox_1, beta_col_neg_reliVox_2, beta_col_neg_reliVox_3, beta_col_neg_reliVox_4, beta_col_neg_reliVox_5, beta_col_neg_reliVox_6, beta_col_neg_reliVox_7]
-
-	
-			for nrii, voxelIndex in enumerate(voxel_indices_reliVox):
-
-				voxelIndex = int(voxelIndex)
-				# t_matrix_leftOut = ts_leftOut[voxelIndex].reshape(8,8)
-				beta_ori_pos = betas_ori_pos_leftOut[voxelIndex]
-				beta_col_pos = betas_col_pos_leftOut[voxelIndex]
-				beta_ori_neg = betas_ori_neg_leftOut[voxelIndex]
-				beta_col_neg = betas_col_neg_leftOut[voxelIndex]
-				# # center --- exact values: make horizontal as the center of the x-axis, so the labels are still the extact positions.
-				# # so exact positions for x-axis
-				# # make the centers are green / horizontal. 
-				# t_matrix_leftOut_cenRow = np.roll(t_matrix_leftOut, 5, axis = 0) # roll downwards by 5 steps, to make the green one as the 4th(0,1,2,3,4), then in the next step, the green one will be at the center.
-				# t_matrix_leftOut_cen= np.roll(t_matrix_leftOut_cenRow, 1, axis = 1) # roll to right side by 1 step, to make horizontal be the 4th (be at center through next step)
-
-				beta_pre_ori_pos_current_index = beta_pre_ori_pos_indices_reliVox[nrii]
-				beta_pre_col_pos_current_index = beta_pre_col_pos_indices_reliVox[nrii] 
-				beta_pre_ori_neg_current_index = beta_pre_ori_neg_indices_reliVox[nrii]
-				beta_pre_col_neg_current_index = beta_pre_col_neg_indices_reliVox[nrii]
-				# beta_pre_col_current_index = beta_pre_col_indices_reliVox[nrii]
-
-				# make it circlar
-				beta_ori_pos_cir = np.hstack((beta_ori_pos, beta_ori_pos[0]))
-				beta_col_pos_cir = np.hstack((beta_col_pos, beta_col_pos[0]))
-				beta_ori_neg_cir = np.hstack((beta_ori_neg, beta_ori_neg[0]))
-				beta_col_neg_cir = np.hstack((beta_col_neg, beta_col_neg[0]))
-				
-				for i in range(0,8):
-					if beta_pre_ori_pos_current_index == i:
-						beta_ori_pos_cate [i].append(beta_ori_pos_cir)
+					voxelIndex = int(voxelIndex)
+					beta_ori_pos =  betas_ori_pos_leftOut [voxelIndex]
+					beta_ori_neg =  betas_ori_neg_leftOut [voxelIndex]
+					beta_col_pos =  betas_col_pos_leftOut [voxelIndex]
+					beta_col_neg =  betas_col_neg_leftOut [voxelIndex]
 					
-					if beta_pre_col_pos_current_index == i:
-						beta_col_pos_cate [i].append(beta_col_pos_cir)
-					
-					if beta_pre_ori_neg_current_index == i:
-						beta_ori_neg_cate [i].append(beta_ori_neg_cir)
-					
-					if beta_pre_col_neg_current_index == i:
-						beta_col_neg_cate [i].append(beta_col_neg_cir)
-			
-			beta_ori_pos_cate_mean_leftOut = np.zeros((8,9)) #8 preference locations, 9 points 
-			beta_col_pos_cate_mean_leftOut = np.zeros((8,9)) 
-			beta_ori_neg_cate_mean_leftOut = np.zeros((8,9)) #8 preference locations, 9 points 
-			beta_col_neg_cate_mean_leftOut = np.zeros((8,9)) 
+					beta_pre_ori_pos_current_index = beta_pre_ori_pos_indices_reliVox [nrii]
+					beta_pre_ori_neg_current_index = beta_pre_ori_neg_indices_reliVox[nrii] 				
+					beta_pre_col_pos_current_index = beta_pre_col_pos_indices_reliVox[nrii]
+					beta_pre_col_neg_current_index = beta_pre_col_neg_indices_reliVox[nrii] 
 
-			for i in range(0,8):
+					# center --- always move the peaks to the position_cen, 'x axis will be relative positions'
+					# so the labels of x-axis are not the actual values (ori/color), but the relative position on the axis.
+					beta_ori_pos_cen = np.roll(beta_ori_pos, int(position_cen-beta_pre_ori_pos_current_index[0]) )
+					beta_ori_neg_cen = np.roll(beta_ori_neg, int(position_cen-beta_pre_ori_neg_current_index[0]) )
+					beta_col_pos_cen = np.roll(beta_col_pos, int(position_cen-beta_pre_col_pos_current_index[0]) )
+					beta_col_neg_cen = np.roll(beta_col_neg, int(position_cen-beta_pre_col_neg_current_index[0]) )				
 
-				beta_ori_pos_cate[i] = np.array(beta_ori_pos_cate[i]) 
-				beta_col_pos_cate[i] = np.array(beta_col_pos_cate[i])
-				beta_ori_neg_cate[i] = np.array(beta_ori_neg_cate[i]) 
-				beta_col_neg_cate[i] = np.array(beta_col_neg_cate[i])
-
-				beta_ori_pos_cate_mean_leftOut[i,:] = np.nanmean(beta_ori_pos_cate[i], axis = 0)
-				beta_col_pos_cate_mean_leftOut[i,:] = np.nanmean(beta_col_pos_cate[i], axis = 0)
-				beta_ori_neg_cate_mean_leftOut[i,:] = np.nanmean(beta_ori_neg_cate[i], axis = 0)
-				beta_col_neg_cate_mean_leftOut[i,:] = np.nanmean(beta_col_neg_cate[i], axis = 0)
+					# make it circlar
+					beta_ori_pos_cir = np.hstack((beta_ori_pos_cen, beta_ori_pos_cen[0]))
+					beta_ori_neg_cir = np.hstack((beta_ori_neg_cen, beta_ori_neg_cen[0]))
+					beta_col_pos_cir = np.hstack((beta_col_pos_cen, beta_col_pos_cen[0]))
+					beta_col_neg_cir = np.hstack((beta_col_neg_cen, beta_col_neg_cen[0]))
 				
+					beta_ori_pos_reliVox[nrii,:] = beta_ori_pos_cir
+					beta_col_pos_reliVox[nrii,:] = beta_col_pos_cir
+					beta_ori_neg_reliVox[nrii,:] = beta_ori_neg_cir
+					beta_col_neg_reliVox[nrii,:] = beta_col_neg_cir
 
-			beta_ori_pos_cate_mean_iterations [filepairii, :, :] = beta_ori_pos_cate_mean_leftOut
-			beta_col_pos_cate_mean_iterations [filepairii, :, :] = beta_col_pos_cate_mean_leftOut
-			beta_ori_neg_cate_mean_iterations [filepairii, :, :] = beta_ori_neg_cate_mean_leftOut
-			beta_col_neg_cate_mean_iterations [filepairii, :, :] = beta_col_neg_cate_mean_leftOut
- 
-# plot figures! across iterations.
+				beta_ori_pos_reliVox_mean = np.nanmean(beta_ori_pos_reliVox, axis = 0)
+				beta_col_pos_reliVox_mean = np.nanmean(beta_col_pos_reliVox, axis = 0)
+				beta_ori_neg_reliVox_mean = np.nanmean(beta_ori_neg_reliVox, axis = 0)
+				beta_col_neg_reliVox_mean = np.nanmean(beta_col_neg_reliVox, axis = 0)
 
-	print 'plot figures across iterations!'
+				beta_ori_pos_mean_iterations_reliVox [filepairii,:] = beta_ori_pos_reliVox_mean
+				beta_col_pos_mean_iterations_reliVox [filepairii,:] = beta_col_pos_reliVox_mean
+				beta_ori_neg_mean_iterations_reliVox [filepairii,:] = beta_ori_neg_reliVox_mean
+				beta_col_neg_mean_iterations_reliVox [filepairii,:] = beta_col_neg_reliVox_mean	
 
-	if position_cen == 2:
+			elif position_cen == 'nan': 
 
-		# beta_ori_pos_mean_bestVox = np.mean(beta_ori_pos_mean_iterations_bestVox, axis = 0)
-		# beta_ori_neg_mean_bestVox = np.mean(beta_ori_neg_mean_iterations_bestVox, axis = 0)
-		# beta_col_pos_mean_bestVox = np.mean(beta_col_pos_mean_iterations_bestVox, axis = 0)		
-		# beta_col_neg_mean_bestVox = np.mean(beta_col_neg_mean_iterations_bestVox, axis = 0)
+				beta_ori_pos_reliVox_0 = []
+				beta_col_pos_reliVox_0 = []
+				beta_ori_pos_reliVox_1 = []
+				beta_col_pos_reliVox_1 = []
+				beta_ori_pos_reliVox_2 = []
+				beta_col_pos_reliVox_2 = []
+				beta_ori_pos_reliVox_3 = []
+				beta_col_pos_reliVox_3 = []
+				beta_ori_pos_reliVox_4 = []
+				beta_col_pos_reliVox_4 = []
+				beta_ori_pos_reliVox_5 = []
+				beta_col_pos_reliVox_5 = []
+				beta_ori_pos_reliVox_6 = []
+				beta_col_pos_reliVox_6 = []
+				beta_ori_pos_reliVox_7 = []
+				beta_col_pos_reliVox_7 = []
 
-		beta_ori_pos_mean_reliVox = np.mean(beta_ori_pos_mean_iterations_reliVox, axis = 0)
-		beta_ori_neg_mean_reliVox = np.mean(beta_ori_neg_mean_iterations_reliVox, axis = 0)
-		beta_col_pos_mean_reliVox = np.mean(beta_col_pos_mean_iterations_reliVox, axis = 0)		
-		beta_col_neg_mean_reliVox = np.mean(beta_col_neg_mean_iterations_reliVox, axis = 0)
+				beta_ori_pos_cate = [beta_ori_pos_reliVox_0, beta_ori_pos_reliVox_1, beta_ori_pos_reliVox_2, beta_ori_pos_reliVox_3, beta_ori_pos_reliVox_4, beta_ori_pos_reliVox_5, beta_ori_pos_reliVox_6, beta_ori_pos_reliVox_7]
+				beta_col_pos_cate = [beta_col_pos_reliVox_0, beta_col_pos_reliVox_1, beta_col_pos_reliVox_2, beta_col_pos_reliVox_3, beta_col_pos_reliVox_4, beta_col_pos_reliVox_5, beta_col_pos_reliVox_6, beta_col_pos_reliVox_7]
 
-		# sd_bestVox = np.array([np.std(beta_ori_pos_mean_iterations_bestVox, axis = 0), np.std(beta_ori_neg_mean_iterations_bestVox, axis = 0), np.std(beta_col_pos_mean_iterations_bestVox, axis = 0), np.std(beta_col_neg_mean_iterations_bestVox, axis = 0)])
-		# n = len(run_nr_all)
-		# yerr_bestVox = (sd_bestVox/np.sqrt(n))
+				beta_ori_neg_reliVox_0 = []
+				beta_col_neg_reliVox_0 = []
+				beta_ori_neg_reliVox_1 = []
+				beta_col_neg_reliVox_1 = []
+				beta_ori_neg_reliVox_2 = []
+				beta_col_neg_reliVox_2 = []
+				beta_ori_neg_reliVox_3 = []
+				beta_col_neg_reliVox_3 = []
+				beta_ori_neg_reliVox_4 = []
+				beta_col_neg_reliVox_4 = []
+				beta_ori_neg_reliVox_5 = []
+				beta_col_neg_reliVox_5 = []
+				beta_ori_neg_reliVox_6 = []
+				beta_col_neg_reliVox_6 = []
+				beta_ori_neg_reliVox_7 = []
+				beta_col_neg_reliVox_7 = []
 
-		sd_reliVox = np.array([np.std(beta_ori_pos_mean_iterations_reliVox, axis = 0), np.std(beta_ori_neg_mean_iterations_reliVox, axis = 0), np.std(beta_col_pos_mean_iterations_reliVox, axis = 0), np.std(beta_col_neg_mean_iterations_reliVox, axis = 0)])
-		n = len(run_nr_all)
-		yerr_reliVox = (sd_reliVox/np.sqrt(n))
+				beta_ori_neg_cate = [beta_ori_neg_reliVox_0, beta_ori_neg_reliVox_1, beta_ori_neg_reliVox_2, beta_ori_neg_reliVox_3, beta_ori_neg_reliVox_4, beta_ori_neg_reliVox_5, beta_ori_neg_reliVox_6, beta_ori_neg_reliVox_7]
+				beta_col_neg_cate = [beta_col_neg_reliVox_0, beta_col_neg_reliVox_1, beta_col_neg_reliVox_2, beta_col_neg_reliVox_3, beta_col_neg_reliVox_4, beta_col_neg_reliVox_5, beta_col_neg_reliVox_6, beta_col_neg_reliVox_7]
 
-		f2 = plt.figure(figsize = (16,12))
-		beta_ori_mean = [beta_ori_pos_mean_reliVox, beta_ori_neg_mean_reliVox]
-		ori_xlabels = ['orientation - relative - positive', 'orientation - relative - negative ']
-		for i in [0,1]:
-			s1 = f2.add_subplot(2,2,i+1)
-			plt.plot(beta_ori_mean[i])
-			plt.errorbar(range(0,9), beta_ori_mean[i], yerr= yerr_reliVox[i])
-			s1.set_xticklabels(['placeholder', -45, -22.5, 0, 22.5, 45, 67.5, 90, -67.5 ,-45])
-			s1.set_xlabel(ori_xlabels[i])
 		
-		beta_col_mean = [beta_col_pos_mean_reliVox, beta_col_neg_mean_reliVox]
-		col_xlabels = ['color - relative - positive', 'color - relative - negative ']
-		for i in [0,1]:
-			s2 = f2.add_subplot(2,2,i+3)
-			plt.plot(beta_col_mean[i])
-			plt.errorbar(range(0,9), beta_col_mean[i], yerr= yerr_reliVox[i+2])
+				for nrii, voxelIndex in enumerate(voxel_indices_reliVox):
+
+					voxelIndex = int(voxelIndex)
+					# t_matrix_leftOut = ts_leftOut[voxelIndex].reshape(8,8)
+					beta_ori_pos = betas_ori_pos_leftOut[voxelIndex]
+					beta_col_pos = betas_col_pos_leftOut[voxelIndex]
+					beta_ori_neg = betas_ori_neg_leftOut[voxelIndex]
+					beta_col_neg = betas_col_neg_leftOut[voxelIndex]
+					# # center --- exact values: make horizontal as the center of the x-axis, so the labels are still the extact positions.
+					# # so exact positions for x-axis
+					# # make the centers are green / horizontal. 
+					# t_matrix_leftOut_cenRow = np.roll(t_matrix_leftOut, 5, axis = 0) # roll downwards by 5 steps, to make the green one as the 4th(0,1,2,3,4), then in the next step, the green one will be at the center.
+					# t_matrix_leftOut_cen= np.roll(t_matrix_leftOut_cenRow, 1, axis = 1) # roll to right side by 1 step, to make horizontal be the 4th (be at center through next step)
+
+					beta_pre_ori_pos_current_index = beta_pre_ori_pos_indices_reliVox[nrii]
+					beta_pre_col_pos_current_index = beta_pre_col_pos_indices_reliVox[nrii] 
+					beta_pre_ori_neg_current_index = beta_pre_ori_neg_indices_reliVox[nrii]
+					beta_pre_col_neg_current_index = beta_pre_col_neg_indices_reliVox[nrii]
+					# beta_pre_col_current_index = beta_pre_col_indices_reliVox[nrii]
+
+					# make it circlar
+					beta_ori_pos_cir = np.hstack((beta_ori_pos, beta_ori_pos[0]))
+					beta_col_pos_cir = np.hstack((beta_col_pos, beta_col_pos[0]))
+					beta_ori_neg_cir = np.hstack((beta_ori_neg, beta_ori_neg[0]))
+					beta_col_neg_cir = np.hstack((beta_col_neg, beta_col_neg[0]))
+					
+					for i in range(0,8):
+						if beta_pre_ori_pos_current_index == i:
+							beta_ori_pos_cate [i].append(beta_ori_pos_cir)
+						
+						if beta_pre_col_pos_current_index == i:
+							beta_col_pos_cate [i].append(beta_col_pos_cir)
+						
+						if beta_pre_ori_neg_current_index == i:
+							beta_ori_neg_cate [i].append(beta_ori_neg_cir)
+						
+						if beta_pre_col_neg_current_index == i:
+							beta_col_neg_cate [i].append(beta_col_neg_cir)
+				
+				beta_ori_pos_cate_mean_leftOut = np.zeros((8,9)) #8 preference locations, 9 points 
+				beta_col_pos_cate_mean_leftOut = np.zeros((8,9)) 
+				beta_ori_neg_cate_mean_leftOut = np.zeros((8,9)) #8 preference locations, 9 points 
+				beta_col_neg_cate_mean_leftOut = np.zeros((8,9)) 
+
+				for i in range(0,8):
+
+					beta_ori_pos_cate[i] = np.array(beta_ori_pos_cate[i]) 
+					beta_col_pos_cate[i] = np.array(beta_col_pos_cate[i])
+					beta_ori_neg_cate[i] = np.array(beta_ori_neg_cate[i]) 
+					beta_col_neg_cate[i] = np.array(beta_col_neg_cate[i])
+
+					beta_ori_pos_cate_mean_leftOut[i,:] = np.nanmean(beta_ori_pos_cate[i], axis = 0)
+					beta_col_pos_cate_mean_leftOut[i,:] = np.nanmean(beta_col_pos_cate[i], axis = 0)
+					beta_ori_neg_cate_mean_leftOut[i,:] = np.nanmean(beta_ori_neg_cate[i], axis = 0)
+					beta_col_neg_cate_mean_leftOut[i,:] = np.nanmean(beta_col_neg_cate[i], axis = 0)
+					
+
+				beta_ori_pos_cate_mean_iterations [filepairii, :, :] = beta_ori_pos_cate_mean_leftOut
+				beta_col_pos_cate_mean_iterations [filepairii, :, :] = beta_col_pos_cate_mean_leftOut
+				beta_ori_neg_cate_mean_iterations [filepairii, :, :] = beta_ori_neg_cate_mean_leftOut
+				beta_col_neg_cate_mean_iterations [filepairii, :, :] = beta_col_neg_cate_mean_leftOut
+	 
+	# plot figures! across iterations.
+
+		print 'plot figures across iterations!'
+
+		if position_cen == 2:
+
+			beta_ori_pos_mean_reliVox = np.mean(beta_ori_pos_mean_iterations_reliVox, axis = 0)
+			beta_ori_neg_mean_reliVox = np.mean(beta_ori_neg_mean_iterations_reliVox, axis = 0)
+			beta_col_pos_mean_reliVox = np.mean(beta_col_pos_mean_iterations_reliVox, axis = 0)		
+			beta_col_neg_mean_reliVox = np.mean(beta_col_neg_mean_iterations_reliVox, axis = 0)
+
+			sd_reliVox = np.array([np.std(beta_ori_pos_mean_iterations_reliVox, axis = 0), np.std(beta_ori_neg_mean_iterations_reliVox, axis = 0), np.std(beta_col_pos_mean_iterations_reliVox, axis = 0), np.std(beta_col_neg_mean_iterations_reliVox, axis = 0)])
+			n = len(run_nr_all)
+			yerr_reliVox = (sd_reliVox/np.sqrt(n))
+
+			f2 = plt.figure(figsize = (16,12))
+			beta_ori_mean = [beta_ori_pos_mean_reliVox, beta_ori_neg_mean_reliVox]
+			ori_xlabels = ['orientation - relative - positive', 'orientation - relative - negative ']
+			for i in [0,1]:
+				s1 = f2.add_subplot(2,2,i+1)
+				plt.plot(beta_ori_mean[i])
+				plt.errorbar(range(0,9), beta_ori_mean[i], yerr= yerr_reliVox[i])
+				s1.set_xticklabels(['placeholder', -45, -22.5, 0, 22.5, 45, 67.5, 90, -67.5 ,-45])
+				s1.set_xlabel(ori_xlabels[i])
+			
+			beta_col_mean = [beta_col_pos_mean_reliVox, beta_col_neg_mean_reliVox]
+			col_xlabels = ['color - relative - positive', 'color - relative - negative ']
+			for i in [0,1]:
+				s2 = f2.add_subplot(2,2,i+3)
+				plt.plot(beta_col_mean[i])
+				plt.errorbar(range(0,9), beta_col_mean[i], yerr= yerr_reliVox[i+2])
+				s2.set_xticklabels(['placeholder', -2, -1, 0, 1, 2, 3, 4, -3, -2])
+				s2.set_xlabel(col_xlabels[i])
+			f2.savefig( '%s_%s_%s_%s_cen%s_beta_posneg_%sVoxels.png'%(subname, ROI, data_type, regression, position_cen, n_reli))
+
+		elif position_cen == 'nan':
+			beta_ori_pos_cate_mean = np.mean(beta_ori_pos_cate_mean_iterations, axis = 0)
+			beta_col_pos_cate_mean = np.mean(beta_col_pos_cate_mean_iterations, axis = 0)
+			beta_ori_pos_cate_yerr = np.std(beta_ori_pos_cate_mean_iterations, axis = 0)/ np.sqrt(len(run_nr_all)) 
+			beta_col_pos_cate_yerr = np.std(beta_col_pos_cate_mean_iterations, axis = 0)/ np.sqrt(len(run_nr_all)) # standard error
+
+			beta_ori_neg_cate_mean = np.mean(beta_ori_neg_cate_mean_iterations, axis = 0)
+			beta_col_neg_cate_mean = np.mean(beta_col_neg_cate_mean_iterations, axis = 0)
+			beta_ori_neg_cate_yerr = np.std(beta_ori_neg_cate_mean_iterations, axis = 0)/ np.sqrt(len(run_nr_all)) 
+			beta_col_neg_cate_yerr = np.std(beta_col_neg_cate_mean_iterations, axis = 0)/ np.sqrt(len(run_nr_all)) # standard error
+
+			f3 = plt.figure(figsize = (16,12))
+
+			colors1 = plt.cm.rainbow(np.linspace(0, 1, len(range(0,8))))
+			beta_ori_cate_mean = [beta_ori_pos_cate_mean, beta_ori_neg_cate_mean]
+			beta_ori_cate_yerr = [beta_ori_pos_cate_yerr, beta_ori_neg_cate_yerr]	
+			ori_cate_xlabels = ['orientation - absolute - positive', 'orientation - absolute - negative ']
+			for i in [0,1]:
+
+				s1 = f3.add_subplot(2,2,i+1)	
+				for colii, color in enumerate(colors1, start =0):
+
+					if beta_ori_cate_mean[i][colii].size == 1:
+						s1.set_title('no voxels fall into peak position: %s' %(str(colii)) , fontsize = 10)
+
+					else:
+						plt.plot(beta_ori_cate_mean[i][colii], color = color, label = 'position:%s' %(str(colii)))
+						plt.errorbar(range(0,9), beta_ori_cate_mean[i][colii], color = color, yerr= beta_ori_cate_yerr[i][colii]) #
+						plt.legend(loc='best')
+
+				s1.set_xticklabels(['placeholder', 'horizontal 0', 22.5, 45, 67.5, 'vertical 90', 112.5, 135, 157.5, 'horizontal 0'])
+				s1.set_xlabel(ori_cate_xlabels[i])
+				# f3.savefig( '%s_%s_%s_%sOri_8pos_tValues_%sVoxels.png'%(subname, ROI, data_type, regression, n_best))
+
+			beta_col_cate_mean = [beta_col_pos_cate_mean, beta_col_neg_cate_mean]
+			beta_col_cate_yerr = [beta_col_pos_cate_yerr, beta_col_neg_cate_yerr]	
+			col_cate_xlabels = ['color - absolute - positive', 'color - absolute - negative ']
+			# use colors in the mapping experiment
+			# Compute evenly-spaced steps in (L)ab-space		
+			color_theta = (np.pi*2)/8
+			color_angle = color_theta * np.arange(0, 8,dtype=float)
+			color_radius = 75
+
+			color_a = color_radius * np.cos(color_angle)
+			color_b = color_radius * np.sin(color_angle)
+
+			colors2 = np.array([ct.lab2rgb((55, a, b)) for a,b in zip(color_a, color_b)])	
+			colors2 = np.hstack((colors2/255, np.ones((8,1))))
+
+			for i in [0,1]:
+				# f4 = plt.figure(figsize = (12,10))
+				s2 = f3.add_subplot(2,2,i+3)
+				# s2 = f4.add_subplot(2,1,2)
+
+				for colii, color in enumerate(colors2, start =0):
+					if beta_col_cate_mean[i][colii].size == 1:
+						s2.set_title('no voxels fall into peak position: %s' %(str(colii)) , fontsize = 10)
+
+					else:
+						plt.plot(beta_col_cate_mean[i][colii], color = color , label = 'position:%s' %(str(colii)))
+						plt.errorbar(range(0,9), beta_col_cate_mean[i][colii], color = color, yerr= beta_col_cate_yerr[i][colii])
+					plt.legend(loc='best')
+
+				s2.set_xlabel(col_cate_xlabels[i])
+				# f4.savefig( '%s_%s_%s_%sCol_8pos_tValues_%sVoxels.png'%(subname, ROI, data_type, regression, n_best))
+			f3.savefig( '%s_%s_%s_%s_8pos_tValues_%sVoxels.png'%(subname, ROI, data_type, regression, n_reli))
+
+
+# #-------------------------------------------------------------------------------------------
+	if z_score == True:
+
+		beta_pre_ori_indices_reliVox = np.zeros((n_reli, 1))
+		beta_pre_col_indices_reliVox = np.zeros((n_reli, 1)) 
+
+		if position_cen == 'nan': 
+			beta_ori_cate_mean_iterations = np.zeros((len(run_nr_all), 8,9)) 
+			beta_col_cate_mean_iterations = np.zeros((len(run_nr_all), 8,9)) 
+		else:
+			beta_ori_mean_iterations = np.zeros((len(run_nr_all), 9))
+			beta_col_mean_iterations = np.zeros((len(run_nr_all), 9))
+
+		for filepairii in run_nr_all :
+		
+			run_nr_leftOut = filepairii
+			run_nr_rest = run_nr_all[~(run_nr_all == run_nr_leftOut)]
+	
+			betas_z_ori_mean = np.mean(betas_z_ori_runs[run_nr_rest], axis = 0)
+			betas_z_col_mean = np.mean(betas_z_col_runs[run_nr_rest], axis = 0)
+
+		### prepare preference indices
+		# position_cen =2 and 'nan' are the same!
+			for voxelii, voxelIndex in enumerate(voxel_indices_reliVox):
+
+				voxelIndex = int(voxelIndex)
+				# r_squared_best = voxel[1]
+
+				# t_matrix = t_mean [voxelIndex ].reshape(8,8)
+				beta_pre_ori = betas_z_ori_mean [voxelIndex]
+				beta_pre_col = betas_z_col_mean [voxelIndex]
+
+				#  the centers are green / vertical already.--4 (0-4) position
+				# beta_ori_cen = np.roll(beta_pre_ori, 1)
+				# beta_col_cen = np.roll(beta_pre_col, )  
+
+				beta_pre_ori_index = [i for i, j in enumerate(beta_pre_ori) if j == beta_pre_ori.max() ]
+				beta_pre_col_index =  [i for i, j in enumerate(beta_pre_col) if j == beta_pre_col.max() ]
+
+				if len(beta_pre_ori_index) != 1:
+					beta_pre_ori_index = beta_pre_ori_index[0]
+					print 'more than one preferred ori'
+				if len(beta_pre_col_index) != 1:
+					beta_pre_col_index = beta_pre_col_index[0]
+					print 'more than one preferred color'			
+
+				beta_pre_ori_indices_reliVox[voxelii ] = beta_pre_ori_index
+				beta_pre_col_indices_reliVox[voxelii ] = beta_pre_col_index
+
+	#---------------------------------------------------------
+		### a set of tunings for the specific leftout run. 
+
+			betas_z_ori_leftOut = betas_z_ori_runs[run_nr_leftOut]
+			betas_z_col_leftOut = betas_z_col_runs[run_nr_leftOut]
+			
+			if position_cen == 2:
+				beta_ori_reliVox = np.zeros((n_reli, 9))
+				beta_col_reliVox = np.zeros((n_reli, 9))
+
+				for nrii, voxelIndex in enumerate(voxel_indices_reliVox):
+
+					voxelIndex = int(voxelIndex)
+					# t_matrix_leftOut = ts_leftOut[voxelIndex].reshape(8,8)
+					beta_ori =  betas_z_ori_leftOut [voxelIndex]
+					beta_col = betas_z_col_leftOut [voxelIndex]
+					# t_pre_current_index = t_pre_indices_reliVox[nrii]		
+					beta_pre_ori_current_index = beta_pre_ori_indices_reliVox[nrii] 
+					beta_pre_col_current_index = beta_pre_col_indices_reliVox[nrii]
+
+					# center --- always move the peaks to the position_cen, 'x axis will be relative positions'
+					# so the labels of x-axis are not the actual values (ori/color), but the relative position on the axis.
+					beta_ori_cen = np.roll(beta_ori, int(position_cen-beta_pre_ori_current_index[0]) )
+					beta_col_cen = np.roll(beta_col, int(position_cen-beta_pre_col_current_index[0]) )				
+
+					# make it circlar
+					beta_ori_cir = np.hstack((beta_ori_cen, beta_ori_cen[0]))
+					beta_col_cir = np.hstack((beta_col_cen, beta_col_cen[0]))				
+
+
+					beta_ori_reliVox[nrii,:] = beta_ori_cir
+					beta_col_reliVox[nrii,:] = beta_col_cir
+
+				beta_ori_reliVox_mean = np.mean(beta_ori_reliVox, axis = 0)
+				beta_col_reliVox_mean = np.mean(beta_col_reliVox, axis = 0)
+
+				beta_ori_mean_iterations [filepairii,:] = beta_ori_reliVox_mean
+				beta_col_mean_iterations [filepairii,:] = beta_col_reliVox_mean
+
+			elif position_cen == 'nan': 
+				beta_z_ori_reliVox_0 = []
+				beta_z_col_reliVox_0 = []
+
+				beta_z_ori_reliVox_1 = []
+				beta_z_col_reliVox_1 = []
+				beta_z_ori_reliVox_2 = []
+				beta_z_col_reliVox_2 = []
+				beta_z_ori_reliVox_3 = []
+				beta_z_col_reliVox_3 = []
+				beta_z_ori_reliVox_4 = []
+				beta_z_col_reliVox_4 = []
+				beta_z_ori_reliVox_5 = []
+				beta_z_col_reliVox_5 = []
+				beta_z_ori_reliVox_6 = []
+				beta_z_col_reliVox_6 = []
+				beta_z_ori_reliVox_7 = []
+				beta_z_col_reliVox_7 = []
+
+				beta_z_ori_cate = [beta_z_ori_reliVox_0, beta_z_ori_reliVox_1, beta_z_ori_reliVox_2, beta_z_ori_reliVox_3, beta_z_ori_reliVox_4, beta_z_ori_reliVox_5, beta_z_ori_reliVox_6, beta_z_ori_reliVox_7]
+				beta_z_col_cate = [beta_z_col_reliVox_0, beta_z_col_reliVox_1, beta_z_col_reliVox_2, beta_z_col_reliVox_3, beta_z_col_reliVox_4, beta_z_col_reliVox_5, beta_z_col_reliVox_6, beta_z_col_reliVox_7]
+
+		
+				for nrii, voxelIndex in enumerate(voxel_indices_reliVox):
+
+					voxelIndex = int(voxelIndex)
+					# t_matrix_leftOut = ts_leftOut[voxelIndex].reshape(8,8)
+					beta_ori =  betas_z_ori_leftOut [voxelIndex]
+					beta_col = betas_z_col_leftOut [voxelIndex]
+					# # center --- exact values: make horizontal as the center of the x-axis, so the labels are still the extact positions.
+					# # so exact positions for x-axis
+					# # make the centers are green / horizontal. 
+					# t_matrix_leftOut_cenRow = np.roll(t_matrix_leftOut, 5, axis = 0) # roll downwards by 5 steps, to make the green one as the 4th(0,1,2,3,4), then in the next step, the green one will be at the center.
+					# t_matrix_leftOut_cen= np.roll(t_matrix_leftOut_cenRow, 1, axis = 1) # roll to right side by 1 step, to make horizontal be the 4th (be at center through next step)
+
+					beta_pre_ori_current_index = beta_pre_ori_indices_reliVox[nrii] 
+					beta_pre_col_current_index = beta_pre_col_indices_reliVox[nrii]
+
+					# make it circlar
+					beta_ori_cir = np.hstack((beta_ori, beta_ori[0]))
+					beta_col_cir = np.hstack((beta_col, beta_col[0]))
+
+					
+					for i in range(0,8):
+						if beta_pre_ori_current_index == i:
+							beta_z_ori_cate [i].append(beta_ori_cir)
+						
+						if beta_pre_col_current_index == i:
+							beta_z_col_cate [i].append(beta_col_cir)
+
+				
+				beta_z_ori_cate_mean_leftOut = np.zeros((8,9)) #8 preference locations, 9 points 
+				beta_z_col_cate_mean_leftOut = np.zeros((8,9)) 
+
+				for i in range(0,8):
+
+					beta_z_ori_cate[i] = np.array(beta_z_ori_cate[i]) 
+					beta_z_col_cate[i] = np.array(beta_z_col_cate[i])
+
+					beta_z_ori_cate_mean_leftOut[i,:] = np.mean(beta_z_ori_cate[i], axis = 0)
+					beta_z_col_cate_mean_leftOut[i,:] = np.mean(beta_z_col_cate[i], axis = 0)
+
+				beta_ori_cate_mean_iterations [filepairii, :, :] = beta_z_ori_cate_mean_leftOut
+				beta_col_cate_mean_iterations [filepairii, :, :] = beta_z_col_cate_mean_leftOut
+
+	# plot figures! across iterations.
+
+		print 'plot figures across iterations!'
+
+		if position_cen == 2:
+
+			beta_ori_mean = np.mean(beta_ori_mean_iterations, axis = 0)
+			beta_col_mean = np.mean(beta_col_mean_iterations, axis = 0)
+
+
+			sd = np.array([np.std(beta_ori_mean_iterations, axis = 0), np.std(beta_col_mean_iterations, axis = 0)])
+			n = len(run_nr_all)
+			yerr = (sd/np.sqrt(n))
+
+
+			f2 = plt.figure(figsize = (8,6))
+			s1 = f2.add_subplot(211)
+			plt.plot(beta_ori_mean)
+			plt.errorbar(range(0,9), beta_ori_mean, yerr= yerr[0])
+			# s1.set_title('orientation', fontsize = 10)
+			s1.set_xticklabels(['placeholder', -45, -22.5, 0, 22.5, 45, 67.5, 90, -67.5 ,-45])
+			s1.set_xlabel('orientation - relative ')
+
+			s2 = f2.add_subplot(212)
+			plt.plot(beta_col_mean)
+			plt.errorbar(range(0,9), beta_col_mean, yerr= yerr[1])
+			# s2.set_title('color', fontsize = 10)
 			s2.set_xticklabels(['placeholder', -2, -1, 0, 1, 2, 3, 4, -3, -2])
-			s2.set_xlabel(col_xlabels[i])
-		f2.savefig( '%s_%s_%s_%s_cen%s_beta_posneg_%sVoxels.png'%(subname, ROI, data_type, regression, position_cen, n_reli))
+			s2.set_xlabel('color - relative')
+			f2.savefig( '%s_%s_%s_%s_cen%s_beta_z_%sVoxels.png'%(subname, ROI, data_type, regression, position_cen, n_reli))
 
-	elif position_cen == 'nan':
-		beta_ori_pos_cate_mean = np.mean(beta_ori_pos_cate_mean_iterations, axis = 0)
-		beta_col_pos_cate_mean = np.mean(beta_col_pos_cate_mean_iterations, axis = 0)
-		beta_ori_pos_cate_yerr = np.std(beta_ori_pos_cate_mean_iterations, axis = 0)/ np.sqrt(len(run_nr_all)) 
-		beta_col_pos_cate_yerr = np.std(beta_col_pos_cate_mean_iterations, axis = 0)/ np.sqrt(len(run_nr_all)) # standard error
 
-		beta_ori_neg_cate_mean = np.mean(beta_ori_neg_cate_mean_iterations, axis = 0)
-		beta_col_neg_cate_mean = np.mean(beta_col_neg_cate_mean_iterations, axis = 0)
-		beta_ori_neg_cate_yerr = np.std(beta_ori_neg_cate_mean_iterations, axis = 0)/ np.sqrt(len(run_nr_all)) 
-		beta_col_neg_cate_yerr = np.std(beta_col_neg_cate_mean_iterations, axis = 0)/ np.sqrt(len(run_nr_all)) # standard error
 
-		f3 = plt.figure(figsize = (16,12))
+		elif position_cen == 'nan':
+			beta_ori_cate_mean = np.mean(beta_ori_cate_mean_iterations, axis = 0)
+			beta_col_cate_mean = np.mean(beta_col_cate_mean_iterations, axis = 0)
 
-		colors1 = plt.cm.rainbow(np.linspace(0, 1, len(range(0,8))))
-		beta_ori_cate_mean = [beta_ori_pos_cate_mean, beta_ori_neg_cate_mean]
-		beta_ori_cate_yerr = [beta_ori_pos_cate_yerr, beta_ori_neg_cate_yerr]	
-		ori_cate_xlabels = ['orientation - absolute - positive', 'orientation - absolute - negative ']
-		for i in [0,1]:
+			beta_ori_cate_yerr = np.std(beta_ori_cate_mean_iterations, axis = 0)/ np.sqrt(len(run_nr_all)) 
+			beta_col_cate_yerr = np.std(beta_col_cate_mean_iterations, axis = 0)/ np.sqrt(len(run_nr_all)) # standard error
 
-			s1 = f3.add_subplot(2,2,i+1)	
+
+			f3 = plt.figure(figsize = (12,10))
+
+			colors1 = plt.cm.rainbow(np.linspace(0, 1, len(range(0,8))))
+
+			s1 = f3.add_subplot(2,1,1)
+					
 			for colii, color in enumerate(colors1, start =0):
 
-				if beta_ori_cate_mean[i][colii].size == 1:
+				if beta_ori_cate_mean[colii].size == 1:
 					s1.set_title('no voxels fall into peak position: %s' %(str(colii)) , fontsize = 10)
 
 				else:
-					plt.plot(beta_ori_cate_mean[i][colii], color = color, label = 'position:%s' %(str(colii)))
-					plt.errorbar(range(0,9), beta_ori_cate_mean[i][colii], color = color, yerr= beta_ori_cate_yerr[i][colii]) #
+					plt.plot(beta_ori_cate_mean[colii], color = color, label = 'position:%s' %(str(colii)))
+					plt.errorbar(range(0,9), beta_ori_cate_mean[colii], color = color, yerr= beta_ori_cate_yerr[colii]) #
 					plt.legend(loc='best')
+			
 
 			# for i,j in zip(x,y):
 			# 	ax.annotate(str(j),xy=(i,j))
 			s1.set_xticklabels(['placeholder', 'horizontal 0', 22.5, 45, 67.5, 'vertical 90', 112.5, 135, 157.5, 'horizontal 0'])
-			s1.set_xlabel(ori_cate_xlabels[i])
-			# f3.savefig( '%s_%s_%s_%sOri_8pos_tValues_%sVoxels.png'%(subname, ROI, data_type, regression, n_best))
+			s1.set_xlabel('orientation - absolute')
+			# f3.savefig( '%s_%s_%s_%sOri_8pos_tValues_%sVoxels.png'%(subname, ROI, data_type, regression, n_reli))
 
-		beta_col_cate_mean = [beta_col_pos_cate_mean, beta_col_neg_cate_mean]
-		beta_col_cate_yerr = [beta_col_pos_cate_yerr, beta_col_neg_cate_yerr]	
-		col_cate_xlabels = ['color - absolute - positive', 'color - absolute - negative ']
-		# use colors in the mapping experiment
-		# Compute evenly-spaced steps in (L)ab-space		
-		color_theta = (np.pi*2)/8
-		color_angle = color_theta * np.arange(0, 8,dtype=float)
-		color_radius = 75
-
-		color_a = color_radius * np.cos(color_angle)
-		color_b = color_radius * np.sin(color_angle)
-
-		colors2 = np.array([ct.lab2rgb((55, a, b)) for a,b in zip(color_a, color_b)])	
-		colors2 = np.hstack((colors2/255, np.ones((8,1))))
-
-		for i in [0,1]:
+			
 			# f4 = plt.figure(figsize = (12,10))
-			s2 = f3.add_subplot(2,2,i+3)
+			s2 = f3.add_subplot(2,1,2)
 			# s2 = f4.add_subplot(2,1,2)
+			# use colors in the mapping experiment
+			# Compute evenly-spaced steps in (L)ab-space
+
+			color_theta = (np.pi*2)/8
+			color_angle = color_theta * np.arange(0, 8,dtype=float)
+			color_radius = 75
+
+			color_a = color_radius * np.cos(color_angle)
+			color_b = color_radius * np.sin(color_angle)
+
+			colors2 = np.array([ct.lab2rgb((55, a, b)) for a,b in zip(color_a, color_b)])	
+			colors2 = np.hstack((colors2/255, np.ones((8,1))))
 
 			for colii, color in enumerate(colors2, start =0):
-				if beta_col_cate_mean[i][colii].size == 1:
+				if beta_col_cate_mean[colii].size == 1:
 					s2.set_title('no voxels fall into peak position: %s' %(str(colii)) , fontsize = 10)
 
 				else:
-					plt.plot(beta_col_cate_mean[i][colii], color = color , label = 'position:%s' %(str(colii)))
-					plt.errorbar(range(0,9), beta_col_cate_mean[i][colii], color = color, yerr= beta_col_cate_yerr[i][colii])
+					plt.plot(beta_col_cate_mean[colii], color = color , label = 'position:%s' %(str(colii)))
+					plt.errorbar(range(0,9), beta_col_cate_mean[colii], color = color, yerr= beta_col_cate_yerr[colii])
 				plt.legend(loc='best')
 
-			s2.set_xlabel(col_cate_xlabels[i])
-			# f4.savefig( '%s_%s_%s_%sCol_8pos_tValues_%sVoxels.png'%(subname, ROI, data_type, regression, n_best))
-		f3.savefig( '%s_%s_%s_%s_8pos_tValues_%sVoxels.png'%(subname, ROI, data_type, regression, n_reli))
-
-
-
-
-
-
-
-
-
-
-# #-------------------------------------------------------------------------------------------
-# # if z_score = True:
-# # when position_cen = 2
-# 	beta_ori_mean_iterations = 
-# 	beta_col_mean_iterations = np.zeros((len(run_nr_all), 9))
-
-# # when position _cen = nan
-# 	beta_ori_cate_mean_iterations = np.zeros((len(run_nr_all), 8,9)) 
-# 	beta_col_cate_mean_iterations = np.zeros((len(run_nr_all), 8,9)) 
-
-# 	for filepairii in run_nr_all :
-	
-# 		run_nr_leftOut = filepairii
-# 		run_nr_rest = run_nr_all[~(run_nr_all == run_nr_leftOut)]
-# 		# file_pairs = file_pairs_all[~(np.arange(file_pairs_all.shape[0]) == run_nr_leftOut)]
-
-# 		# t_mean = np.mean(t_runs[run_nr_rest], axis = 0) # average across rest runs 		# t_mean shape: (5638,64)		
-# 		betas_z_ori_mean = np.mean(betas_z_ori_runs[run_nr_rest], axis = 0)
-# 		betas_z_col_mean = np.mean(betas_z_col_runs[run_nr_rest], axis = 0)
-# 		r_squareds_mean = np.mean(r_squareds_selection_runs[run_nr_rest], axis = 0) 
-
-# 		order = np.argsort(r_squareds_mean)
-# 		voxels_all = sorted( zip(order, r_squareds_mean) , key = lambda tup: tup [1] )
-# 		n_best = 100 # n_voxels #100
-# 		voxels = voxels_all[-n_best:]
-
-# 		voxel_indices_bestVox = np.array(voxels)[:,0]
-# 		# t_pre_indices_bestVox = np.zeros((n_best, 2 ))
-# 		beta_pre_ori_indices_bestVox = np.zeros((n_best, 1))
-# 		beta_pre_col_indices_bestVox = np.zeros((n_best, 1)) 
-
-
-# 	### prepare preference indices
-# 	# position_cen =2 and 'nan' are the same!
-# 		for voxelii, voxelIndex in enumerate(voxel_indices_bestVox):
-
-# 			voxelIndex = int(voxelIndex)
-# 			# r_squared_best = voxel[1]
-
-# 			# t_matrix = t_mean [voxelIndex ].reshape(8,8)
-# 			beta_pre_ori = betas_z_ori_mean [voxelIndex]
-# 			beta_pre_col = betas_z_col_mean [voxelIndex]
-
-# 			#  the centers are green / vertical already.--4 (0-4) position
-# 			# beta_ori_cen = np.roll(beta_pre_ori, 1)
-# 			# beta_col_cen = np.roll(beta_pre_col, )  
-
-# 			beta_pre_ori_index = [i for i, j in enumerate(beta_pre_ori) if j == beta_pre_ori.max() ]
-# 			beta_pre_col_index =  [i for i, j in enumerate(beta_pre_col) if j == beta_pre_col.max() ]
-
-# 			if len(beta_pre_ori_index) == 1:
-# 				print 'only one preferred orientation'
-# 			else:
-# 				beta_pre_ori_index = beta_pre_ori_index[0]
-# 				print 'more than one preferred ori'
-
-# 			if len(beta_pre_col_index) == 1:
-# 				print 'only one preferred color'
-# 			else:
-# 				beta_pre_col_index = beta_pre_col_index[0]
-# 				print 'more than one preferred color'			
-			
-# 			beta_pre_ori_indices_bestVox[voxelii ] = beta_pre_ori_index
-# 			beta_pre_col_indices_bestVox[voxelii ] = beta_pre_col_index
-
-# #---------------------------------------------------------
-# 	### a set of tunings for the specific leftout run. 
-
-# 		betas_z_ori_leftOut = betas_z_ori_runs[run_nr_leftOut]
-# 		betas_z_col_leftOut = betas_z_col_runs[run_nr_leftOut]
-# 		# voxel_indices_bestVox 
-# 		# t_pre_indices_bestVox
-		
-# 		if position_cen == 2:
-# 			beta_oriBestVox = np.zeros((n_best, 9))
-# 			beta_colBestVox = np.zeros((n_best, 9))
-
-# 			for nrii, voxelIndex in enumerate(voxel_indices_bestVox):
-
-# 				voxelIndex = int(voxelIndex)
-# 				# t_matrix_leftOut = ts_leftOut[voxelIndex].reshape(8,8)
-# 				beta_ori =  betas_z_ori_leftOut [voxelIndex]
-# 				beta_col = betas_z_col_leftOut [voxelIndex]
-# 				# t_pre_current_index = t_pre_indices_bestVox[nrii]		
-# 				beta_pre_ori_current_index = beta_pre_ori_indices_bestVox[nrii] 
-# 				beta_pre_col_current_index = beta_pre_col_indices_bestVox[nrii]
-
-# 				# center --- always move the peaks to the position_cen, 'x axis will be relative positions'
-# 				# so the labels of x-axis are not the actual values (ori/color), but the relative position on the axis.
-# 				beta_ori_cen = np.roll(beta_ori, int(position_cen-beta_pre_ori_current_index[0]) )
-# 				beta_col_cen = np.roll(beta_col, int(position_cen-beta_pre_col_current_index[0]) )				
-
-# 				# make it circlar
-# 				beta_ori_cir = np.hstack((beta_ori_cen, beta_ori_cen[0]))
-# 				beta_col_cir = np.hstack((beta_col_cen, beta_col_cen[0]))				
-
-
-		
-# 				beta_oriBestVox[nrii,:] = beta_ori_cir
-# 				beta_colBestVox[nrii,:] = beta_col_cir
-
-# 			beta_oriBestVox_mean = np.mean(beta_oriBestVox, axis = 0)
-# 			beta_colBestVox_mean = np.mean(beta_colBestVox, axis = 0)
-
-# 			beta_ori_mean_iterations [filepairii,:] = beta_oriBestVox_mean
-# 			beta_col_mean_iterations [filepairii,:] = beta_colBestVox_mean
-
-# 		elif position_cen == 'nan': 
-# 			beta_z_oriBestVox_0 = []
-# 			beta_z_colBestVox_0 = []
-
-# 			beta_z_oriBestVox_1 = []
-# 			beta_z_colBestVox_1 = []
-# 			beta_z_oriBestVox_2 = []
-# 			beta_z_colBestVox_2 = []
-# 			beta_z_oriBestVox_3 = []
-# 			beta_z_colBestVox_3 = []
-# 			beta_z_oriBestVox_4 = []
-# 			beta_z_colBestVox_4 = []
-# 			beta_z_oriBestVox_5 = []
-# 			beta_z_colBestVox_5 = []
-# 			beta_z_oriBestVox_6 = []
-# 			beta_z_colBestVox_6 = []
-# 			beta_z_oriBestVox_7 = []
-# 			beta_z_colBestVox_7 = []
-
-# 			beta_z_ori_cate = [beta_z_oriBestVox_0, beta_z_oriBestVox_1, beta_z_oriBestVox_2, beta_z_oriBestVox_3, beta_z_oriBestVox_4, beta_z_oriBestVox_5, beta_z_oriBestVox_6, beta_z_oriBestVox_7]
-# 			beta_z_col_cate = [beta_z_colBestVox_0, beta_z_colBestVox_1, beta_z_colBestVox_2, beta_z_colBestVox_3, beta_z_colBestVox_4, beta_z_colBestVox_5, beta_z_colBestVox_6, beta_z_colBestVox_7]
-
-	
-# 			for nrii, voxelIndex in enumerate(voxel_indices_bestVox):
-
-# 				voxelIndex = int(voxelIndex)
-# 				# t_matrix_leftOut = ts_leftOut[voxelIndex].reshape(8,8)
-# 				beta_ori =  betas_z_ori_leftOut [voxelIndex]
-# 				beta_col = betas_z_col_leftOut [voxelIndex]
-# 				# # center --- exact values: make horizontal as the center of the x-axis, so the labels are still the extact positions.
-# 				# # so exact positions for x-axis
-# 				# # make the centers are green / horizontal. 
-# 				# t_matrix_leftOut_cenRow = np.roll(t_matrix_leftOut, 5, axis = 0) # roll downwards by 5 steps, to make the green one as the 4th(0,1,2,3,4), then in the next step, the green one will be at the center.
-# 				# t_matrix_leftOut_cen= np.roll(t_matrix_leftOut_cenRow, 1, axis = 1) # roll to right side by 1 step, to make horizontal be the 4th (be at center through next step)
-
-# 				beta_pre_ori_current_index = beta_pre_ori_indices_bestVox[nrii] 
-# 				beta_pre_col_current_index = beta_pre_col_indices_bestVox[nrii]
-
-# 				# make it circlar
-# 				beta_ori_cir = np.hstack((beta_ori, beta_ori[0]))
-# 				beta_col_cir = np.hstack((beta_col, beta_col[0]))
-
-				
-# 				for i in range(0,8):
-# 					if beta_pre_ori_current_index == i:
-# 						beta_z_ori_cate [i].append(beta_ori_cir)
-					
-# 					if beta_pre_col_current_index == i:
-# 						beta_z_col_cate [i].append(beta_col_cir)
-
-			
-# 			beta_z_ori_cate_mean_leftOut = np.zeros((8,9)) #8 preference locations, 9 points 
-# 			beta_z_col_cate_mean_leftOut = np.zeros((8,9)) 
-
-# 			for i in range(0,8):
-
-# 				beta_z_ori_cate[i] = np.array(beta_z_ori_cate[i]) 
-# 				beta_z_col_cate[i] = np.array(beta_z_col_cate[i])
-
-# 				beta_z_ori_cate_mean_leftOut[i,:] = np.mean(beta_z_ori_cate[i], axis = 0)
-# 				beta_z_col_cate_mean_leftOut[i,:] = np.mean(beta_z_col_cate[i], axis = 0)
-
-# 				len(beta_z_ori_cate[i])
-
-# 			beta_ori_cate_mean_iterations [filepairii, :, :] = beta_z_ori_cate_mean_leftOut
-# 			beta_col_cate_mean_iterations [filepairii, :, :] = beta_z_col_cate_mean_leftOut
-
-
-# # plot figures! across iterations.
-
-# 	print 'plot figures across iterations!'
-
-# 	if position_cen == 2:
-
-# 		beta_ori_mean = np.mean(beta_ori_mean_iterations, axis = 0)
-# 		beta_col_mean = np.mean(beta_col_mean_iterations, axis = 0)
-
-
-# 		sd = np.array([np.std(beta_ori_mean_iterations, axis = 0), np.std(beta_col_mean_iterations, axis = 0)])
-# 		n = len(run_nr_all)
-# 		yerr = (sd/np.sqrt(n))
-
-
-# 		f2 = plt.figure(figsize = (8,6))
-# 		s1 = f2.add_subplot(211)
-# 		plt.plot(beta_ori_mean)
-# 		plt.errorbar(range(0,9), beta_ori_mean, yerr= yerr[0])
-# 		# s1.set_title('orientation', fontsize = 10)
-# 		s1.set_xticklabels(['placeholder', -45, -22.5, 0, 22.5, 45, 67.5, 90, -67.5 ,-45])
-# 		s1.set_xlabel('orientation - relative ')
-
-
-# 		s2 = f2.add_subplot(212)
-# 		plt.plot(beta_col_mean)
-# 		plt.errorbar(range(0,9), beta_col_mean, yerr= yerr[1])
-# 		# s2.set_title('color', fontsize = 10)
-# 		s2.set_xticklabels(['placeholder', -2, -1, 0, 1, 2, 3, 4, -3, -2])
-# 		s2.set_xlabel('color - relative')
-# 		f2.savefig( '%s_%s_%s_%s_cen%s_tValues_%sVoxels.png'%(subname, ROI, data_type, regression, position_cen, n_best))
-
-
-
-# 	elif position_cen == 'nan':
-# 		beta_ori_cate_mean = np.mean(beta_ori_cate_mean_iterations, axis = 0)
-# 		beta_col_cate_mean = np.mean(beta_col_cate_mean_iterations, axis = 0)
-
-# 		beta_ori_cate_yerr = np.std(beta_ori_cate_mean_iterations, axis = 0)/ np.sqrt(len(run_nr_all)) 
-# 		beta_col_cate_yerr = np.std(beta_col_cate_mean_iterations, axis = 0)/ np.sqrt(len(run_nr_all)) # standard error
-
-
-# 		f3 = plt.figure(figsize = (12,10))
-
-# 		colors1 = plt.cm.rainbow(np.linspace(0, 1, len(range(0,8))))
-
-# 		s1 = f3.add_subplot(2,1,1)
-				
-# 		for colii, color in enumerate(colors1, start =0):
-
-# 			if beta_ori_cate_mean[colii].size == 1:
-# 				s1.set_title('no voxels fall into peak position: %s' %(str(colii)) , fontsize = 10)
-
-# 			else:
-# 				plt.plot(beta_ori_cate_mean[colii], color = color, label = 'position:%s' %(str(colii)))
-# 				plt.errorbar(range(0,9), beta_ori_cate_mean[colii], color = color, yerr= beta_ori_cate_yerr[colii]) #
-# 				plt.legend(loc='best')
-		
-
-# 		# for i,j in zip(x,y):
-# 		# 	ax.annotate(str(j),xy=(i,j))
-# 		s1.set_xticklabels(['placeholder', 'horizontal 0', 22.5, 45, 67.5, 'vertical 90', 112.5, 135, 157.5, 'horizontal 0'])
-# 		s1.set_xlabel('orientation - absolute')
-# 		# f3.savefig( '%s_%s_%s_%sOri_8pos_tValues_%sVoxels.png'%(subname, ROI, data_type, regression, n_best))
-
-		
-# 		# f4 = plt.figure(figsize = (12,10))
-# 		s2 = f3.add_subplot(2,1,2)
-# 		# s2 = f4.add_subplot(2,1,2)
-# 		# use colors in the mapping experiment
-# 		# Compute evenly-spaced steps in (L)ab-space
-
-# 		color_theta = (np.pi*2)/8
-# 		color_angle = color_theta * np.arange(0, 8,dtype=float)
-# 		color_radius = 75
-
-# 		color_a = color_radius * np.cos(color_angle)
-# 		color_b = color_radius * np.sin(color_angle)
-
-# 		colors2 = np.array([ct.lab2rgb((55, a, b)) for a,b in zip(color_a, color_b)])	
-# 		colors2 = np.hstack((colors2/255, np.ones((8,1))))
-
-# 		for colii, color in enumerate(colors2, start =0):
-# 			if beta_col_cate_mean[colii].size == 1:
-# 				s2.set_title('no voxels fall into peak position: %s' %(str(colii)) , fontsize = 10)
-
-# 			else:
-# 				plt.plot(beta_col_cate_mean[colii], color = color , label = 'position:%s' %(str(colii)))
-# 				plt.errorbar(range(0,9), beta_col_cate_mean[colii], color = color, yerr= beta_col_cate_yerr[colii])
-# 			plt.legend(loc='best')
-
-# 		s2.set_xlabel('color - absolute')
-# 		# f4.savefig( '%s_%s_%s_%sCol_8pos_tValues_%sVoxels.png'%(subname, ROI, data_type, regression, n_best))
-# 		f3.savefig( '%s_%s_%s_%s_8pos_tValues_%sVoxels.png'%(subname, ROI, data_type, regression, n_best))
+			s2.set_xlabel('color - absolute')
+			# f4.savefig( '%s_%s_%s_%sCol_8pos_tValues_%sVoxels.png'%(subname, ROI, data_type, regression, n_reli))
+			f3.savefig( '%s_%s_%s_%s_8pos_beta_z_%sVoxels.png'%(subname, ROI, data_type, regression, n_reli))
 
 
 
