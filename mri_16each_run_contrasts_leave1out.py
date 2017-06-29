@@ -49,14 +49,15 @@ def rotate_90_clockwise ( myarray ):
 # rh = np.array(nib.load(os.path.join(data_dir_masks, 'rh.V1.thresh_vol_dil.nii.gz')).get_data(), dtype=bool)
 
 
-sublist = [ ('sub-004', True, False), ('sub-001', False, True), ('sub-003', False, True), ]#[('sub-001', False, True) ] [('sub-002', True, False)], [('sub-004', True, False)] [('sub-003', False, True) ]
+# sublist = [ ('sub-004', True, False), ('sub-001', False, True), ('sub-003', False, True), ]#[('sub-001', False, True) ] [('sub-002', True, False)], [('sub-004', True, False)] [('sub-003', False, True) ]
+sublist = [ ('sub-n003', False, False), ('sub-n005', False, False), ]#('sub-n001', False, False), 
 
 data_dir_fmri = '/home/shared/2017/visual/OriColorMapper/preproc/'#'/home/barendregt/disks/Aeneas_Shared/2017/visual/OriColorMapper/preproc/'#'
 #	data_dir_fmri = '/home/shared/2017/visual/OriColorMapper/preproc/sub-002/psc/'
 data_dir_beh = '/home/shared/2017/visual/OriColorMapper/bids_converted/'#'/home/barendregt/disks/Aeneas_Shared/2017/visual/OriColorMapper/bids_converted/'#/home/shared/2017/visual/OriColorMapper/bids_converted/'
 #	data_dir_beh = '/home/shared/2017/visual/OriColorMapper/bids_converted/sub-002/func/'
 #/Users/xiaomeng/subjects/XY_01052017/mri/brainmask.mgz  #or T1.mgz
-data_dir_fixation = '/home/shared/2017/visual/OriColorMapper/raw/'#/home/barendregt/disks/Aeneas_Shared/2017/visual/OriColorMapper/raw/'#/home/shared/2017/visual/OriColorMapper/raw/'
+# data_dir_fixation = '/home/shared/2017/visual/OriColorMapper/raw/'#/home/barendregt/disks/Aeneas_Shared/2017/visual/OriColorMapper/raw/'#/home/shared/2017/visual/OriColorMapper/raw/'
 
 # get fullfield files
 # sub-002_task-location_run-1_bold_brain_B0_volreg_sg.nii.gz
@@ -68,7 +69,7 @@ each_run = True #False #True #False
 ROI = 'V1' # 'V4'
 regression = 'RidgeCV' # can't use GLM, as it's not completed. GLM' #'RidgeCV' 
 position_cen = 2 #'nan' #2 4  #'nan'
-z_score = True
+z_score = False
 select_100 = False
 
 for subii, sub in enumerate(sublist):
@@ -116,10 +117,11 @@ for subii, sub in enumerate(sublist):
 	beh_files.sort()
 
 
-	subject_dir_fixation = os.path.join(data_dir_fixation, subname)
-	fixation_files = glob.glob(subject_dir_fixation +'/output' +'/*.pickle')
+	# subject_dir_fixation = os.path.join(data_dir_fixation, subname)
+	# fixation_files = glob.glob(subject_dir_fixation +'/output' +'/*.pickle')
 	# for new-standard data
-	# fixation_files = glob.glob(subject_dir_fixation + '/*.pickle')
+	subject_dir_fixation = os.path.join(data_dir_beh, subname)
+	fixation_files = glob.glob(subject_dir_fixation +'/func'+ '/*.pickle')
 	fixation_files.sort()
 
 	target_files_fmri = []
@@ -133,20 +135,20 @@ for subii, sub in enumerate(sublist):
 			target_files_fmri.append(fmri_file)
 
 	for beh_file in beh_files:
-		if os.path.split(beh_file)[1].split('_')[1]== target_condition:
+		if (os.path.split(beh_file)[1].split('_')[3]== 'trialinfo.pickle')*(os.path.split(beh_file)[1].split('_')[1]== target_condition):
 			target_files_beh.append(beh_file)
 
 	for moco_file in moco_files:
 		if os.path.split(moco_file)[1].split('_')[1]== target_condition:
 			target_files_moco.append(moco_file)
 
-	for fixation_file in fixation_files:
-		if os.path.split(fixation_file)[1].split('_')[1]== target_condition:
-			target_files_fixation.append(fixation_file)
-	# for new-standard data
 	# for fixation_file in fixation_files:
-	# 	if (os.path.split(fixation_file)[1].split('_')[0]== params)*(os.path.split(fixation_file)[1].split('_')[1]== target_condition):
+	# 	if os.path.split(fixation_file)[1].split('_')[1]== target_condition:
 	# 		target_files_fixation.append(fixation_file)
+	# for new-standard data
+	for fixation_file in fixation_files:
+		if (os.path.split(fixation_file)[1].split('_')[3]== 'params.pickle')*(os.path.split(fixation_file)[1].split('_')[1]== target_condition):
+			target_files_fixation.append(fixation_file)
 
 # #----------------------------------------------------------------------------------------------------------		
 # #----------------------------------------------------------------------------------------------------------
@@ -187,7 +189,7 @@ for subii, sub in enumerate(sublist):
 
 	## Load all types of data
 	file_pairs_all = np.array(zip (target_files_fmri, target_files_beh, target_files_moco, target_files_fixation))
-	
+
 	# t_runs = [] 
 	r_squareds_runs = []
 	r_squareds_selection_runs = []
@@ -271,12 +273,12 @@ for subii, sub in enumerate(sublist):
 
 		#create events with 1
 		tmp_trial_order_ori  = np.zeros((fmri_data.shape[1],1))
-		#15 + 256( 2* 128) +15 =286, (286,1)
+		#15 + 256( 2* 128) +15 =286, (286,1)  new: 15+ 512(2*256) +15 =542
 		tmp_trial_order_ori[empty_start:-empty_end:2] = trial_order_ori[:]   
 		events_ori = np.hstack([np.array(tmp_trial_order_ori == stim, dtype=int) for stim in np.arange(1,number_of_stimuli+1)])
 
 
-		events = np.hstack([events_ori, events_col])  # orientation + col
+		events = np.hstack([events_ori, events_col])  # orientation + col (542,16)
 
 	## Load motion correction parameters
 		moco_params = pd.read_csv(filename_moco, delim_whitespace=True, header = None)
@@ -286,15 +288,16 @@ for subii, sub in enumerate(sublist):
 	# ## Load fixation task parameters
 		fixation_order_run = pickle.load(open(filename_fixation, 'rb'))
 		eventArray = fixation_order_run['eventArray']  # a list of lists
-
 		key_press = np.zeros((fmri_data.shape[1],1))
 
-		for n_event, event in enumerate (eventArray):
-			for txt in event:
-				if 'key: y' in txt:
+		for event in eventArray:
+			# for txt in event:
+				if 'key: y' in event:
+					n_event = int(event.split( )[1])
 					key_press[n_event] = 1
 
-				elif 'key: b' in txt:
+				elif 'key: b' in event:
+					n_event = int(event.split( )[1])
 					key_press[n_event] = 1
 
 	### Load stimulus regressor
@@ -398,6 +401,7 @@ for subii, sub in enumerate(sublist):
 
 		betas_ori_runs.append(betas_ori_per_run)
 		betas_col_runs.append(betas_col_per_run)
+
 
 	betas_z_ori_runs = np.array(betas_z_ori_runs)
 	betas_z_col_runs = np.array(betas_z_col_runs)
