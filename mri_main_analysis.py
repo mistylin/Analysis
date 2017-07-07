@@ -26,15 +26,9 @@ from tools import two_gamma as hrf
 
 import mri_load_data as ld
 
-	# results = np.zeros((n_voxels,3))
-	# r_squareds =  np.zeros((n_voxels, )) 
-	# alphas =  np.zeros((n_voxels, 1))
-	# intercept =  np.zeros((n_voxels, 1))
-	# betas = np.zeros((n_voxels, n_regressors ))  #shape (5734, 71)
-	# _sse = np.zeros((n_voxels, ))
-
-	# r_squareds_selection =  np.zeros((n_voxels, ))
-	# betas_selection = np.zeros((n_voxels, n_regressors ))
+import numpy as np
+import pyvttbl as pt
+from collections import namedtuple
 
 def run_regression(fileii, design_matrix, design_matrix_selection, fmri_data, regression = 'RidgeCV'):
 
@@ -72,7 +66,8 @@ def run_regression(fileii, design_matrix, design_matrix_selection, fmri_data, re
 		print 'finish GLM'
 
 	elif regression == 'RidgeCV':
-		ridge_fit = RidgeCV(alphas = np.linspace(1,400,400) , fit_intercept = False, normalize = True )
+		ridge_fit = RidgeCV(alphas = np.concatenate( (np.array([1]), np.linspace(5,400,80)) ) , fit_intercept = False, normalize = True )
+		# ridge_fit = RidgeCV(alphas = [1] , fit_intercept = False, normalize = True )
 		
 		# alpha_range = [0.001, 1000]
 		#[0.001,0.01,1,10,100,1000]
@@ -109,6 +104,33 @@ def run_regression(fileii, design_matrix, design_matrix_selection, fmri_data, re
 
 	return r_squareds, r_squareds_selection, betas, betas_selection, _sse, intercept, alphas
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def calculate_t_p_values (betas, fmri_data, moco_params, key_press, design_matrix, _sse, n_contrasts = 64 ):
 	# compute contrasts
 	# if type_contrasts == 'full':
@@ -138,6 +160,7 @@ def calculate_t_p_values (betas, fmri_data, moco_params, key_press, design_matri
 		p[:,i] = scipy.stats.t.sf(np.abs(t[:,i]), df)*2		
 
 	return t, p
+
 
 def get_voxel_indices_reliVox(r_squareds_selection_runs, r_squareds_threshold = 0.05, select_100 = False ):
 	# r_squareds_threshold = 0.05
@@ -174,6 +197,53 @@ def find_preference_matrix_allRuns( beta_runs, n_reli, voxel_indices_reliVox) :
 
 		beta_pre_indices_reliVox[voxelii, :] = beta_pre_index # 7,0 -- 
 	return beta_pre_indices_reliVox
+
+
+
+
+
+
+def find_preference_16ch_allRuns( betas_ori_runs, betas_col_runs, n_reli, voxel_indices_reliVox) :
+
+	betas_ori_mean_all = np.mean(betas_ori_runs, axis = 0)
+	betas_col_mean_all = np.mean(betas_col_runs, axis = 0)
+
+	beta_pre_ori_indices_reliVox = np.zeros((n_reli, 1))
+	beta_pre_col_indices_reliVox = np.zeros((n_reli, 1)) 		
+
+### prepare preference indices
+# position_cen =2 and 'nan' are the same!
+	for voxelii, voxelIndex in enumerate(voxel_indices_reliVox):
+
+		voxelIndex = int(voxelIndex)
+		# r_squared_best = voxel[1]
+
+		# t_matrix = t_mean [voxelIndex ].reshape(8,8)
+		beta_pre_ori = betas_ori_mean_all [voxelIndex]
+		beta_pre_col = betas_col_mean_all [voxelIndex]
+
+		#  the centers are green / vertical already.--4 (0-4) position
+		# beta_ori_cen = np.roll(beta_pre_ori, 1)
+		# beta_col_cen = np.roll(beta_pre_col, )  
+
+		beta_pre_ori_index = [i for i, j in enumerate(beta_pre_ori) if j == beta_pre_ori.max() ]
+		beta_pre_col_index =  [i for i, j in enumerate(beta_pre_col) if j == beta_pre_col.max() ]
+
+		if len(beta_pre_ori_index) != 1:
+			beta_pre_ori_index = beta_pre_ori_index[0]
+			print 'more than one preferred ori'
+		if len(beta_pre_col_index) != 1:
+			beta_pre_col_index = beta_pre_col_index[0]
+			print 'more than one preferred color'			
+
+		beta_pre_ori_indices_reliVox[voxelii ] = beta_pre_ori_index
+		beta_pre_col_indices_reliVox[voxelii ] = beta_pre_col_index
+
+	return beta_pre_ori_indices_reliVox, beta_pre_col_indices_reliVox
+
+
+
+
 
 
 

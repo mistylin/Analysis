@@ -1,0 +1,31 @@
+r_squareds ~ model_type
+
+TESTS OF WITHIN SUBJECTS EFFECTS
+
+Measure: r_squareds
+     Source                              Type III    eps       df        MS          F       Sig.   et2_G   Obs.      SE       95% CI    lambda     Obs.  
+                                            SS                                                                                                      Power 
+=========================================================================================================================================================
+model_type          Sphericity Assumed    111.892       -          2    55.946   12921.075      0   1.037   5734   8.690e-04    0.002   12923.328       1 
+                    Greenhouse-Geisser    111.892   0.503      1.006   111.212   12921.075      0   1.037   5734   8.690e-04    0.002   12923.328       1 
+                    Huynh-Feldt           111.892   0.503      1.006   111.212   12921.075      0   1.037   5734   8.690e-04    0.002   12923.328       1 
+                    Box                   111.892   0.500          1   111.892   12921.075      0   1.037   5734   8.690e-04    0.002   12923.328       1 
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Error(model_type)   Sphericity Assumed     49.646       -      11466     0.004                                                                            
+                    Greenhouse-Geisser     49.646   0.503   5768.020     0.009                                                                            
+                    Huynh-Feldt            49.646   0.503   5768.020     0.009                                                                            
+                    Box                    49.646   0.500       5733     0.009                                                                            
+
+TABLES OF ESTIMATED MARGINAL MEANS
+
+Estimated Marginal Means for model_type
+model_type   Mean    Std. Error   95% Lower Bound   95% Upper Bound 
+===================================================================
+64ch         0.212        0.002             0.209             0.216 
+8ch_col      0.039    3.377e-04             0.038             0.039 
+8ch_ori      0.044    3.883e-04             0.044             0.045 
+
+
+t_64vs8ori_r2_rel: 115.18, p_64vs8ori_r2_rel: 0.00
+t_64vs8col_r2_rel: 113.09, p_64vs8col_r2_rel: 0.00
+t_8oriVs8col_r2_rel: 30.36, p_8oriVs8col_r2_rel: 0.00
