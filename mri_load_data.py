@@ -12,30 +12,83 @@ import pickle
 from IPython import embed as shell
 import matplotlib.pyplot as plt
 import pandas as pd
+import copy
 
 
-
-def nan_filter(target_files_fmri, lh, rh):
+def voxel_filter(target_files_fmri, lh, rh):
 	# #check nan values	
 	nan_voxels = []
+	same_voxels = []
 	for filename_fmri in target_files_fmri:
 		unmasked_fmri_data = nib.load(filename_fmri).get_data()
 		fmri_data = np.vstack([unmasked_fmri_data[lh,:], unmasked_fmri_data[rh,:]])
-		  
+
+		# if filename_fmri == target_files_fmri[0]:
+		# 	fmri_data_first_run = copy.copy(fmri_data)
+
+		# 	fmri_data_first_run_lh = unmasked_fmri_data[lh,:]
+		#  	fmri_data_first_run_rh = unmasked_fmri_data[rh,:]
+
 		n_all_voxels = fmri_data.shape[0] # 5728, 5728, 5728, 5728
 		print 'n_all_voxels:', n_all_voxels 
 		
 		nan_voxels.extend(np.argwhere(fmri_data.sum(axis=1)==0).flatten())
 
-	voxel_list =[]
-
 	print 'found %i nan voxels'%len(nan_voxels)
 
+	voxel_list_without_nan =[]
 	for i in range(n_all_voxels):
 		if i not in nan_voxels:
-			voxel_list.append(i)
+			voxel_list_without_nan.append(i)
 	print 'finish checking nan values'
+
+
+
+	# for filename_fmri in target_files_fmri:
+	# 	unmasked_fmri_data = nib.load(filename_fmri).get_data()
+	# 	fmri_data = np.vstack([unmasked_fmri_data[lh,:], unmasked_fmri_data[rh,:]])[voxel_list_without_nan,:]
+
+		# if filename_fmri == target_files_fmri[0]:
+	# for i in voxel_list_without_nan:
+	# 	for j in voxel_list_without_nan:
+	# 		if i != j:
+	# 			b = pearsonr(fmri_data[i], fmri_data[j])[0]
+	# 			if b ==1:
+	# 				print 'find you! (%i, %i)' % (i, j)
+	# 				same_voxels.append((i, j))
+	# 			else:
+	# 				print i, j, b
+
+
+	for i in voxel_list_without_nan :
+		for j in voxel_list_without_nan :
+			if i < j:
+				a = pearsonr(fmri_data[i], fmri_data[j])[0]
+				if a ==1:
+					print 'find you! (%i, %i)' % (i, j)
+					same_voxels.append((i,j))
+				else:
+					print i,j,a
+	print 'found %i doubled voxels'% len(same_voxels)
+
+	duplicated_voxels = np.array(same_voxels)[:, 1] #.flatten()
+	voxel_list = []
+	for i in voxel_list_without_nan:
+		if i not in duplicated_voxels:
+			voxel_list.append(i)
+	print 'finish checking freesurfer masks'
+
+
+	# voxel_list = []
+	# for i in voxel_list_without_nan:
+	# 	if i not in same_voxels:
+	# 		voxel_list.append(i)
+	# print 'finish checking freesurfer masks'
+
 	return voxel_list
+
+
+
 
 def load_fmri(filename_fmri, voxel_list, lh, rh):
 	unmasked_fmri_data = nib.load(filename_fmri).get_data()

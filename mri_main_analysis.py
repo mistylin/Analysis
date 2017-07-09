@@ -100,7 +100,7 @@ def run_regression(fileii, design_matrix, design_matrix_selection, fmri_data, re
 			# r_squareds_selection[x] = ridge_fit_selection.score(design_matrix_selection, fmri_data[x,:])
 			# betas_selection[x] = ridge_fit.coef_.T
 
-		print 'finish RidgeCV'
+		print 'finish %s RidgeCV'%(str(fileii))
 
 	return r_squareds, r_squareds_selection, betas, betas_selection, _sse, intercept, alphas
 

@@ -1,0 +1,31 @@
+sub-n005
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mNameError[0m                                 Traceback (most recent call last)
+[0;32m/home/xiaomeng/Analysis/mri_64vs16_functions.py[0m in [0;36m<module>[0;34m()[0m
+[1;32m      1[0m [0msys[0m[0;34m.[0m[0mstdout[0m [0;34m=[0m [0mopen[0m[0;34m([0m[0;34m'%s_F_t_64v8v8_r2.txt'[0m[0;34m%[0m[0;34m([0m[0msubname[0m[0;34m)[0m[0;34m,[0m [0;34m'w'[0m[0;34m)[0m[0;34m[0m[0m
+[1;32m      2[0m [0;32mprint[0m [0msubname[0m[0;34m[0m[0m
+[0;32m----> 3[0;31m [0;32mprint[0m [0maov[0m[0;34m[0m[0m
+[0m[1;32m      4[0m [0;34m[0m[0m
+[1;32m      5[0m [0;32mprint[0m [0;34m't_64vs8ori_r2_rel: %f, p_64vs8ori_r2_rel: %f, correction: %f'[0m [0;34m%[0m[0;34m([0m[0mt_64vs8ori_r2_rel[0m[0;34m,[0m [0mp_64vs8ori_r2_rel[0m[0;34m,[0m [0mp_64vs8ori_r2_rel[0m[0;34m*[0m[0mlen[0m[0;34m([0m[0mvoxel_list[0m[0;34m)[0m[0;34m*[0m[0;36m3[0m [0;34m)[0m[0;34m[0m[0m
+
+[0;31mNameError[0m: name 'aov' is not defined
+
+[0msys[0m[0;34m.[0m[0mstdout[0m [0;34m=[0m [0mopen[0m[0;34m([0m[0;34m'%s_F_t_64v8v8_r2.txt'[0m[0;34m%[0m[0;34m([0m[0msubname[0m[0;34m)[0m[0;34m,[0m [0;34m'w'[0m[0;34m)[0m[0;34m[0m
+[0;34m[0m[0;32mprint[0m [0msubname[0m[0;34m[0m
+[0;34m[0m[0;32mprint[0m [0maov[0m[0;34m[0m
+[0;34m[0m[0;34m[0m
+[0;34m[0m[0;32mprint[0m [0;34m't_64vs8ori_r2_rel: %f, p_64vs8ori_r2_rel: %f, correction: %f'[0m [0;34m%[0m[0;34m([0m[0mt_64vs8ori_r2_rel[0m[0;34m,[0m [0mp_64vs8ori_r2_rel[0m[0;34m,[0m [0mp_64vs8ori_r2_rel[0m[0;34m*[0m[0mlen[0m[0;34m([0m[0mvoxel_list[0m[0;34m)[0m[0;34m*[0m[0;36m3[0m [0;34m)[0m[0;34m[0m
+[0;34m[0m[0;32mprint[0m [0;34m't_64vs8col_r2_rel: %f, p_64vs8col_r2_rel: %f, correction: %f '[0m [0;34m%[0m[0;34m([0m[0mt_64vs8col_r2_rel[0m[0;34m,[0m [0mp_64vs8col_r2_rel[0m[0;34m,[0m [0mp_64vs8ori_r2_rel[0m[0;34m*[0m[0mlen[0m[0;34m([0m[0mvoxel_list[0m[0;34m)[0m[0;34m*[0m[0;36m3[0m [0;34m)[0m[0;34m[0m
+[0;34m[0m[0;32mprint[0m [0;34m't_8oriVs8col_r2_rel: %f, p_8oriVs8col_r2_rel: %f, correction: %f'[0m [0;34m%[0m[0;34m([0m[0mt_8oriVs8col_r2_rel[0m[0;34m,[0m [0mp_8oriVs8col_r2_rel[0m[0;34m,[0m [0mp_64vs8ori_r2_rel[0m[0;34m*[0m[0mlen[0m[0;34m([0m[0mvoxel_list[0m[0;34m)[0m[0;34m*[0m[0;36m3[0m [0;34m)[0m[0;34m[0m
+[0;34m[0m[0;34m[0m
+[0;34m[0m[0;32mprint[0m [0mp_64vs8ori_r2_rel[0m[0;34m*[0m[0mlen[0m[0;34m([0m[0mvoxel_list[0m[0;34m)[0m[0;34m*[0m[0;36m3[0m[0;34m[0m
+[0;34m[0m[0;32mprint[0m [0mp_64vs8ori_r2_rel[0m[0;34m*[0m[0mlen[0m[0;34m([0m[0mvoxel_list[0m[0;34m)[0m[0;34m*[0m[0;36m3[0m[0;34m[0m
+[0;34m[0m[0;32mprint[0m [0mp_64vs8ori_r2_rel[0m[0;34m*[0m[0mlen[0m[0;34m([0m[0mvoxel_list[0m[0;34m)[0m[0;34m*[0m[0;36m3[0m[0;34m[0m
+[0;34m[0m[0;34m[0m
+[0;34m[0m[0;34m[0m
+[0;34m[0m[0;31m# print 'beta_runs_64'[0m[0;34m[0m
+[0;34m[0m[0;31m# print beta_runs_64[0m[0;34m[0m
+[0;34m[0m[0;34m[0m
+[0;34m[0m[0msys[0m[0;34m.[0m[0mstdout[0m[0;34m.[0m[0mclose[0m[0;34m([0m[0;34m)[0m[0;34m[0m[0m
+
+## -- End pasted text --
