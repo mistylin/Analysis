@@ -98,6 +98,10 @@ def load_fmri(filename_fmri, voxel_list, lh, rh):
 	return fmri_data
 
 def load_event_64channels (filename_beh, fmri_data, empty_start = 15, empty_end = 15, number_of_stimuli = 64):
+	empty_start = 15
+	empty_end = 15
+	number_of_stimuli = 64
+
 	trial_order_run = pickle.load(open(filename_beh, 'rb'))[1]
 	#create events with 1
 	tmp_trial_order_run  = np.zeros((fmri_data.shape[1],1))
@@ -110,7 +114,9 @@ def load_event_64channels (filename_beh, fmri_data, empty_start = 15, empty_end 
 def load_event_16channels (filename_beh, fmri_data, empty_start = 15, empty_end = 15, number_of_stimuli = 8):
 	trial_order_run = pickle.load(open(filename_beh, 'rb'))[1]
 	#  the first 8 values represent all orientations but only 1color
-
+	empty_start = 15
+	empty_end = 15
+	number_of_stimuli = 8
 	## for trial_order_col------------------------------------
 	trial_order_col = np.zeros((len(trial_order_run),))
 

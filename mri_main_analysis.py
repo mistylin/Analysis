@@ -30,7 +30,7 @@ import numpy as np
 import pyvttbl as pt
 from collections import namedtuple
 
-def run_regression(fileii, design_matrix, design_matrix_selection, fmri_data, regression = 'RidgeCV'):
+def run_regression(fileii, design_matrix, fmri_data, regression = 'RidgeCV'):
 
 	global n_voxels, n_TRs, n_regressors, df #, results, r_squareds, alphas, intercept, betas, _sse 
 
@@ -102,7 +102,7 @@ def run_regression(fileii, design_matrix, design_matrix_selection, fmri_data, re
 
 		print 'finish %s RidgeCV'%(str(fileii))
 
-	return r_squareds, r_squareds_selection, betas, betas_selection, _sse, intercept, alphas
+	return r_squareds, betas, _sse, intercept, alphas
 
 
 
