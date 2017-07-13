@@ -55,7 +55,7 @@ t_64vs8col = []
 t_8oriVs8col = []
 
 for subii, sub in enumerate(sublist):
-	shell()
+
 
 	subname = sub[0]
 	retinotopic = sub[1]
@@ -144,11 +144,11 @@ for subii, sub in enumerate(sublist):
 
 	## check nans
 	# voxel_list = ld.voxel_filter(target_files_fmri, lh, rh)
-	# voxel_list = voxel_lists[subii]
+	voxel_list = voxel_lists[subii]
 	
 	##subn001
 	# voxel_list = [voxel_lists[subii][442] ]
-	voxel_list = [voxel_lists[subii][442], voxel_lists[subii][5046], voxel_lists[subii][684], voxel_lists[subii][415], voxel_lists[subii][5059], voxel_lists[subii][2194], voxel_lists[subii][5169], voxel_lists[subii][387], voxel_lists[subii][3544], voxel_lists[subii][428]]
+	# voxel_list = [voxel_lists[subii][442], voxel_lists[subii][5046], voxel_lists[subii][684], voxel_lists[subii][415], voxel_lists[subii][5059], voxel_lists[subii][2194], voxel_lists[subii][5169], voxel_lists[subii][387], voxel_lists[subii][3544], voxel_lists[subii][428]]
 	##subn005
 	# voxel_list = [voxel_lists[subii][2224], voxel_lists[subii][4687]]
 
@@ -326,7 +326,7 @@ for subii, sub in enumerate(sublist):
 ###  beta values  ---------------------------------------------------------------
 ###  beta values  ---------------------------------------------------------------
 ###  beta values  ---------------------------------------------------------------
-	shell()
+
 	beta_runs_64 = np.array(beta_runs_64)
 	r_squareds_runs_64 = np.array(r_squareds_runs_64)
 	beta_runs_8_ori = np.array(beta_runs_8_ori)
@@ -387,7 +387,7 @@ for subii, sub in enumerate(sublist):
 	design_matrix_8_ori_runs = np.array(design_matrix_8_ori_runs)
 	design_matrix_8_col_runs = np.array(design_matrix_8_col_runs)
 
-	shell()
+
 
 	for modelii in ['64','8ori','8col']:
 		for volii in np.arange(1,2,1): #(1,31,1)
@@ -402,89 +402,88 @@ for subii, sub in enumerate(sublist):
 			
 			# beta_64_best_voxel = beta_64_across_runs [best_voxel_index]
 
-
 			# modelii = '64'
 			# best_voxel_index = 0
 
-			run_nr_all = np.arange(file_pairs_all.shape[0])
 
-			
-			for x in range(voxel_list):
-				best_voxel_index = x
+			# run_nr_all = np.arange(file_pairs_all.shape[0])			
+			# # for x in range(voxel_list):
+			# # 	best_voxel_index = x
 
-				f = plt.figure(figsize = (12,12))
-				for i in run_nr_all:
-					s1=f.add_subplot(4,1,i+1)
+			# 	f = plt.figure(figsize = (12,12))
+			# 	for i in run_nr_all:
+			# 		s1=f.add_subplot(4,1,i+1)
 
-					plt.plot(fmri_data_runs[i, best_voxel_index, :])
-					plt.plot(design_matrix_64_runs[i].dot(beta_runs_64_allRegressors[ i, best_voxel_index, :] + intercept_runs_64 [ i , best_voxel_index]), 'g')
-					s1.set_xlabel('64_run%i_alpha_%s_r2_[%.2f]'%( i, str(alphas_runs_8_ori[ i, best_voxel_index]), r_squareds_runs_8_ori[ i, best_voxel_index]), fontsize = 10)
+			# 		plt.plot(fmri_data_runs[i, best_voxel_index, :])
+			# 		plt.plot(design_matrix_64_runs[i].dot(beta_runs_64_allRegressors[ i, best_voxel_index, :] + intercept_runs_64 [ i , best_voxel_index]), 'g')
+			# 		s1.set_xlabel('64_run%i_alpha_%s_r2_[%.2f]'%( i, str(alphas_runs_8_ori[ i, best_voxel_index]), r_squareds_runs_8_ori[ i, best_voxel_index]), fontsize = 10)
 
-				f.savefig('%s-%s_%s-modelFit&Events.pdf'%(subname, '64', str(x) ))	
+			# 	f.savefig('%s-%s_%s-modelFit&Events.pdf'%(subname, '64', str(x) ))	
 		
-				f = plt.figure(figsize = (12,12))
-				for i in run_nr_all:
-					s1=f.add_subplot(4,1,i+1)
-					plt.plot(fmri_data_runs[i, best_voxel_index, :])
-					plt.plot(design_matrix_8_ori_runs[i].dot(beta_runs_8_ori_allRegressors[ i, best_voxel_index, :] + intercept_runs_8_ori [ i, best_voxel_index]))
-					# plt.plot(events_8_ori_runs[i])
-					s1.set_xlabel('8ch_ori_run%i_alpha_%s_r2_[%.2f]'%( i, str(alphas_runs_8_ori[ i, best_voxel_index]), r_squareds_runs_8_ori[ i, best_voxel_index]), fontsize = 10)
-				f.savefig('%s-%s_%s-modelFit&Events.pdf'%(subname, '8chOri', str(x)  ))
+			# 	f = plt.figure(figsize = (12,12))
+			# 	for i in run_nr_all:
+			# 		s1=f.add_subplot(4,1,i+1)
+			# 		plt.plot(fmri_data_runs[i, best_voxel_index, :])
+			# 		plt.plot(design_matrix_8_ori_runs[i].dot(beta_runs_8_ori_allRegressors[ i, best_voxel_index, :] + intercept_runs_8_ori [ i, best_voxel_index]))
+			# 		# plt.plot(events_8_ori_runs[i])
+			# 		s1.set_xlabel('8ch_ori_run%i_alpha_%s_r2_[%.2f]'%( i, str(alphas_runs_8_ori[ i, best_voxel_index]), r_squareds_runs_8_ori[ i, best_voxel_index]), fontsize = 10)
+			# 	f.savefig('%s-%s_%s-modelFit&Events.pdf'%(subname, '8chOri', str(x)  ))
 
-				f = plt.figure(figsize = (12,12))
-				for i in run_nr_all:
-					s1=f.add_subplot(4,1,i+1)
-					plt.plot(fmri_data_runs[i, best_voxel_index, :])
-					plt.plot(design_matrix_8_col_runs[i].dot(beta_runs_8_col_allRegressors[ i, best_voxel_index, :] + intercept_runs_8_col [ i, best_voxel_index]))
-					# plt.plot(events_8_col_runs[i])
-					s1.set_xlabel('8ch_col_run%i_alpha_%s_r2_[%.2f]'%( i, str(alphas_runs_8_col[ i, best_voxel_index]), r_squareds_runs_8_col[ i, best_voxel_index]), fontsize = 10)
-				# f.savefig('%s-%s_%s-modelFit&Events.pdf'%(subname, '8chCol', str(x)  ))
+			# 	f = plt.figure(figsize = (12,12))
+			# 	for i in run_nr_all:
+			# 		s1=f.add_subplot(4,1,i+1)
+			# 		plt.plot(fmri_data_runs[i, best_voxel_index, :])
+			# 		plt.plot(design_matrix_8_col_runs[i].dot(beta_runs_8_col_allRegressors[ i, best_voxel_index, :] + intercept_runs_8_col [ i, best_voxel_index]))
+			# 		# plt.plot(events_8_col_runs[i])
+			# 		s1.set_xlabel('8ch_col_run%i_alpha_%s_r2_[%.2f]'%( i, str(alphas_runs_8_col[ i, best_voxel_index]), r_squareds_runs_8_col[ i, best_voxel_index]), fontsize = 10)
+			# 	# f.savefig('%s-%s_%s-modelFit&Events.pdf'%(subname, '8chCol', str(x)  ))
 
 
 ###----------------------------------------------------------------------------
-			run_nr_all = np.arange(file_pairs_all.shape[0])
-			f = plt.figure(figsize = (12*len(run_nr_all),12))
-			gs=GridSpec(3,len(run_nr_all)) # (2,3)2 rows, 3 columns
+			# run_nr_all = np.arange(file_pairs_all.shape[0])
+			# f = plt.figure(figsize = (12*len(run_nr_all),12))
+			# gs=GridSpec(3,len(run_nr_all)) # (2,3)2 rows, 3 columns
 			# gs=GridSpec(3,1) # (2,3)2 rows, 3 columns			
 			# 1. fmri data & model BOLD response
 			# s1 = f.add_subplot(4,1,1)
 
-				# for j in [0,1,2]:
-			# i = 3
-			names = ['442', '5046', '684', '415', '5059', '2194', '5169', '387', '3544', '428']
-			for y in range(len(names)):
-				best_voxel_index = y
 
-				run_nr_all = np.arange(file_pairs_all.shape[0])
-				f = plt.figure(figsize = (12*len(run_nr_all),12))
-				gs=GridSpec(3,len(run_nr_all)) # (2,3)2 rows, 3 columns
-					
-				for i in run_nr_all:
+			# names = ['442', '5046', '684', '415', '5059', '2194', '5169', '387', '3544', '428']
+			# for y in range(len(names)):
+			# 	best_voxel_index = y
+
+			run_nr_all = np.arange(file_pairs_all.shape[0])
+			f = plt.figure(figsize = (12*len(run_nr_all),12))
+			gs=GridSpec(3,len(run_nr_all)) # (2,3)2 rows, 3 columns
+				
+			for i in run_nr_all:
+						
+				s1=f.add_subplot(gs[0,i]) # First row, first column
+				plt.plot(fmri_data_runs[i, best_voxel_index, :])	
 							
-					s1=f.add_subplot(gs[0,i]) # First row, first column
-					plt.plot(fmri_data_runs[i, best_voxel_index, :])	
-								
-					# design_matrix_64_plot = np.hstack([ design_matrix_64[:, 0:128:2],  design_matrix_64[:, -7:] ])
-					# beta_runs_64_allRegressors_plot = np.hstack( [ beta_runs_64_allRegressors[ i, best_voxel_index, 0:128:2],  beta_runs_64_allRegressors[ i, best_voxel_index, -7:]   ]  )
-					plt.plot(design_matrix_64_runs[i].dot(beta_runs_64_allRegressors[ i, best_voxel_index, :] + intercept_runs_64 [ i , best_voxel_index]))
-					s1.set_xlabel('64ch_time_course_alpha_%s_r2_[%.2f]'%( str(alphas_runs_64 [ i, best_voxel_index]), r_squareds_runs_64[ i, best_voxel_index]), fontsize = 10)
+				# design_matrix_64_plot = np.hstack([ design_matrix_64[:, 0:128:2],  design_matrix_64[:, -7:] ])
+				# beta_runs_64_allRegressors_plot = np.hstack( [ beta_runs_64_allRegressors[ i, best_voxel_index, 0:128:2],  beta_runs_64_allRegressors[ i, best_voxel_index, -7:]   ]  )
+				plt.plot(design_matrix_64_runs[i].dot(beta_runs_64_allRegressors[ i, best_voxel_index, :] + intercept_runs_64 [ i , best_voxel_index]))
+				s1.set_xlabel('64ch_time_course_alpha_%s_r2_[%.2f]'%( str(alphas_runs_64 [ i, best_voxel_index]), r_squareds_runs_64[ i, best_voxel_index]), fontsize = 10)
 
-					s2=f.add_subplot(gs[1,i]) # First row, first column
-					plt.plot(fmri_data_runs[i, best_voxel_index, :])
-					# design_matrix_8_ori = np.hstack( [design_matrix_8_ori[:, 0:16:2], design_matrix_8_ori[:, -7:] ] )
-					# beta_runs_8_ori_allRegressors = np.hstack ( [beta_runs_8_ori_allRegressors[ i, best_voxel_index,0:16:2 ],  beta_runs_8_ori_allRegressors[ i, best_voxel_index, -7: ] ])
-					plt.plot(design_matrix_8_ori_runs[i].dot(beta_runs_8_ori_allRegressors[ i, best_voxel_index, :] + intercept_runs_8_ori [ i, best_voxel_index]))
-					s2.set_xlabel('8ch_ori_time_course_alpha_%s_r2_[%.2f]'%( str(alphas_runs_8_ori[ i, best_voxel_index]), r_squareds_runs_8_ori[ i, best_voxel_index]), fontsize = 10)
+				s2=f.add_subplot(gs[1,i]) # First row, first column
+				plt.plot(fmri_data_runs[i, best_voxel_index, :])
+				# design_matrix_8_ori = np.hstack( [design_matrix_8_ori[:, 0:16:2], design_matrix_8_ori[:, -7:] ] )
+				# beta_runs_8_ori_allRegressors = np.hstack ( [beta_runs_8_ori_allRegressors[ i, best_voxel_index,0:16:2 ],  beta_runs_8_ori_allRegressors[ i, best_voxel_index, -7: ] ])
+				plt.plot(design_matrix_8_ori_runs[i].dot(beta_runs_8_ori_allRegressors[ i, best_voxel_index, :] + intercept_runs_8_ori [ i, best_voxel_index]))
+				s2.set_xlabel('8ch_ori_time_course_alpha_%s_r2_[%.2f]'%( str(alphas_runs_8_ori[ i, best_voxel_index]), r_squareds_runs_8_ori[ i, best_voxel_index]), fontsize = 10)
 
-					s3=f.add_subplot(gs[2,i]) # First row, first column
-					plt.plot(fmri_data_runs[i, best_voxel_index, :])
-					# design_matrix_8_col = np.hstack( [design_matrix_8_col[:, 0:16:2], design_matrix_8_col[:, -7:] ] )
-					# beta_runs_8_col_allRegressors = np.hstack ( [beta_runs_8_col_allRegressors[ i, best_voxel_index,0:16:2 ],  beta_runs_8_col_allRegressors[ i, best_voxel_index, -7: ] ])
-					plt.plot(design_matrix_8_col_runs[i].dot(beta_runs_8_col_allRegressors[ i, best_voxel_index, :] + intercept_runs_8_col [ i, best_voxel_index]))
-					s3.set_xlabel('8ch_col_time_course_alpha_%s_r2_[%.2f]'%( str(alphas_runs_8_col[ i, best_voxel_index]), r_squareds_runs_8_col[ i, best_voxel_index]), fontsize = 10)
+				s3=f.add_subplot(gs[2,i]) # First row, first column
+				plt.plot(fmri_data_runs[i, best_voxel_index, :])
+				# design_matrix_8_col = np.hstack( [design_matrix_8_col[:, 0:16:2], design_matrix_8_col[:, -7:] ] )
+				# beta_runs_8_col_allRegressors = np.hstack ( [beta_runs_8_col_allRegressors[ i, best_voxel_index,0:16:2 ],  beta_runs_8_col_allRegressors[ i, best_voxel_index, -7: ] ])
+				plt.plot(design_matrix_8_col_runs[i].dot(beta_runs_8_col_allRegressors[ i, best_voxel_index, :] + intercept_runs_8_col [ i, best_voxel_index]))
+				s3.set_xlabel('8ch_col_time_course_alpha_%s_r2_[%.2f]'%( str(alphas_runs_8_col[ i, best_voxel_index]), r_squareds_runs_8_col[ i, best_voxel_index]), fontsize = 10)
 
-				f.savefig('%s-3models_%s_%s.pdf'%(subname, '64-8ori-col', names[y] ))
-				plt.close()
+			# f.savefig('%s-3models_%s_%s.pdf'%(subname, '64-8ori-col', names[y] ))
+			f.savefig('%s-3models_%s_best%s_%s.pdf'%(subname, modelii,volii, best_voxel_index))
+
+			plt.close()
 			# f.savefig('%s-3models_%s_best%s_%s-without_dt_fitting,manual.pdf'%(subname, '64','1', '442'))
 			# f.savefig('%s-3models_%s_best%s_%s-without_dt_fitting,auto.pdf'%(subname, modelii,volii, best_voxel_index))
 ###----------------------------------------------------------------------------
@@ -615,7 +614,7 @@ for subii, sub in enumerate(sublist):
 			elif modelii == '8col':
 				best_voxel_index = np.argsort(r_squareds_mean_8_col)[-volii]
 			
-			beta_64_best_voxel = beta_64_across_runs [best_voxel_index]
+			# beta_64_best_voxel = beta_64_across_runs [best_voxel_index]
 # #-----------------------
 
 # 			f1 = plt.figure(figsize = (12,12))
@@ -657,12 +656,12 @@ for subii, sub in enumerate(sublist):
 		#### beta_matrix = beta_runs_64_allRegressors[ i, best_voxel_index, 0:128:2]
 
 
-		beta_64_best_voxel = beta_64_across_runs [best_voxel_index]
+		# beta_64_best_voxel = beta_64_across_runs [best_voxel_index]
 
 
-		names = ['442', '5046', '684', '415', '5059', '2194', '5169', '387', '3544', '428']
-		for y in range(len(names)):
-			best_voxel_index = y
+		# names = ['442', '5046', '684', '415', '5059', '2194', '5169', '387', '3544', '428']
+		# for y in range(len(names)):
+		# 	best_voxel_index = y
 
 		# 2. beta matrix
 		# best_voxel_index =0
@@ -712,8 +711,8 @@ for subii, sub in enumerate(sublist):
 				s4.set_ylabel('color')
 				s4.set_xlabel('run%i;voxel_index: %s' % (i, str(442)) ) #(best_voxel_index) 
 
-			f.savefig('%s-3models_64matrix-positive_%s.pdf'%(subname, names[y] ))
-				# f.savefig('%s-3models_64matrix-positive_best%i_%i.png'%(subname, volii, best_voxel_index))
+			# f.savefig('%s-3models_64matrix-positive_%s.pdf'%(subname, names[y] ))
+			f.savefig('%s-3models_%s_64matrix-positive_best%i_%i.pdf'%(subname, modelii, volii, best_voxel_index))		
 			plt.close()
 
 
@@ -795,8 +794,6 @@ for subii, sub in enumerate(sublist):
 			n = len(run_nr_all)
 			yerr = (sd/np.sqrt(n)) #*1.96
 
-
-
 			event_time_mean = [event_time_64_mean, event_time_ori_mean, event_time_col_mean]
 			labels = ['time_course_of_preferred_stimuli', 'time_course_of_preferred_orientation', 'time_course_of_preferred_color' ]
 			f = plt.figure(figsize = (12,12))
@@ -809,9 +806,10 @@ for subii, sub in enumerate(sublist):
 				s1.set_xlabel(labels[i])
 				# sn.despine(offset=10)
 
-			f.savefig('%s-3models_time_course_of_preferred_features_voxel%s.pdf'%(subname, names[y] ))
-			print 'plot %s-3models_time_course_of_preferred_features_voxel%s.pdf'%(subname, names[y] )
-
+			# f.savefig('%s-3models_time_course_of_preferred_features_voxel%s.pdf'%(subname, names[y] ))
+			f.savefig('%s-3models_%s_time_course_of_preferred_features_best%i_voxel%s.pdf'%(subname, modelii,volii, best_voxel_index))	
+			# print 'plot %s-3models_time_course_of_preferred_features_voxel%s.pdf'%(subname, names[y] )
+			# f.savefig('%s-3models_%s_best%s_%s.pdf'%(subname, modelii,volii, best_voxel_index))	
 
 
 
