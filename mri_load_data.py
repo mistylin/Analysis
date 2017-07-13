@@ -170,7 +170,7 @@ def load_event_16channels (filename_beh, fmri_data, empty_start = 15, empty_end 
 	events_ori = np.hstack([np.array(tmp_trial_order_ori == stim, dtype=int) for stim in np.arange(1,number_of_stimuli+1)])
 
 
-	events = np.hstack([events_ori, events_col])  # orientation + col (542,16)
+	# events = np.hstack([events_ori, events_col])  # orientation + col (542,16)
 
 	return events_ori, events_col
 
