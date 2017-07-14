@@ -56,6 +56,7 @@ t_8oriVs8col = []
 
 for subii, sub in enumerate(sublist):
 
+	shell()
 
 	subname = sub[0]
 	retinotopic = sub[1]
@@ -144,6 +145,7 @@ for subii, sub in enumerate(sublist):
 
 	## check nans
 	# voxel_list = ld.voxel_filter(target_files_fmri, lh, rh)
+	
 	voxel_list = voxel_lists[subii]
 	
 	##subn001
@@ -194,7 +196,7 @@ for subii, sub in enumerate(sublist):
 	design_matrix_64_runs = []
 	design_matrix_8_ori_runs = []
 	design_matrix_8_col_runs = []
-
+	shell()
 	for fileii, (filename_fmri, filename_beh, filename_moco, filename_fixation) in enumerate(file_pairs_all):	
 		# shell()
 		#0,1,2,3
@@ -326,7 +328,7 @@ for subii, sub in enumerate(sublist):
 ###  beta values  ---------------------------------------------------------------
 ###  beta values  ---------------------------------------------------------------
 ###  beta values  ---------------------------------------------------------------
-
+	shell()
 	beta_runs_64 = np.array(beta_runs_64)
 	r_squareds_runs_64 = np.array(r_squareds_runs_64)
 	beta_runs_8_ori = np.array(beta_runs_8_ori)
@@ -388,9 +390,9 @@ for subii, sub in enumerate(sublist):
 	design_matrix_8_col_runs = np.array(design_matrix_8_col_runs)
 
 
-
+	shell()
 	for modelii in ['64','8ori','8col']:
-		for volii in np.arange(1,2,1): #(1,31,1)
+		for volii in np.arange(1,31,1): #(1,31,1)
 			# pt.plot_3ModelFit_beta_matrix(subname, volii, r_squareds_64, beta_64_across_runs, fmri_data, design_matrix_64, betas_64, intercept_64, alphas_64, r_squareds_8_ori, design_matrix_8_ori, betas_8_ori, intercept_8_ori, alphas_8_ori, r_squareds_8_col, design_matrix_8_col, betas_8_col, intercept_8_col, alphas_8_col) 
 			# plot_3ModelFit_beta_matrix(subname, volii, r_squareds_64, beta_64_across_runs, fmri_data, design_matrix_64, betas_64, intercept_64, alphas_64, r_squareds_8_ori, design_matrix_8_ori, betas_8_ori, intercept_8_ori, alphas_8_ori, r_squareds_8_col, design_matrix_8_col, betas_8_col, intercept_8_col, alphas_8_col) 
 			if modelii == '64':
@@ -482,6 +484,7 @@ for subii, sub in enumerate(sublist):
 
 			# f.savefig('%s-3models_%s_%s.pdf'%(subname, '64-8ori-col', names[y] ))
 			f.savefig('%s-3models_%s_best%s_%s.pdf'%(subname, modelii,volii, best_voxel_index))
+			print 'plotting %s-3models_%s_best%s_%s.pdf'%(subname, modelii,volii, best_voxel_index)
 
 			plt.close()
 			# f.savefig('%s-3models_%s_best%s_%s-without_dt_fitting,manual.pdf'%(subname, '64','1', '442'))
@@ -527,81 +530,81 @@ for subii, sub in enumerate(sublist):
 			# 'events': [events_64_runs, events_8_ori_runs, events_8_col_runs],
 
 
-			run_nr_all = np.arange(file_pairs_all.shape[0])
-			best_voxel_index = 0
+			# run_nr_all = np.arange(file_pairs_all.shape[0])
+			# best_voxel_index = 0
 
 
-			for j in range(design_matrix_8_ori_runs.shape[2]):
-				f = plt.figure(figsize = (12,12))
-				if j in range(model_BOLD_timecourse_8_ori.shape[1])[::2] :
-					regressor_type = 'regressor_of_interest_%i_start_from1'%( (j/2)+1)
-				elif j in range(model_BOLD_timecourse_8_ori.shape[1])[1::2] :
-					regressor_type = 'dt_%i_start_from1'%( (j+1)/2)
-				elif j in range(design_matrix_8_ori_runs.shape[2])[-7:-1]:
-					regressor_type = 'moco_parameter_%i' %( (j-model_BOLD_timecourse_8_ori.shape[1] +1 ) )
-				elif j == range(design_matrix_8_ori_runs.shape[2])[-1]:
-					regressor_type = 'key_press'
+			# for j in range(design_matrix_8_ori_runs.shape[2]):
+			# 	f = plt.figure(figsize = (12,12))
+			# 	if j in range(model_BOLD_timecourse_8_ori.shape[1])[::2] :
+			# 		regressor_type = 'regressor_of_interest_%i_start_from1'%( (j/2)+1)
+			# 	elif j in range(model_BOLD_timecourse_8_ori.shape[1])[1::2] :
+			# 		regressor_type = 'dt_%i_start_from1'%( (j+1)/2)
+			# 	elif j in range(design_matrix_8_ori_runs.shape[2])[-7:-1]:
+			# 		regressor_type = 'moco_parameter_%i' %( (j-model_BOLD_timecourse_8_ori.shape[1] +1 ) )
+			# 	elif j == range(design_matrix_8_ori_runs.shape[2])[-1]:
+			# 		regressor_type = 'key_press'
 
-				for i in run_nr_all:
+			# 	for i in run_nr_all:
 					
-					s1=f.add_subplot(4,1,i+1)
+			# 		s1=f.add_subplot(4,1,i+1)
 
-					# num_plots = 64
+			# 		# num_plots = 64
 
-					plt.plot(fmri_data_runs[i, best_voxel_index, :], 'k')
+			# 		plt.plot(fmri_data_runs[i, best_voxel_index, :], 'k')
 					
-					plt.plot(design_matrix_8_ori_runs[i].dot(beta_runs_8_ori_allRegressors[ i, best_voxel_index, :] + intercept_runs_8_ori [ i, best_voxel_index]), 'b')
+			# 		plt.plot(design_matrix_8_ori_runs[i].dot(beta_runs_8_ori_allRegressors[ i, best_voxel_index, :] + intercept_runs_8_ori [ i, best_voxel_index]), 'b')
 
-					# colormap = plt.cm.gist_ncar
-					# plt.gca().set_color_cycle([colormap(i) for i in np.linspace(0, 0.9, num_plots)]) 
-					plt.plot(design_matrix_8_ori_runs[i, :, j] *(beta_runs_8_ori_allRegressors[ i, best_voxel_index, j] +  intercept_runs_8_ori [ i, best_voxel_index] ) ,'g'  )
+			# 		# colormap = plt.cm.gist_ncar
+			# 		# plt.gca().set_color_cycle([colormap(i) for i in np.linspace(0, 0.9, num_plots)]) 
+			# 		plt.plot(design_matrix_8_ori_runs[i, :, j] *(beta_runs_8_ori_allRegressors[ i, best_voxel_index, j] +  intercept_runs_8_ori [ i, best_voxel_index] ) ,'g'  )
 
-					s1.set_xlabel('8ch_ori_%s_run%i'%( regressor_type, i))
-
-
-				f.savefig('%s-%s_%s-modelFit_%s.pdf'%(subname, '8ori', '442', regressor_type))
-				plt.close()
-				print 'plotting %s-%s_%s-modelFit_%s'%(subname, '8ori', '442', regressor_type)
-
-			### color
-
-			run_nr_all = np.arange(file_pairs_all.shape[0])
-			best_voxel_index = 0
+			# 		s1.set_xlabel('8ch_ori_%s_run%i'%( regressor_type, i))
 
 
-			for j in range(design_matrix_8_col_runs.shape[2]):
-				f = plt.figure(figsize = (12,12))
-				if j in range(model_BOLD_timecourse_8_col.shape[1])[::2] :
-					regressor_type = 'regressor_of_interest_%i_start_from1'%( (j/2)+1)
-				elif j in range(model_BOLD_timecourse_8_col.shape[1])[1::2] :
-					regressor_type = 'dt_%i_start_from1'%( (j+1)/2)
-				elif j in range(design_matrix_8_col_runs.shape[2])[-7:-1]:
-					regressor_type = 'moco_parameter_%i' %( (j-model_BOLD_timecourse_8_col.shape[1] +1 ) )
-				elif j == range(design_matrix_8_col_runs.shape[2])[-1]:
-					regressor_type = 'key_press'
+			# 	f.savefig('%s-%s_%s-modelFit_%s.pdf'%(subname, '8ori', '442', regressor_type))
+			# 	plt.close()
+			# 	print 'plotting %s-%s_%s-modelFit_%s'%(subname, '8ori', '442', regressor_type)
 
-				for i in run_nr_all:
+			# ### color
+
+			# run_nr_all = np.arange(file_pairs_all.shape[0])
+			# best_voxel_index = 0
+
+
+			# for j in range(design_matrix_8_col_runs.shape[2]):
+			# 	f = plt.figure(figsize = (12,12))
+			# 	if j in range(model_BOLD_timecourse_8_col.shape[1])[::2] :
+			# 		regressor_type = 'regressor_of_interest_%i_start_from1'%( (j/2)+1)
+			# 	elif j in range(model_BOLD_timecourse_8_col.shape[1])[1::2] :
+			# 		regressor_type = 'dt_%i_start_from1'%( (j+1)/2)
+			# 	elif j in range(design_matrix_8_col_runs.shape[2])[-7:-1]:
+			# 		regressor_type = 'moco_parameter_%i' %( (j-model_BOLD_timecourse_8_col.shape[1] +1 ) )
+			# 	elif j == range(design_matrix_8_col_runs.shape[2])[-1]:
+			# 		regressor_type = 'key_press'
+
+			# 	for i in run_nr_all:
 					
-					s1=f.add_subplot(4,1,i+1)
+			# 		s1=f.add_subplot(4,1,i+1)
 
-					# num_plots = 64
+			# 		# num_plots = 64
 
-					plt.plot(fmri_data_runs[i, best_voxel_index, :], 'k')
+			# 		plt.plot(fmri_data_runs[i, best_voxel_index, :], 'k')
 					
-					plt.plot(design_matrix_8_col_runs[i].dot(beta_runs_8_col_allRegressors[ i, best_voxel_index, :] + intercept_runs_8_col [ i, best_voxel_index]), 'b')
+			# 		plt.plot(design_matrix_8_col_runs[i].dot(beta_runs_8_col_allRegressors[ i, best_voxel_index, :] + intercept_runs_8_col [ i, best_voxel_index]), 'b')
 
-					# colormap = plt.cm.gist_ncar
-					# plt.gca().set_color_cycle([colormap(i) for i in np.linspace(0, 0.9, num_plots)]) 
-					plt.plot(design_matrix_8_col_runs[i, :, j] *(beta_runs_8_col_allRegressors[ i, best_voxel_index, j] +  intercept_runs_8_col [ i, best_voxel_index] ) ,'g'  )
+			# 		# colormap = plt.cm.gist_ncar
+			# 		# plt.gca().set_color_cycle([colormap(i) for i in np.linspace(0, 0.9, num_plots)]) 
+			# 		plt.plot(design_matrix_8_col_runs[i, :, j] *(beta_runs_8_col_allRegressors[ i, best_voxel_index, j] +  intercept_runs_8_col [ i, best_voxel_index] ) ,'g'  )
 
-					s1.set_xlabel('8ch_ori_%s_run%i'%( regressor_type, i))
+			# 		s1.set_xlabel('8ch_ori_%s_run%i'%( regressor_type, i))
 
 
-				f.savefig('%s-%s_%s-modelFit_%s.pdf'%(subname, '8col', '442', regressor_type))
-				plt.close()
-				print 'plotting %s-%s_%s-modelFit_%s'%(subname, '8col', '442', regressor_type)
+			# 	f.savefig('%s-%s_%s-modelFit_%s.pdf'%(subname, '8col', '442', regressor_type))
+			# 	plt.close()
+			# 	print 'plotting %s-%s_%s-modelFit_%s'%(subname, '8col', '442', regressor_type)
 ###----------------------------------------------------------------------------
-
+	shell()
 # #-----------------------
 	for modelii in ['64','8ori','8col']:
 		for volii in np.arange(1,31,1):
@@ -712,7 +715,8 @@ for subii, sub in enumerate(sublist):
 				s4.set_xlabel('run%i;voxel_index: %s' % (i, str(442)) ) #(best_voxel_index) 
 
 			# f.savefig('%s-3models_64matrix-positive_%s.pdf'%(subname, names[y] ))
-			f.savefig('%s-3models_%s_64matrix-positive_best%i_%i.pdf'%(subname, modelii, volii, best_voxel_index))		
+			f.savefig('%s-3models_%s_64matrix-positive_best%i_%i.pdf'%(subname, modelii, volii, best_voxel_index))
+			print 'plotting %s-3models_%s_64matrix-positive_best%i_%i.pdf'%(subname, modelii, volii, best_voxel_index)
 			plt.close()
 
 
@@ -781,7 +785,6 @@ for subii, sub in enumerate(sublist):
 					event_time_col_runs[i, j] = fmri_data_runs[i, best_voxel_index, target_TR_col[j]-4 : target_TR_col[j]+9]
 
 
-
 			event_time_64_across_repetitions =  np.mean(event_time_64_runs, axis = 1)
 			event_time_ori_across_repetitions =  np.mean(event_time_ori_runs, axis = 1)
 			event_time_col_across_repetitions =  np.mean(event_time_col_runs, axis = 1)
@@ -808,8 +811,10 @@ for subii, sub in enumerate(sublist):
 
 			# f.savefig('%s-3models_time_course_of_preferred_features_voxel%s.pdf'%(subname, names[y] ))
 			f.savefig('%s-3models_%s_time_course_of_preferred_features_best%i_voxel%s.pdf'%(subname, modelii,volii, best_voxel_index))	
+			plt.close()
 			# print 'plot %s-3models_time_course_of_preferred_features_voxel%s.pdf'%(subname, names[y] )
-			# f.savefig('%s-3models_%s_best%s_%s.pdf'%(subname, modelii,volii, best_voxel_index))	
+			# f.savefig('%s-3models_%s_best%s_%s.pdf'%(subname, modelii,volii, best_voxel_index))
+			print 'plottting %s-3models_%s_time_course_of_preferred_features_best%i_voxel%s.pdf'%(subname, modelii,volii, best_voxel_index)
 
 
 

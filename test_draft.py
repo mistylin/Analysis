@@ -33,9 +33,65 @@ model_type   Mean    Std. Error   95% Lower Bound   95% Upper Bound
 t_64vs8ori_r2_rel: 111.00, p_64vs8ori_r2_rel: 0.00, correction: 0.000000
 t_64vs8col_r2_rel: 108.88, p_64vs8col_r2_rel: 0.00, correction: 0.000000 
 t_8oriVs8col_r2_rel: 14.65, p_8oriVs8col_r2_rel: 0.00, correction: 0.000000
+
 finish print sub-n001-3models_64_best1_442
 finish print sub-n001-3models_8ori_best1_4339
 finish print sub-n001-3models_8col_best1_4339
+
+In [1]: p_64vs8ori_r2_rel*len(voxel_list)*3
+Out[1]: 0.0
+
+In [2]: p_64vs8ori_r2_rel*len(voxel_list)*3 
+Out[2]: 0.0
+
+In [3]: p_64vs8ori_r2_rel*len(voxel_list)*3
+Out[3]: 0.0
+
+
+
+
+sub n 003 -- with dt
+r_squareds ~ model_type
+
+TESTS OF WITHIN SUBJECTS EFFECTS
+
+Measure: r_squareds
+     Source                              Type III    eps       df        MS          F       Sig.   et2_G   Obs.      SE       95% CI    lambda     Obs.  
+                                            SS                                                                                                      Power 
+=========================================================================================================================================================
+model_type          Sphericity Assumed    222.113       -          2   111.056   25930.751      0   0.992   9019   6.891e-04    0.001   25933.626       1 
+                    Greenhouse-Geisser    222.113   0.504      1.008   220.354   25930.751      0   0.992   9019   6.891e-04    0.001   25933.626       1 
+                    Huynh-Feldt           222.113   0.504      1.008   220.354   25930.751      0   0.992   9019   6.891e-04    0.001   25933.626       1 
+                    Box                   222.113   0.500          1   222.113   25930.751      0   0.992   9019   6.891e-04    0.001   25933.626       1 
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Error(model_type)   Sphericity Assumed     77.245       -      18036     0.004                                                                            
+                    Greenhouse-Geisser     77.245   0.504   9089.961     0.008                                                                            
+                    Huynh-Feldt            77.245   0.504   9089.961     0.008                                                                            
+                    Box                    77.245   0.500       9018     0.009                                                                            
+
+TABLES OF ESTIMATED MARGINAL MEANS
+
+Estimated Marginal Means for model_type
+model_type   Mean    Std. Error   95% Lower Bound   95% Upper Bound 
+===================================================================
+64ch         0.260        0.002             0.257             0.263 
+8ch_col      0.072    4.673e-04             0.071             0.072 
+8ch_ori      0.065    4.372e-04             0.064             0.065 
+
+
+t_64vs8ori_r2_rel: 161.63, p_64vs8ori_r2_rel: 0.00, correction: 0.000000
+t_64vs8col_r2_rel: 162.14, p_64vs8col_r2_rel: 0.00, correction: 0.000000 
+t_8oriVs8col_r2_rel: -39.33, p_8oriVs8col_r2_rel: 0.00, correction: 0.000000
+
+In [1]: p_64vs8ori_r2_rel*len(voxel_list)*3
+Out[1]: 0.0
+
+In [2]: p_64vs8ori_r2_rel*len(voxel_list)*3 
+Out[2]: 0.0
+
+In [3]: p_64vs8ori_r2_rel*len(voxel_list)*3
+Out[3]: 0.0
+
 
 
 
@@ -78,7 +134,14 @@ finish print sub-n005-3models_64_best1_2224
 finish print sub-n005-3models_8ori_best1_4687
 finish print sub-n005-3models_8col_best1_4687
 
+In [1]: p_64vs8ori_r2_rel*len(voxel_list)*3
+Out[1]: 0.0
 
+In [2]: p_64vs8ori_r2_rel*len(voxel_list)*3
+Out[2]: 0.0
+
+In [3]: p_64vs8ori_r2_rel*len(voxel_list)*3
+Out[3]: 0.0
 
 
 
