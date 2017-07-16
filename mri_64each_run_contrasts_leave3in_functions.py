@@ -23,14 +23,17 @@ import sys
 
 import ColorTools as ct
 from Staircase import ThreeUpOneDownStaircase
-from tools import two_gamma as hrf
+from tools import two_gamma as hrf_fun
 
 import mri_load_data as ld
 import mri_main_analysis as ma
 import mri_plot_tunings as pt
+import mri_statistical_analysis as sa
 
-
-
+import numpy as np
+import pyvttbl as pt
+from collections import namedtuple
+from voxel_lists import *
 #-------------------------------------------------------------------------------------------------------
 ##-------------------------------------------------------------------------------------------------------
  # without def 
@@ -137,7 +140,13 @@ for subii, sub in enumerate(sublist):
 	#if each_run == True: 
 
 	## check nans
-	voxel_list = ld.nan_filter(target_files_fmri, lh, rh)
+	# voxel_list = ld.nan_filter(target_files_fmri, lh, rh)
+	voxel_list = voxel_lists[subii]
+	##subn001
+	# voxel_list = [voxel_lists[subii][442] ]
+	# voxel_list = [voxel_lists[subii][442], voxel_lists[subii][5046], voxel_lists[subii][684], voxel_lists[subii][415], voxel_lists[subii][5059], voxel_lists[subii][2194], voxel_lists[subii][5169], voxel_lists[subii][387], voxel_lists[subii][3544], voxel_lists[subii][428]]
+	##subn005
+	# voxel_list = [voxel_lists[subii][2224], voxel_lists[subii][4687]]	
 
 	## Load all types of data
 	file_pairs_all = np.array(zip (target_files_fmri, target_files_beh, target_files_moco, target_files_fixation))
@@ -155,6 +164,14 @@ for subii, sub in enumerate(sublist):
 	beta_selection_runs_16 = []
 
 	for fileii, (filename_fmri, filename_beh, filename_moco, filename_fixation) in enumerate(file_pairs_all):		
+
+		# shell()
+		#0,1,2,3
+		# file_pair = file_pairs_all[fileii]
+		# filename_fmri = file_pair[0]
+		# filename_beh = file_pair[1]
+		# filename_moco = file_pair[2]
+		# filename_fixation = file_pair[3]
 
 	## Load fmri data--run
 		fmri_data = ld.load_fmri(filename_fmri, voxel_list, lh, rh) #

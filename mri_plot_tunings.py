@@ -77,7 +77,7 @@ def plot_3models_timeCourse_alphaHist(subname, fileii, fmri_data, r_squareds_64,
 	# savefig('%s_64_alphas-[(1,500,500)]' ) %(str(subname) )
 	# f1.savefig('%s_run%s_8v8_time_course[(1,1000,1000)].png'  %(str(subname), str(fileii)  ))
 
-	f1.savefig('%s_run%s_64v8v8_time_course[(1,400,400)].png'  %(str(subname), str(fileii)  ))
+	f1.savefig('%s_run%s_64v8v8_time_course[(1,400,400)].pdf'  %(str(subname), str(fileii)  ))
 
 
 def plot_3ModelFit_beta_matrix(subname, volii, r_squareds_64, beta_64_across_runs, fmri_data, design_matrix_64, betas_64, intercept_64, alphas_64, r_squareds_8_ori, design_matrix_8_ori, betas_8_ori, intercept_8_ori, alphas_8_ori, r_squareds_8_col, design_matrix_8_col, betas_8_col, intercept_8_col, alphas_8_col): 
@@ -137,7 +137,7 @@ def plot_3ModelFit_beta_matrix(subname, volii, r_squareds_64, beta_64_across_run
 	s4.set_ylabel('color')
 	s4.set_title('voxel_index: %s' % (best_voxel_index) )
 
-	f.savefig('%s-3models_64matrix-positive_best%i_%i.png'%(subname, volii, best_voxel_index))
+	f.savefig('%s-3models_64matrix-positive_best%i_%i.pdf'%(subname, volii, best_voxel_index))
 	plt.close()
 
 
@@ -182,7 +182,7 @@ def plot_tunings (run_nr_all, n_reli, beta_ori_mean_iterations, beta_col_mean_it
 		# s2.set_title('color', fontsize = 10)
 		s2.set_xticklabels(['placeholder', -2, -1, 0, 1, 2, 3, 4, -3, -2])
 		s2.set_xlabel('color - relative')
-		f2.savefig( '%s_%s_%s_%s_cen%s_betaValues_%sVoxels.png'%(subname, ROI, data_type, regression, position_cen, n_reli))
+		f2.savefig( '%s_%s_%s_%s_cen%s_betaValues_%sVoxels.pdf'%(subname, ROI, data_type, regression, position_cen, n_reli))
 
 
 # def plot_tunings_16 (run_nr_all, n_reli, beta_ori_mean_iterations, beta_col_mean_iterations, position_cen = 2):
