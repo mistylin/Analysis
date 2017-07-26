@@ -162,7 +162,7 @@ def calculate_t_p_values (betas, fmri_data, moco_params, key_press, design_matri
 	return t, p
 
 
-def get_voxel_indices_reliVox(r_squareds_selection_runs, r_squareds_threshold = 0.05, select_100 = False ):
+def get_voxel_indices_reliVox(r_squareds_selection_runs, r_squareds_threshold = 0.05, select_100 = True ):
 	# r_squareds_threshold = 0.05
 	voxel_indices_reliVox = np.squeeze(np.where(np.mean(r_squareds_selection_runs, axis = 0) > r_squareds_threshold)) #2403 voxels in total left, out of 5734
 	n_reli = voxel_indices_reliVox.shape[0]

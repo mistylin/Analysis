@@ -66,7 +66,7 @@ t_8oriVs8col = []
 
 for subii, sub in enumerate(sublist):
 
-	shell()
+	# shell()
 
 	subname = sub[0]
 	retinotopic = sub[1]
@@ -142,7 +142,7 @@ for subii, sub in enumerate(sublist):
 		if (os.path.split(fixation_file)[1].split('_')[3]== 'params.pickle')*(os.path.split(fixation_file)[1].split('_')[1]== target_condition):
 			target_files_fixation.append(fixation_file)
 
-	shell()
+
 # #----------------------------------------------------------------------------------------------------------		
 # #----------------------------------------------------------------------------------------------------------
 ###
@@ -153,17 +153,26 @@ for subii, sub in enumerate(sublist):
 # #----------------------------------------------------------------------------------------------------------		
 # #----------------------------------------------------------------------------------------------------------
 	#if each_run == True: 
-
+	# shell()
 	## check nans
 	# voxel_list = ld.voxel_filter(target_files_fmri, lh, rh)
 	
-	# voxel_list = voxel_lists[subii]
+	voxel_list = voxel_lists[subii]
 	
 	##subn001
 	# voxel_list = [voxel_lists[subii][442] ]
-	voxel_list = [voxel_lists[subii][442], voxel_lists[subii][5046], voxel_lists[subii][684], voxel_lists[subii][415], voxel_lists[subii][5059], voxel_lists[subii][2194], voxel_lists[subii][5169], voxel_lists[subii][387], voxel_lists[subii][3544], voxel_lists[subii][428]]
-	##subn005
+	# voxel_list = [voxel_lists[subii][442], voxel_lists[subii][5046], voxel_lists[subii][387], voxel_lists[subii][3544], voxel_lists[subii][415], voxel_lists[subii][684], voxel_lists[subii][5169], voxel_lists[subii][402], voxel_lists[subii][2194], voxel_lists[subii][5047], voxel_lists[subii][372], voxel_lists[subii][5059], voxel_lists[subii][371], voxel_lists[subii][428], voxel_lists[subii][429], voxel_lists[subii][3554], voxel_lists[subii][3417], voxel_lists[subii][685], voxel_lists[subii][1265], voxel_lists[subii][3925], voxel_lists[subii][3407], voxel_lists[subii][202], voxel_lists[subii][3418], voxel_lists[subii][3412], voxel_lists[subii][930], voxel_lists[subii][2061],voxel_lists[subii][5071],voxel_lists[subii][594],voxel_lists[subii][2080],voxel_lists[subii][962] ]
+
+	# ##subn003
+	# voxel_list = [voxel_lists[subii][188], voxel_lists[subii][189], voxel_lists[subii][1757], voxel_lists[subii][516], voxel_lists[subii][8850], voxel_lists[subii][190], voxel_lists[subii][8997], voxel_lists[subii][648], voxel_lists[subii][8815], voxel_lists[subii][2263], voxel_lists[subii][8656], voxel_lists[subii][206], voxel_lists[subii][8998], voxel_lists[subii][8477], voxel_lists[subii][6075], voxel_lists[subii][4078], voxel_lists[subii][8491], voxel_lists[subii][8341], voxel_lists[subii][8516], voxel_lists[subii][8811], voxel_lists[subii][3657], voxel_lists[subii][8519], voxel_lists[subii][2242], voxel_lists[subii][1056], voxel_lists[subii][8835], voxel_lists[subii][2748],voxel_lists[subii][7524],voxel_lists[subii][2243],voxel_lists[subii][738],voxel_lists[subii][4816] ]
+
+	# ##subn005
 	# voxel_list = [voxel_lists[subii][2224], voxel_lists[subii][4687]]
+	# voxel_list = [voxel_lists[subii][2224], voxel_lists[subii][2017], voxel_lists[subii][2016], voxel_lists[subii][2004], voxel_lists[subii][2236], voxel_lists[subii][2223], voxel_lists[subii][4929], voxel_lists[subii][975], voxel_lists[subii][694], voxel_lists[subii][695], voxel_lists[subii][2003], voxel_lists[subii][2212], voxel_lists[subii][2015], voxel_lists[subii][5042], voxel_lists[subii][2622], voxel_lists[subii][3145], voxel_lists[subii][961], voxel_lists[subii][412], voxel_lists[subii][681], voxel_lists[subii][988], voxel_lists[subii][974], voxel_lists[subii][1991], voxel_lists[subii][3174], voxel_lists[subii][3293], voxel_lists[subii][4702], voxel_lists[subii][3154], voxel_lists[subii][4928],voxel_lists[subii][424],voxel_lists[subii][1256],voxel_lists[subii][3283] ]
+
+
+
+
 # 	[442], [5046], [684], [415], [5059], [2194], [5169], [387], [3544], [428]
 # a: 415"4" 428"10" 442"1"  2194"6" 5046 "2"
 # s: 387"8" 684"3" 3544"9" 5059"5" 5169"7"
@@ -212,7 +221,7 @@ for subii, sub in enumerate(sublist):
 	design_matrix_64_runs = []
 	design_matrix_8_ori_runs = []
 	design_matrix_8_col_runs = []
-	shell()
+
 	for fileii, (filename_fmri, filename_beh, filename_moco, filename_fixation) in enumerate(file_pairs_all):	
 		# shell()
 		#0,1,2,3
@@ -343,7 +352,7 @@ for subii, sub in enumerate(sublist):
 ###  beta values  ---------------------------------------------------------------
 ###  beta values  ---------------------------------------------------------------
 ###  beta values  ---------------------------------------------------------------
-	shell()
+	# shell()
 	beta_runs_64 = np.array(beta_runs_64)
 	r_squareds_runs_64 = np.array(r_squareds_runs_64)
 	beta_runs_8_ori = np.array(beta_runs_8_ori)
@@ -355,29 +364,29 @@ for subii, sub in enumerate(sublist):
 	r_squareds_mean_8_ori = np.mean(r_squareds_runs_8_ori, axis = 0)	
 	r_squareds_mean_8_col = np.mean(r_squareds_runs_8_col, axis = 0)
 
-##### stat test
-	# repeated measure
-	aov = sa.repeated_anova(fmri_data, r_squareds_mean_64, r_squareds_mean_8_ori, r_squareds_mean_8_col )
+# ##### stat test
+# 	# repeated measure
+# 	aov = sa.repeated_anova(fmri_data, r_squareds_mean_64, r_squareds_mean_8_ori, r_squareds_mean_8_col )
 
 
-	# post-hoc
-	t_64vs8ori_r2_rel, p_64vs8ori_r2_rel = scipy.stats.ttest_rel(r_squareds_mean_64, r_squareds_mean_8_ori)
-	t_64vs8col_r2_rel, p_64vs8col_r2_rel = scipy.stats.ttest_rel(r_squareds_mean_64, r_squareds_mean_8_col)
-	t_8oriVs8col_r2_rel, p_8oriVs8col_r2_rel = scipy.stats.ttest_rel(r_squareds_mean_8_ori, r_squareds_mean_8_col)
+# 	# post-hoc
+# 	t_64vs8ori_r2_rel, p_64vs8ori_r2_rel = scipy.stats.ttest_rel(r_squareds_mean_64, r_squareds_mean_8_ori)
+# 	t_64vs8col_r2_rel, p_64vs8col_r2_rel = scipy.stats.ttest_rel(r_squareds_mean_64, r_squareds_mean_8_col)
+# 	t_8oriVs8col_r2_rel, p_8oriVs8col_r2_rel = scipy.stats.ttest_rel(r_squareds_mean_8_ori, r_squareds_mean_8_col)
 
-	print 't_64vs8ori_r2_rel: %.2f, p_64vs8ori_r2_rel: %.2f, correction: %f' %(t_64vs8ori_r2_rel, p_64vs8ori_r2_rel, p_64vs8ori_r2_rel*len(voxel_list)*3 )
-	print 't_64vs8col_r2_rel: %.2f, p_64vs8col_r2_rel: %.2f, correction: %f ' %(t_64vs8col_r2_rel, p_64vs8col_r2_rel, p_64vs8ori_r2_rel*len(voxel_list)*3 )
-	print 't_8oriVs8col_r2_rel: %.2f, p_8oriVs8col_r2_rel: %.2f, correction: %f' %(t_8oriVs8col_r2_rel, p_8oriVs8col_r2_rel, p_64vs8ori_r2_rel*len(voxel_list)*3 )
+# 	print 't_64vs8ori_r2_rel: %.2f, p_64vs8ori_r2_rel: %.2f, correction: %f' %(t_64vs8ori_r2_rel, p_64vs8ori_r2_rel, p_64vs8ori_r2_rel*len(voxel_list)*3 )
+# 	print 't_64vs8col_r2_rel: %.2f, p_64vs8col_r2_rel: %.2f, correction: %f ' %(t_64vs8col_r2_rel, p_64vs8col_r2_rel, p_64vs8ori_r2_rel*len(voxel_list)*3 )
+# 	print 't_8oriVs8col_r2_rel: %.2f, p_8oriVs8col_r2_rel: %.2f, correction: %f' %(t_8oriVs8col_r2_rel, p_8oriVs8col_r2_rel, p_64vs8ori_r2_rel*len(voxel_list)*3 )
 
-	# t_64vs8ori_r2_rel: 114.14, p_64vs8ori_r2_rel: 0.00
-	# t_64vs8col_r2_rel: 112.13, p_64vs8col_r2_rel: 0.00
-	# t_8oriVs8col_r2_rel: 30.36, p_8oriVs8col_r2_rel: 0.00
+# 	# t_64vs8ori_r2_rel: 114.14, p_64vs8ori_r2_rel: 0.00
+# 	# t_64vs8col_r2_rel: 112.13, p_64vs8col_r2_rel: 0.00
+# 	# t_8oriVs8col_r2_rel: 30.36, p_8oriVs8col_r2_rel: 0.00
 
-	aov_values.append(aov)
-	t_64vs8ori.append((t_64vs8ori_r2_rel, p_64vs8ori_r2_rel))
-	t_64vs8col.append((t_64vs8col_r2_rel, p_64vs8col_r2_rel))
-	t_8oriVs8col.append((t_8oriVs8col_r2_rel, p_8oriVs8col_r2_rel))
-	##(115.18453285570681, 0.0), (113.0876960551475, 0.0), (30.362206735333434, 6.6824459323599391e-188)
+# 	aov_values.append(aov)
+# 	t_64vs8ori.append((t_64vs8ori_r2_rel, p_64vs8ori_r2_rel))
+# 	t_64vs8col.append((t_64vs8col_r2_rel, p_64vs8col_r2_rel))
+# 	t_8oriVs8col.append((t_8oriVs8col_r2_rel, p_8oriVs8col_r2_rel))
+# 	##(115.18453285570681, 0.0), (113.0876960551475, 0.0), (30.362206735333434, 6.6824459323599391e-188)
 
 ##### leave 3 in :  orientation and color tunings
 
@@ -449,274 +458,384 @@ for subii, sub in enumerate(sublist):
 
 
 
-#### circle or oval? the best voxel
-	beta_64_across_runs = np.mean(beta_runs_64, axis = 0)
+# #### circle or oval? the best voxel
+# 	beta_64_across_runs = np.mean(beta_runs_64, axis = 0)
 
-	fmri_data_runs = np.array(fmri_data_runs)
-	beta_runs_64_allRegressors = np.array(beta_runs_64_allRegressors)
-	intercept_runs_64  = np.array(intercept_runs_64 )
-	alphas_runs_64 = np.array(alphas_runs_64)
+# 	fmri_data_runs = np.array(fmri_data_runs)
+# 	beta_runs_64_allRegressors = np.array(beta_runs_64_allRegressors)
+# 	intercept_runs_64  = np.array(intercept_runs_64 )
+# 	alphas_runs_64 = np.array(alphas_runs_64)
 
-	beta_runs_8_ori_allRegressors = np.array(beta_runs_8_ori_allRegressors)	
-	intercept_runs_8_ori = np.array(intercept_runs_8_ori)
-	alphas_runs_8_ori = np.array(alphas_runs_8_ori)
+# 	beta_runs_8_ori_allRegressors = np.array(beta_runs_8_ori_allRegressors)	
+# 	intercept_runs_8_ori = np.array(intercept_runs_8_ori)
+# 	alphas_runs_8_ori = np.array(alphas_runs_8_ori)
 
-	beta_runs_8_col_allRegressors = np.array(beta_runs_8_col_allRegressors)	
-	intercept_runs_8_col = np.array(intercept_runs_8_col)
-	alphas_runs_8_col = np.array(alphas_runs_8_col)
+# 	beta_runs_8_col_allRegressors = np.array(beta_runs_8_col_allRegressors)	
+# 	intercept_runs_8_col = np.array(intercept_runs_8_col)
+# 	alphas_runs_8_col = np.array(alphas_runs_8_col)
 
-	events_64_runs = np.array(events_64_runs)
-	events_8_ori_runs = np.array(events_8_ori_runs)
-	events_8_col_runs = np.array(events_8_col_runs)
+# 	events_64_runs = np.array(events_64_runs)
+# 	events_8_ori_runs = np.array(events_8_ori_runs)
+# 	events_8_col_runs = np.array(events_8_col_runs)
 
-	design_matrix_64_runs = np.array(design_matrix_64_runs)
-	design_matrix_8_ori_runs = np.array(design_matrix_8_ori_runs)
-	design_matrix_8_col_runs = np.array(design_matrix_8_col_runs)
+# 	design_matrix_64_runs = np.array(design_matrix_64_runs)
+# 	design_matrix_8_ori_runs = np.array(design_matrix_8_ori_runs)
+# 	design_matrix_8_col_runs = np.array(design_matrix_8_col_runs)
 
 
-	shell()
-	for modelii in ['64','8ori','8col']:
-		for volii in np.arange(1,31,1): #(1,31,1)
-			# pt.plot_3ModelFit_beta_matrix(subname, volii, r_squareds_64, beta_64_across_runs, fmri_data, design_matrix_64, betas_64, intercept_64, alphas_64, r_squareds_8_ori, design_matrix_8_ori, betas_8_ori, intercept_8_ori, alphas_8_ori, r_squareds_8_col, design_matrix_8_col, betas_8_col, intercept_8_col, alphas_8_col) 
-			# plot_3ModelFit_beta_matrix(subname, volii, r_squareds_64, beta_64_across_runs, fmri_data, design_matrix_64, betas_64, intercept_64, alphas_64, r_squareds_8_ori, design_matrix_8_ori, betas_8_ori, intercept_8_ori, alphas_8_ori, r_squareds_8_col, design_matrix_8_col, betas_8_col, intercept_8_col, alphas_8_col) 
-			if modelii == '64':
-				best_voxel_index = np.argsort(r_squareds_mean_64)[-volii]
-			elif modelii == '8ori':
-				best_voxel_index = np.argsort(r_squareds_mean_8_ori)[-volii]
-			elif modelii == '8col':
-				best_voxel_index = np.argsort(r_squareds_mean_8_col)[-volii]
+# 	shell()
+# 	for modelii in ['64','8ori','8col']:
+# 		for volii in np.arange(1,31,1): #(1,31,1)
+# 			# pt.plot_3ModelFit_beta_matrix(subname, volii, r_squareds_64, beta_64_across_runs, fmri_data, design_matrix_64, betas_64, intercept_64, alphas_64, r_squareds_8_ori, design_matrix_8_ori, betas_8_ori, intercept_8_ori, alphas_8_ori, r_squareds_8_col, design_matrix_8_col, betas_8_col, intercept_8_col, alphas_8_col) 
+# 			# plot_3ModelFit_beta_matrix(subname, volii, r_squareds_64, beta_64_across_runs, fmri_data, design_matrix_64, betas_64, intercept_64, alphas_64, r_squareds_8_ori, design_matrix_8_ori, betas_8_ori, intercept_8_ori, alphas_8_ori, r_squareds_8_col, design_matrix_8_col, betas_8_col, intercept_8_col, alphas_8_col) 
+# 			if modelii == '64':
+# 				best_voxel_index = np.argsort(r_squareds_mean_64)[-volii]
+# 			elif modelii == '8ori':
+# 				best_voxel_index = np.argsort(r_squareds_mean_8_ori)[-volii]
+# 			elif modelii == '8col':
+# 				best_voxel_index = np.argsort(r_squareds_mean_8_col)[-volii]
 			
-			# beta_64_best_voxel = beta_64_across_runs [best_voxel_index]
+# 			# beta_64_best_voxel = beta_64_across_runs [best_voxel_index]
 
-			# modelii = '64'
-			# best_voxel_index = 0
+# 			# modelii = '64'
+# 			# best_voxel_index = 0
 
 
-			# run_nr_all = np.arange(file_pairs_all.shape[0])			
-			# # for x in range(voxel_list):
-			# # 	best_voxel_index = x
+# 			# run_nr_all = np.arange(file_pairs_all.shape[0])			
+# 			# # for x in range(voxel_list):
+# 			# # 	best_voxel_index = x
 
-			# 	f = plt.figure(figsize = (12,12))
-			# 	for i in run_nr_all:
-			# 		s1=f.add_subplot(4,1,i+1)
+# 			# 	f = plt.figure(figsize = (12,12))
+# 			# 	for i in run_nr_all:
+# 			# 		s1=f.add_subplot(4,1,i+1)
 
-			# 		plt.plot(fmri_data_runs[i, best_voxel_index, :])
-			# 		plt.plot(design_matrix_64_runs[i].dot(beta_runs_64_allRegressors[ i, best_voxel_index, :] + intercept_runs_64 [ i , best_voxel_index]), 'g')
-			# 		s1.set_xlabel('64_run%i_alpha_%s_r2_[%.2f]'%( i, str(alphas_runs_8_ori[ i, best_voxel_index]), r_squareds_runs_8_ori[ i, best_voxel_index]), fontsize = 10)
+# 			# 		plt.plot(fmri_data_runs[i, best_voxel_index, :])
+# 			# 		plt.plot(design_matrix_64_runs[i].dot(beta_runs_64_allRegressors[ i, best_voxel_index, :] + intercept_runs_64 [ i , best_voxel_index]), 'g')
+# 			# 		s1.set_xlabel('64_run%i_alpha_%s_r2_[%.2f]'%( i, str(alphas_runs_8_ori[ i, best_voxel_index]), r_squareds_runs_8_ori[ i, best_voxel_index]), fontsize = 10)
 
-			# 	f.savefig('%s-%s_%s-modelFit&Events.pdf'%(subname, '64', str(x) ))	
+# 			# 	f.savefig('%s-%s_%s-modelFit&Events.pdf'%(subname, '64', str(x) ))	
 		
-			# 	f = plt.figure(figsize = (12,12))
-			# 	for i in run_nr_all:
-			# 		s1=f.add_subplot(4,1,i+1)
-			# 		plt.plot(fmri_data_runs[i, best_voxel_index, :])
-			# 		plt.plot(design_matrix_8_ori_runs[i].dot(beta_runs_8_ori_allRegressors[ i, best_voxel_index, :] + intercept_runs_8_ori [ i, best_voxel_index]))
-			# 		# plt.plot(events_8_ori_runs[i])
-			# 		s1.set_xlabel('8ch_ori_run%i_alpha_%s_r2_[%.2f]'%( i, str(alphas_runs_8_ori[ i, best_voxel_index]), r_squareds_runs_8_ori[ i, best_voxel_index]), fontsize = 10)
-			# 	f.savefig('%s-%s_%s-modelFit&Events.pdf'%(subname, '8chOri', str(x)  ))
+# 			# 	f = plt.figure(figsize = (12,12))
+# 			# 	for i in run_nr_all:
+# 			# 		s1=f.add_subplot(4,1,i+1)
+# 			# 		plt.plot(fmri_data_runs[i, best_voxel_index, :])
+# 			# 		plt.plot(design_matrix_8_ori_runs[i].dot(beta_runs_8_ori_allRegressors[ i, best_voxel_index, :] + intercept_runs_8_ori [ i, best_voxel_index]))
+# 			# 		# plt.plot(events_8_ori_runs[i])
+# 			# 		s1.set_xlabel('8ch_ori_run%i_alpha_%s_r2_[%.2f]'%( i, str(alphas_runs_8_ori[ i, best_voxel_index]), r_squareds_runs_8_ori[ i, best_voxel_index]), fontsize = 10)
+# 			# 	f.savefig('%s-%s_%s-modelFit&Events.pdf'%(subname, '8chOri', str(x)  ))
 
-			# 	f = plt.figure(figsize = (12,12))
-			# 	for i in run_nr_all:
-			# 		s1=f.add_subplot(4,1,i+1)
-			# 		plt.plot(fmri_data_runs[i, best_voxel_index, :])
-			# 		plt.plot(design_matrix_8_col_runs[i].dot(beta_runs_8_col_allRegressors[ i, best_voxel_index, :] + intercept_runs_8_col [ i, best_voxel_index]))
-			# 		# plt.plot(events_8_col_runs[i])
-			# 		s1.set_xlabel('8ch_col_run%i_alpha_%s_r2_[%.2f]'%( i, str(alphas_runs_8_col[ i, best_voxel_index]), r_squareds_runs_8_col[ i, best_voxel_index]), fontsize = 10)
-			# 	# f.savefig('%s-%s_%s-modelFit&Events.pdf'%(subname, '8chCol', str(x)  ))
-
-
-###----------------------------------------------------------------------------
-			# run_nr_all = np.arange(file_pairs_all.shape[0])
-			# f = plt.figure(figsize = (12*len(run_nr_all),12))
-			# gs=GridSpec(3,len(run_nr_all)) # (2,3)2 rows, 3 columns
-			# gs=GridSpec(3,1) # (2,3)2 rows, 3 columns			
-			# 1. fmri data & model BOLD response
-			# s1 = f.add_subplot(4,1,1)
+# 			# 	f = plt.figure(figsize = (12,12))
+# 			# 	for i in run_nr_all:
+# 			# 		s1=f.add_subplot(4,1,i+1)
+# 			# 		plt.plot(fmri_data_runs[i, best_voxel_index, :])
+# 			# 		plt.plot(design_matrix_8_col_runs[i].dot(beta_runs_8_col_allRegressors[ i, best_voxel_index, :] + intercept_runs_8_col [ i, best_voxel_index]))
+# 			# 		# plt.plot(events_8_col_runs[i])
+# 			# 		s1.set_xlabel('8ch_col_run%i_alpha_%s_r2_[%.2f]'%( i, str(alphas_runs_8_col[ i, best_voxel_index]), r_squareds_runs_8_col[ i, best_voxel_index]), fontsize = 10)
+# 			# 	# f.savefig('%s-%s_%s-modelFit&Events.pdf'%(subname, '8chCol', str(x)  ))
 
 
-			# names = ['442', '5046', '684', '415', '5059', '2194', '5169', '387', '3544', '428']
-			# for y in range(len(names)):
-			# 	best_voxel_index = y
+# ###----------------------------------------------------------------------------
+# 			# run_nr_all = np.arange(file_pairs_all.shape[0])
+# 			# f = plt.figure(figsize = (12*len(run_nr_all),12))
+# 			# gs=GridSpec(3,len(run_nr_all)) # (2,3)2 rows, 3 columns
+# 			# gs=GridSpec(3,1) # (2,3)2 rows, 3 columns			
+# 			# 1. fmri data & model BOLD response
+# 			# s1 = f.add_subplot(4,1,1)
 
-			run_nr_all = np.arange(file_pairs_all.shape[0])
-			f = plt.figure(figsize = (12*len(run_nr_all),12))
-			gs=GridSpec(3,len(run_nr_all)) # (2,3)2 rows, 3 columns
+
+# 			# names = ['442', '5046', '684', '415', '5059', '2194', '5169', '387', '3544', '428']
+# 			# for y in range(len(names)):
+# 			# 	best_voxel_index = y
+
+# 			run_nr_all = np.arange(file_pairs_all.shape[0])
+# 			f = plt.figure(figsize = (12*len(run_nr_all),12))
+# 			gs=GridSpec(3,len(run_nr_all)) # (2,3)2 rows, 3 columns
 				
-			for i in run_nr_all:
+# 			for i in run_nr_all:
 						
-				s1=f.add_subplot(gs[0,i]) # First row, first column
-				plt.plot(fmri_data_runs[i, best_voxel_index, :])	
+# 				s1=f.add_subplot(gs[0,i]) # First row, first column
+# 				plt.plot(fmri_data_runs[i, best_voxel_index, :])	
 							
-				# design_matrix_64_plot = np.hstack([ design_matrix_64[:, 0:128:2],  design_matrix_64[:, -7:] ])
-				# beta_runs_64_allRegressors_plot = np.hstack( [ beta_runs_64_allRegressors[ i, best_voxel_index, 0:128:2],  beta_runs_64_allRegressors[ i, best_voxel_index, -7:]   ]  )
-				plt.plot(design_matrix_64_runs[i].dot(beta_runs_64_allRegressors[ i, best_voxel_index, :] + intercept_runs_64 [ i , best_voxel_index]))
-				s1.set_xlabel('64ch_time_course_alpha_%s_r2_[%.2f]'%( str(alphas_runs_64 [ i, best_voxel_index]), r_squareds_runs_64[ i, best_voxel_index]), fontsize = 10)
+# 				# design_matrix_64_plot = np.hstack([ design_matrix_64[:, 0:128:2],  design_matrix_64[:, -7:] ])
+# 				# beta_runs_64_allRegressors_plot = np.hstack( [ beta_runs_64_allRegressors[ i, best_voxel_index, 0:128:2],  beta_runs_64_allRegressors[ i, best_voxel_index, -7:]   ]  )
+# 				plt.plot(design_matrix_64_runs[i].dot(beta_runs_64_allRegressors[ i, best_voxel_index, :] + intercept_runs_64 [ i , best_voxel_index]))
+# 				s1.set_xlabel('64ch_time_course_alpha_%s_r2_[%.2f]'%( str(alphas_runs_64 [ i, best_voxel_index]), r_squareds_runs_64[ i, best_voxel_index]), fontsize = 10)
 
-				s2=f.add_subplot(gs[1,i]) # First row, first column
-				plt.plot(fmri_data_runs[i, best_voxel_index, :])
-				# design_matrix_8_ori = np.hstack( [design_matrix_8_ori[:, 0:16:2], design_matrix_8_ori[:, -7:] ] )
-				# beta_runs_8_ori_allRegressors = np.hstack ( [beta_runs_8_ori_allRegressors[ i, best_voxel_index,0:16:2 ],  beta_runs_8_ori_allRegressors[ i, best_voxel_index, -7: ] ])
-				plt.plot(design_matrix_8_ori_runs[i].dot(beta_runs_8_ori_allRegressors[ i, best_voxel_index, :] + intercept_runs_8_ori [ i, best_voxel_index]))
-				s2.set_xlabel('8ch_ori_time_course_alpha_%s_r2_[%.2f]'%( str(alphas_runs_8_ori[ i, best_voxel_index]), r_squareds_runs_8_ori[ i, best_voxel_index]), fontsize = 10)
+# 				s2=f.add_subplot(gs[1,i]) # First row, first column
+# 				plt.plot(fmri_data_runs[i, best_voxel_index, :])
+# 				# design_matrix_8_ori = np.hstack( [design_matrix_8_ori[:, 0:16:2], design_matrix_8_ori[:, -7:] ] )
+# 				# beta_runs_8_ori_allRegressors = np.hstack ( [beta_runs_8_ori_allRegressors[ i, best_voxel_index,0:16:2 ],  beta_runs_8_ori_allRegressors[ i, best_voxel_index, -7: ] ])
+# 				plt.plot(design_matrix_8_ori_runs[i].dot(beta_runs_8_ori_allRegressors[ i, best_voxel_index, :] + intercept_runs_8_ori [ i, best_voxel_index]))
+# 				s2.set_xlabel('8ch_ori_time_course_alpha_%s_r2_[%.2f]'%( str(alphas_runs_8_ori[ i, best_voxel_index]), r_squareds_runs_8_ori[ i, best_voxel_index]), fontsize = 10)
 
-				s3=f.add_subplot(gs[2,i]) # First row, first column
-				plt.plot(fmri_data_runs[i, best_voxel_index, :])
-				# design_matrix_8_col = np.hstack( [design_matrix_8_col[:, 0:16:2], design_matrix_8_col[:, -7:] ] )
-				# beta_runs_8_col_allRegressors = np.hstack ( [beta_runs_8_col_allRegressors[ i, best_voxel_index,0:16:2 ],  beta_runs_8_col_allRegressors[ i, best_voxel_index, -7: ] ])
-				plt.plot(design_matrix_8_col_runs[i].dot(beta_runs_8_col_allRegressors[ i, best_voxel_index, :] + intercept_runs_8_col [ i, best_voxel_index]))
-				s3.set_xlabel('8ch_col_time_course_alpha_%s_r2_[%.2f]'%( str(alphas_runs_8_col[ i, best_voxel_index]), r_squareds_runs_8_col[ i, best_voxel_index]), fontsize = 10)
+# 				s3=f.add_subplot(gs[2,i]) # First row, first column
+# 				plt.plot(fmri_data_runs[i, best_voxel_index, :])
+# 				# design_matrix_8_col = np.hstack( [design_matrix_8_col[:, 0:16:2], design_matrix_8_col[:, -7:] ] )
+# 				# beta_runs_8_col_allRegressors = np.hstack ( [beta_runs_8_col_allRegressors[ i, best_voxel_index,0:16:2 ],  beta_runs_8_col_allRegressors[ i, best_voxel_index, -7: ] ])
+# 				plt.plot(design_matrix_8_col_runs[i].dot(beta_runs_8_col_allRegressors[ i, best_voxel_index, :] + intercept_runs_8_col [ i, best_voxel_index]))
+# 				s3.set_xlabel('8ch_col_time_course_alpha_%s_r2_[%.2f]'%( str(alphas_runs_8_col[ i, best_voxel_index]), r_squareds_runs_8_col[ i, best_voxel_index]), fontsize = 10)
 
-			# f.savefig('%s-3models_%s_%s.pdf'%(subname, '64-8ori-col', names[y] ))
-			f.savefig('%s-3models_%s_best%s_%s.pdf'%(subname, modelii,volii, best_voxel_index))
-			print 'plotting %s-3models_%s_best%s_%s.pdf'%(subname, modelii,volii, best_voxel_index)
+# 			# f.savefig('%s-3models_%s_%s.pdf'%(subname, '64-8ori-col', names[y] ))
+# 			f.savefig('%s-3models_%s_best%s_%s.pdf'%(subname, modelii,volii, best_voxel_index))
+# 			print 'plotting %s-3models_%s_best%s_%s.pdf'%(subname, modelii,volii, best_voxel_index)
 
-			plt.close()
-			# f.savefig('%s-3models_%s_best%s_%s-without_dt_fitting,manual.pdf'%(subname, '64','1', '442'))
-			# f.savefig('%s-3models_%s_best%s_%s-without_dt_fitting,auto.pdf'%(subname, modelii,volii, best_voxel_index))
-###----------------------------------------------------------------------------
-			# ### without selecting dt
-			# 	s1=f.add_subplot(gs[0,i]) # First row, first column
-			# 	plt.plot(fmri_data_runs[i, best_voxel_index, :])	
+# 			plt.close()
+# 			# f.savefig('%s-3models_%s_best%s_%s-without_dt_fitting,manual.pdf'%(subname, '64','1', '442'))
+# 			# f.savefig('%s-3models_%s_best%s_%s-without_dt_fitting,auto.pdf'%(subname, modelii,volii, best_voxel_index))
+# ###----------------------------------------------------------------------------
 
-			# 	design_matrix_64_plot = np.hstack([ design_matrix_64[:, 0:128:2],  design_matrix_64[:, -7:] ])
-			# 	beta_runs_64_allRegressors_plot = np.hstack( [ beta_runs_64_allRegressors[ i, best_voxel_index, 0:128:2],  beta_runs_64_allRegressors[ i, best_voxel_index, -7:]   ]  )
-			# 	plt.plot(design_matrix_64_plot.dot(beta_runs_64_allRegressors_plot + intercept_runs_64 [ i , best_voxel_index]))
-			# 	s1.set_xlabel('64ch_time_course_alpha_%s_r2_[%.2f]'%( str(alphas_runs_64 [ i, best_voxel_index]), r_squareds_runs_64[ i, best_voxel_index]), fontsize = 10)
-
-			# 	s2=f.add_subplot(gs[1,i]) # First row, first column
-			# 	plt.plot(fmri_data_runs[i, best_voxel_index, :])
-			# 	design_matrix_8_ori_plot = np.hstack( [design_matrix_8_ori[:, 0:16:2], design_matrix_8_ori[:, -7:] ] )
-			# 	beta_runs_8_ori_allRegressors_plot = np.hstack ( [beta_runs_8_ori_allRegressors[ i, best_voxel_index,0:16:2 ],  beta_runs_8_ori_allRegressors[ i, best_voxel_index, -7: ] ])
-			# 	plt.plot(design_matrix_8_ori_plot.dot(beta_runs_8_ori_allRegressors_plot + intercept_runs_8_ori [ i, best_voxel_index]))
-			# 	s2.set_xlabel('8ch_ori_time_course_alpha_%s_r2_[%.2f]'%( str(alphas_runs_8_ori[ i, best_voxel_index]), r_squareds_runs_8_ori[ i, best_voxel_index]), fontsize = 10)
-
-			# 	s3=f.add_subplot(gs[2,i]) # First row, first column
-			# 	plt.plot(fmri_data_runs[i, best_voxel_index, :])
-			# 	design_matrix_8_col_plot = np.hstack( [design_matrix_8_col[:, 0:16:2], design_matrix_8_col[:, -7:] ] )
-			# 	beta_runs_8_col_allRegressors_plot = np.hstack ( [beta_runs_8_col_allRegressors[ i, best_voxel_index,0:16:2 ],  beta_runs_8_col_allRegressors[ i, best_voxel_index, -7: ] ])
-			# 	plt.plot(design_matrix_8_col_plot.dot(beta_runs_8_col_allRegressors_plot + intercept_runs_8_col [ i, best_voxel_index]))
-			# 	s3.set_xlabel('8ch_col_time_course_alpha_%s_r2_[%.2f]'%( str(alphas_runs_8_col[ i, best_voxel_index]), r_squareds_runs_8_col[ i, best_voxel_index]), fontsize = 10)
-
-			# # f.savefig('%s-3models_%s_best%s_%s,manual.png'%(subname, '64','1', '442'))
-			# f.savefig('%s-3models_%s_best%s_%s,-wrong_auto.pdf'%(subname, modelii,volii, best_voxel_index))
-			# print 'finish print %s-3models_%s_best%i_%i'%(subname, modelii,volii, best_voxel_index)
-
-##### for each regressor----------------------------------------------------------------------------
-		## for each regressor
-		# orientation
-			# f = plt.figure(figsize = (12*len(run_nr_all),12))
-			# for i in []
-			# a = {
-			# 'regressor_of_interest': [ model_BOLD_timecourse_64[:,::2], model_BOLD_timecourse_8_ori [:,::2], model_BOLD_timecourse_8_col [:,::2] ],
-			# 'time_derivative': [ model_BOLD_timecourse_64[:,1::2], model_BOLD_timecourse_8_ori [:,1::2], model_BOLD_timecourse_8_col [:,1::2] ],
-			# 'moco_params', 
-			# 'key_press',}
-			# 'events': [events_64_runs, events_8_ori_runs, events_8_col_runs],
+# ##### for each regressor----------------------------------------------------------------------------
+# 		## for each regressor
+# 		# orientation
+# 			# f = plt.figure(figsize = (12*len(run_nr_all),12))
+# 			# for i in []
+# 			# a = {
+# 			# 'regressor_of_interest': [ model_BOLD_timecourse_64[:,::2], model_BOLD_timecourse_8_ori [:,::2], model_BOLD_timecourse_8_col [:,::2] ],
+# 			# 'time_derivative': [ model_BOLD_timecourse_64[:,1::2], model_BOLD_timecourse_8_ori [:,1::2], model_BOLD_timecourse_8_col [:,1::2] ],
+# 			# 'moco_params', 
+# 			# 'key_press',}
+# 			# 'events': [events_64_runs, events_8_ori_runs, events_8_col_runs],
 
 
-			# run_nr_all = np.arange(file_pairs_all.shape[0])
-			# best_voxel_index = 0
+# 			# run_nr_all = np.arange(file_pairs_all.shape[0])
+# 			# best_voxel_index = 0
 
 
-			# for j in range(design_matrix_8_ori_runs.shape[2]):
-			# 	f = plt.figure(figsize = (12,12))
-			# 	if j in range(model_BOLD_timecourse_8_ori.shape[1])[::2] :
-			# 		regressor_type = 'regressor_of_interest_%i_start_from1'%( (j/2)+1)
-			# 	elif j in range(model_BOLD_timecourse_8_ori.shape[1])[1::2] :
-			# 		regressor_type = 'dt_%i_start_from1'%( (j+1)/2)
-			# 	elif j in range(design_matrix_8_ori_runs.shape[2])[-7:-1]:
-			# 		regressor_type = 'moco_parameter_%i' %( (j-model_BOLD_timecourse_8_ori.shape[1] +1 ) )
-			# 	elif j == range(design_matrix_8_ori_runs.shape[2])[-1]:
-			# 		regressor_type = 'key_press'
+# 			# for j in range(design_matrix_8_ori_runs.shape[2]):
+# 			# 	f = plt.figure(figsize = (12,12))
+# 			# 	if j in range(model_BOLD_timecourse_8_ori.shape[1])[::2] :
+# 			# 		regressor_type = 'regressor_of_interest_%i_start_from1'%( (j/2)+1)
+# 			# 	elif j in range(model_BOLD_timecourse_8_ori.shape[1])[1::2] :
+# 			# 		regressor_type = 'dt_%i_start_from1'%( (j+1)/2)
+# 			# 	elif j in range(design_matrix_8_ori_runs.shape[2])[-7:-1]:
+# 			# 		regressor_type = 'moco_parameter_%i' %( (j-model_BOLD_timecourse_8_ori.shape[1] +1 ) )
+# 			# 	elif j == range(design_matrix_8_ori_runs.shape[2])[-1]:
+# 			# 		regressor_type = 'key_press'
 
-			# 	for i in run_nr_all:
+# 			# 	for i in run_nr_all:
 					
-			# 		s1=f.add_subplot(4,1,i+1)
+# 			# 		s1=f.add_subplot(4,1,i+1)
 
-			# 		# num_plots = 64
+# 			# 		# num_plots = 64
 
-			# 		plt.plot(fmri_data_runs[i, best_voxel_index, :], 'k')
+# 			# 		plt.plot(fmri_data_runs[i, best_voxel_index, :], 'k')
 					
-			# 		plt.plot(design_matrix_8_ori_runs[i].dot(beta_runs_8_ori_allRegressors[ i, best_voxel_index, :] + intercept_runs_8_ori [ i, best_voxel_index]), 'b')
+# 			# 		plt.plot(design_matrix_8_ori_runs[i].dot(beta_runs_8_ori_allRegressors[ i, best_voxel_index, :] + intercept_runs_8_ori [ i, best_voxel_index]), 'b')
 
-			# 		# colormap = plt.cm.gist_ncar
-			# 		# plt.gca().set_color_cycle([colormap(i) for i in np.linspace(0, 0.9, num_plots)]) 
-			# 		plt.plot(design_matrix_8_ori_runs[i, :, j] *(beta_runs_8_ori_allRegressors[ i, best_voxel_index, j] +  intercept_runs_8_ori [ i, best_voxel_index] ) ,'g'  )
+# 			# 		# colormap = plt.cm.gist_ncar
+# 			# 		# plt.gca().set_color_cycle([colormap(i) for i in np.linspace(0, 0.9, num_plots)]) 
+# 			# 		plt.plot(design_matrix_8_ori_runs[i, :, j] *(beta_runs_8_ori_allRegressors[ i, best_voxel_index, j] +  intercept_runs_8_ori [ i, best_voxel_index] ) ,'g'  )
 
-			# 		s1.set_xlabel('8ch_ori_%s_run%i'%( regressor_type, i))
-
-
-			# 	f.savefig('%s-%s_%s-modelFit_%s.pdf'%(subname, '8ori', '442', regressor_type))
-			# 	plt.close()
-			# 	print 'plotting %s-%s_%s-modelFit_%s'%(subname, '8ori', '442', regressor_type)
-
-			# ### color
-
-			# run_nr_all = np.arange(file_pairs_all.shape[0])
-			# best_voxel_index = 0
+# 			# 		s1.set_xlabel('8ch_ori_%s_run%i'%( regressor_type, i))
 
 
-			# for j in range(design_matrix_8_col_runs.shape[2]):
-			# 	f = plt.figure(figsize = (12,12))
-			# 	if j in range(model_BOLD_timecourse_8_col.shape[1])[::2] :
-			# 		regressor_type = 'regressor_of_interest_%i_start_from1'%( (j/2)+1)
-			# 	elif j in range(model_BOLD_timecourse_8_col.shape[1])[1::2] :
-			# 		regressor_type = 'dt_%i_start_from1'%( (j+1)/2)
-			# 	elif j in range(design_matrix_8_col_runs.shape[2])[-7:-1]:
-			# 		regressor_type = 'moco_parameter_%i' %( (j-model_BOLD_timecourse_8_col.shape[1] +1 ) )
-			# 	elif j == range(design_matrix_8_col_runs.shape[2])[-1]:
-			# 		regressor_type = 'key_press'
+# 			# 	f.savefig('%s-%s_%s-modelFit_%s.pdf'%(subname, '8ori', '442', regressor_type))
+# 			# 	plt.close()
+# 			# 	print 'plotting %s-%s_%s-modelFit_%s'%(subname, '8ori', '442', regressor_type)
 
-			# 	for i in run_nr_all:
+# 			# ### color
+
+# 			# run_nr_all = np.arange(file_pairs_all.shape[0])
+# 			# best_voxel_index = 0
+
+
+# 			# for j in range(design_matrix_8_col_runs.shape[2]):
+# 			# 	f = plt.figure(figsize = (12,12))
+# 			# 	if j in range(model_BOLD_timecourse_8_col.shape[1])[::2] :
+# 			# 		regressor_type = 'regressor_of_interest_%i_start_from1'%( (j/2)+1)
+# 			# 	elif j in range(model_BOLD_timecourse_8_col.shape[1])[1::2] :
+# 			# 		regressor_type = 'dt_%i_start_from1'%( (j+1)/2)
+# 			# 	elif j in range(design_matrix_8_col_runs.shape[2])[-7:-1]:
+# 			# 		regressor_type = 'moco_parameter_%i' %( (j-model_BOLD_timecourse_8_col.shape[1] +1 ) )
+# 			# 	elif j == range(design_matrix_8_col_runs.shape[2])[-1]:
+# 			# 		regressor_type = 'key_press'
+
+# 			# 	for i in run_nr_all:
 					
-			# 		s1=f.add_subplot(4,1,i+1)
+# 			# 		s1=f.add_subplot(4,1,i+1)
 
-			# 		# num_plots = 64
+# 			# 		# num_plots = 64
 
-			# 		plt.plot(fmri_data_runs[i, best_voxel_index, :], 'k')
+# 			# 		plt.plot(fmri_data_runs[i, best_voxel_index, :], 'k')
 					
-			# 		plt.plot(design_matrix_8_col_runs[i].dot(beta_runs_8_col_allRegressors[ i, best_voxel_index, :] + intercept_runs_8_col [ i, best_voxel_index]), 'b')
+# 			# 		plt.plot(design_matrix_8_col_runs[i].dot(beta_runs_8_col_allRegressors[ i, best_voxel_index, :] + intercept_runs_8_col [ i, best_voxel_index]), 'b')
 
-			# 		# colormap = plt.cm.gist_ncar
-			# 		# plt.gca().set_color_cycle([colormap(i) for i in np.linspace(0, 0.9, num_plots)]) 
-			# 		plt.plot(design_matrix_8_col_runs[i, :, j] *(beta_runs_8_col_allRegressors[ i, best_voxel_index, j] +  intercept_runs_8_col [ i, best_voxel_index] ) ,'g'  )
+# 			# 		# colormap = plt.cm.gist_ncar
+# 			# 		# plt.gca().set_color_cycle([colormap(i) for i in np.linspace(0, 0.9, num_plots)]) 
+# 			# 		plt.plot(design_matrix_8_col_runs[i, :, j] *(beta_runs_8_col_allRegressors[ i, best_voxel_index, j] +  intercept_runs_8_col [ i, best_voxel_index] ) ,'g'  )
 
-			# 		s1.set_xlabel('8ch_ori_%s_run%i'%( regressor_type, i))
+# 			# 		s1.set_xlabel('8ch_ori_%s_run%i'%( regressor_type, i))
 
 
-			# 	f.savefig('%s-%s_%s-modelFit_%s.pdf'%(subname, '8col', '442', regressor_type))
-			# 	plt.close()
-			# 	print 'plotting %s-%s_%s-modelFit_%s'%(subname, '8col', '442', regressor_type)
-###----------------------------------------------------------------------------
-	shell()
-# #-----------------------
-	for modelii in ['64','8ori','8col']:
-		for volii in np.arange(1,31,1):
-			# pt.plot_3ModelFit_beta_matrix(subname, volii, r_squareds_64, beta_64_across_runs, fmri_data, design_matrix_64, betas_64, intercept_64, alphas_64, r_squareds_8_ori, design_matrix_8_ori, betas_8_ori, intercept_8_ori, alphas_8_ori, r_squareds_8_col, design_matrix_8_col, betas_8_col, intercept_8_col, alphas_8_col) 
-			# plot_3ModelFit_beta_matrix(subname, volii, r_squareds_64, beta_64_across_runs, fmri_data, design_matrix_64, betas_64, intercept_64, alphas_64, r_squareds_8_ori, design_matrix_8_ori, betas_8_ori, intercept_8_ori, alphas_8_ori, r_squareds_8_col, design_matrix_8_col, betas_8_col, intercept_8_col, alphas_8_col) 
-			if modelii == '64':
-				best_voxel_index = np.argsort(r_squareds_mean_64)[-volii]
-			elif modelii == '8ori':
-				best_voxel_index = np.argsort(r_squareds_mean_8_ori)[-volii]
-			elif modelii == '8col':
-				best_voxel_index = np.argsort(r_squareds_mean_8_col)[-volii]
+# 			# 	f.savefig('%s-%s_%s-modelFit_%s.pdf'%(subname, '8col', '442', regressor_type))
+# 			# 	plt.close()
+# 			# 	print 'plotting %s-%s_%s-modelFit_%s'%(subname, '8col', '442', regressor_type)
+# ###----------------------------------------------------------------------------
+# 	shell()
+# # #-----------------------
+# 	for modelii in ['64','8ori','8col']:
+# 		for volii in np.arange(1,31,1):
+# 			# pt.plot_3ModelFit_beta_matrix(subname, volii, r_squareds_64, beta_64_across_runs, fmri_data, design_matrix_64, betas_64, intercept_64, alphas_64, r_squareds_8_ori, design_matrix_8_ori, betas_8_ori, intercept_8_ori, alphas_8_ori, r_squareds_8_col, design_matrix_8_col, betas_8_col, intercept_8_col, alphas_8_col) 
+# 			# plot_3ModelFit_beta_matrix(subname, volii, r_squareds_64, beta_64_across_runs, fmri_data, design_matrix_64, betas_64, intercept_64, alphas_64, r_squareds_8_ori, design_matrix_8_ori, betas_8_ori, intercept_8_ori, alphas_8_ori, r_squareds_8_col, design_matrix_8_col, betas_8_col, intercept_8_col, alphas_8_col) 
+# 			if modelii == '64':
+# 				best_voxel_index = np.argsort(r_squareds_mean_64)[-volii]
+# 			elif modelii == '8ori':
+# 				best_voxel_index = np.argsort(r_squareds_mean_8_ori)[-volii]
+# 			elif modelii == '8col':
+# 				best_voxel_index = np.argsort(r_squareds_mean_8_col)[-volii]
 			
-			# beta_64_best_voxel = beta_64_across_runs [best_voxel_index]
-# #-----------------------
+# 			# beta_64_best_voxel = beta_64_across_runs [best_voxel_index]
+# # #-----------------------
 
-# 			f1 = plt.figure(figsize = (12,12))
+# # 			f1 = plt.figure(figsize = (12,12))
 
-# 			s4 = f1.add_subplot(1,1,1)
-# 			beta_matrix = beta_64_best_voxel.reshape(8,8)
-# 			# plt.plot()
+# # 			s4 = f1.add_subplot(1,1,1)
+# # 			beta_matrix = beta_64_best_voxel.reshape(8,8)
+# # 			# plt.plot()
+
+# # 			# make it circlar
+# # 			beta_matrix_add_column = np.hstack((beta_matrix[:,4:8],beta_matrix, beta_matrix[:,0:4]))
+# # 			beta_matrix_cir = np.vstack ((beta_matrix_add_column[4:8, :], beta_matrix_add_column, beta_matrix_add_column[0:4, :]))
+# # 			plt.imshow(beta_matrix_cir, cmap= plt.cm.viridis, interpolation = 'gaussian' ,  vmin= 0) #  vmin= -4.5, vmax= 4.5   #'bilinear' #"bicubic"
+# # 			# im = mainax.imshow(beta_image,clim=(0,np.abs(all_stuff_betas[voxelii,1:]).max()), cmap='viridis')
+# # 			plt.xticks( np.arange(16), (0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5))
+# # 			plt.yticks(  np.arange(16), (4,5,6,7,0,1,2,3,4,5,6,7,0,1,2,3 ))
+
+# # 			color_theta = (np.pi*2)/8
+# # 			color_angle = color_theta * np.arange(0, 8,dtype=float)
+# # 			color_radius = 75
+# # 			color_a = color_radius * np.cos(color_angle)
+# # 			color_b = color_radius * np.sin(color_angle)
+# # 			colors2 = np.array([ct.lab2rgb((55, a, b)) for a,b in zip(color_a, color_b)])	
+# # 			colors2 = np.hstack((colors2/255, np.ones((8,1))))
+# # 			colors = np.vstack((colors2[4:8, :], colors2, colors2[0:4, :]))
+
+# # 			for ytick, color in zip(s4.get_yticklabels(), colors):
+# # 				ytick.set_color(color)
+
+# # 			s4.grid(False)
+# # 			plt.colorbar()
+# # 			s4.set_xlabel('orientation')
+# # 			s4.set_ylabel('color')
+# # 			s4.set_xlabel('voxel_index: %s' % (best_voxel_index) )
+
+# # 			f1.savefig('%s-%smodel_64matrix-positive_best%i_%i.png'%(subname, modelii, volii, best_voxel_index))
+# # 			print 'finish plot %s-%smodel_64matrix-positive_best%i_%i'%(subname, modelii, volii, best_voxel_index)
+# # 			plt.close()
+
+# 		#### beta_matrix = beta_runs_64_allRegressors[ i, best_voxel_index, 0:128:2]
+
+
+# 		# beta_64_best_voxel = beta_64_across_runs [best_voxel_index]
+
+
+# 		# names = ['442', '5046', '684', '415', '5059', '2194', '5169', '387', '3544', '428']
+# 		# for y in range(len(names)):
+# 		# 	best_voxel_index = y
+
+# 		# 2. beta matrix- for each run
+
+
+# 		# # best_voxel_index = 442
+# 		# 	run_nr_all = np.arange(file_pairs_all.shape[0])
+# 		# 	f = plt.figure(figsize = (12*len(run_nr_all),12))
+# 		# 	# s4=f.add_subplot(gs[:,1]) # First row, second column
+
+# 		# 	preference_64 = []
+# 		# 	for i in run_nr_all:
+
+# 		# 		s4 = f.add_subplot(1,4,i+1)#(3,1,2)
+# 		# 		# beta_matrix = beta_64_best_voxel.reshape(8,8)
+# 		# 		beta_matrix = beta_runs_64_allRegressors[ i, best_voxel_index, 0:128:2].reshape(8,8)
+
+
+# 		# 		# beta_pre_index = np.squeeze(np.where(beta_matrix == beta_matrix.max()))
+# 		# 		a = beta_runs_64_allRegressors[ i, best_voxel_index, 0:128:2]
+
+# 		# 		beta_pre_index_64 = np.where(a == np.max(a) )
+# 		# 		print beta_pre_index_64
+# 		# 		preference_64.append(beta_pre_index_64)
+
+
+# 		# 		# make it circlar
+# 		# 		beta_matrix_add_column = np.hstack((beta_matrix[:,4:8],beta_matrix, beta_matrix[:,0:4]))
+# 		# 		beta_matrix_cir = np.vstack ((beta_matrix_add_column[4:8, :], beta_matrix_add_column, beta_matrix_add_column[0:4, :]))
+# 		# 		plt.imshow(beta_matrix_cir, cmap= plt.cm.viridis, interpolation = 'gaussian' ,  vmin= 0) #  vmin= -4.5, vmax= 4.5   #'bilinear' #"bicubic"
+# 		# 		# im = mainax.imshow(beta_image,clim=(0,np.abs(all_stuff_betas[voxelii,1:]).max()), cmap='viridis')
+# 		# 		plt.xticks( np.arange(16), (0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5))
+# 		# 		plt.yticks(  np.arange(16), (4,5,6,7,0,1,2,3,4,5,6,7,0,1,2,3 ))
+
+# 		# 		color_theta = (np.pi*2)/8
+# 		# 		color_angle = color_theta * np.arange(0, 8,dtype=float)
+# 		# 		color_radius = 75
+# 		# 		color_a = color_radius * np.cos(color_angle)
+# 		# 		color_b = color_radius * np.sin(color_angle)
+# 		# 		colors2 = np.array([ct.lab2rgb((55, a, b)) for a,b in zip(color_a, color_b)])	
+# 		# 		colors2 = np.hstack((colors2/255, np.ones((8,1))))
+# 		# 		colors = np.vstack((colors2[4:8, :], colors2, colors2[0:4, :]))
+
+# 		# 		for ytick, color in zip(s4.get_yticklabels(), colors):
+# 		# 			ytick.set_color(color)
+
+# 		# 		s4.grid(False)
+# 		# 		plt.colorbar()
+# 		# 		s4.set_xlabel('orientation')
+# 		# 		s4.set_ylabel('color')
+# 		# 		s4.set_xlabel('run%i;voxel_index: %s' % (i, str(442)) ) #(best_voxel_index) 
+
+# 		# 	# f.savefig('%s-3models_64matrix-positive_%s.pdf'%(subname, names[y] ))
+# 		# 	f.savefig('%s-3models_%s_64matrix-positive_best%i_%i.pdf'%(subname, modelii, volii, best_voxel_index))
+# 		# 	print 'plotting %s-3models_%s_64matrix-positive_best%i_%i.pdf'%(subname, modelii, volii, best_voxel_index)
+# 		# 	plt.close()
+
+
+# 		# 2. beta matrix- for all runs
+# 		# names = ['442', '5046', '684', '415', '5059', '2194', '5169', '387', '3544', '428']
+
+# 		##subn001
+# 		# names = ['442', '5046', '387', '3544', '415', '684', '5169', '402', '2194', '5047', '372', '5059', '371', '428', '429', '3554', '3417', '685', '1265', '3925', '3407', '202', '3418', '3412', '930', '2061','5071','594','2080','962' ]
+# 		# ##subn003
+# 		# names = ['188', '189', '1757', '516', '8850', '190', '8997', '648', '8815', '2263', '8656', '206', '8998', '8477', '6075', '4078', '8491', '8341', '8516', '8811', '3657', '8519', '2242', '1056', '8835', '2748','7524','2243','738','4816' ]
+# 		# ##subn005
+# 		names = ['2224', '2017', '2016', '2004', '2236', '2223', '4929', '975', '694', '695', '2003', '2212', '2015', '5042', '2622', '3145', '961', '412', '681', '988', '974', '1991', '3174', '3293', '4702', '3154', '4928','424','1256','3283' ]
+
+
+# 		for y in range(len(names)):
+# 			best_voxel_index = y
+
+# 			# best_voxel_index = 0
+# 			# run_nr_all = np.arange(file_pairs_all.shape[0])
+
+# 			f = plt.figure(figsize = (24,24))
+# 			# s4=f.add_subplot(gs[:,1]) # First row, second column
+
+# 			# preference_64 = []
+# 			gs=GridSpec(6,6) # (2,3)2 rows, 3 columns
+
+
+
+# 			s4=f.add_subplot(gs[3:,0:-2])	
+# 			beta_matrix = np.mean(beta_runs_64_allRegressors[ :, best_voxel_index, 0:128:2], axis = 0).reshape(8,8)
+
+
+# 			beta_pre_index = np.squeeze(np.where(beta_matrix== beta_matrix.max()))
+# 			# if get two max values, make the first one
+# 			if beta_pre_index.size == 2:
+# 				print 'only one preferred stimulus'
+# 			else:
+# 				beta_pre_index = np.array([beta_pre_index[0][0], beta_pre_index[1][0]])
+# 				print 'more than one preferred stimulus'
+
+# 			ori = beta_matrix[beta_pre_index[0],:]
+# 			col = beta_matrix[:,beta_pre_index[1]]
 
 # 			# make it circlar
 # 			beta_matrix_add_column = np.hstack((beta_matrix[:,4:8],beta_matrix, beta_matrix[:,0:4]))
 # 			beta_matrix_cir = np.vstack ((beta_matrix_add_column[4:8, :], beta_matrix_add_column, beta_matrix_add_column[0:4, :]))
 # 			plt.imshow(beta_matrix_cir, cmap= plt.cm.viridis, interpolation = 'gaussian' ,  vmin= 0) #  vmin= -4.5, vmax= 4.5   #'bilinear' #"bicubic"
 # 			# im = mainax.imshow(beta_image,clim=(0,np.abs(all_stuff_betas[voxelii,1:]).max()), cmap='viridis')
-# 			plt.xticks( np.arange(16), (0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5))
-# 			plt.yticks(  np.arange(16), (4,5,6,7,0,1,2,3,4,5,6,7,0,1,2,3 ))
+# 			plt.xticks( np.arange(16), (0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5), fontsize = 15)
+# 			plt.yticks(  np.arange(16), (4,5,6,7,0,1,2,3,4,5,6,7,0,1,2,3 ), fontsize = 20)
 
 # 			color_theta = (np.pi*2)/8
 # 			color_angle = color_theta * np.arange(0, 8,dtype=float)
@@ -732,524 +851,251 @@ for subii, sub in enumerate(sublist):
 
 # 			s4.grid(False)
 # 			plt.colorbar()
-# 			s4.set_xlabel('orientation')
-# 			s4.set_ylabel('color')
-# 			s4.set_xlabel('voxel_index: %s' % (best_voxel_index) )
+# 			s4.set_xlabel('orientation', fontsize = 20)
+# 			s4.set_ylabel('color', fontsize = 20)
+# 			# s4.set_xlabel('run%i;voxel_index: %s' % (i, str(442)) ) #(best_voxel_index) 
 
-# 			f1.savefig('%s-%smodel_64matrix-positive_best%i_%i.png'%(subname, modelii, volii, best_voxel_index))
-# 			print 'finish plot %s-%smodel_64matrix-positive_best%i_%i'%(subname, modelii, volii, best_voxel_index)
+
+# 			# a = np.mean(beta_runs_64_allRegressors[ :, best_voxel_index, 0:128:2], axis = 0)
+
+# 			# beta_pre_index_64 = np.where(a == np.max(a) )
+# 			# print beta_pre_index_64
+
+# 			# # make it circlar
+# 			# t_matrix_add_column = np.hstack((t_matrix_cen, t_matrix_cen[:,0][:, np.newaxis]))
+# 			# t_matrix_cir = np.vstack ((t_matrix_add_column, t_matrix_add_column[0,:]))
+
+
+
+
+# 			# stimuli_64 = beta_pre_index_64[0][0]
+
+# 			# if (stimuli_64 >= 0 ) * (stimuli_64 < (8*1))  :
+# 			# 	stimuli_col = 0			
+# 			# elif (stimuli_64 >= (8*1)) and (stimuli_64 < (8*2)) :
+# 			# 	stimuli_col = 1
+# 			# elif (stimuli_64 >= (8*2)) and (stimuli_64 < (8*3)) :
+# 			# 	stimuli_col = 2
+# 			# elif (stimuli_64 >= (8*3)) and (stimuli_64 < (8*4)) :
+# 			# 	stimuli_col = 3
+# 			# elif (stimuli_64 >= (8*4)) and (stimuli_64 < (8*5)) :
+# 			# 	stimuli_col = 4
+# 			# elif (stimuli_64 >= (8*5)) and (stimuli_64 < (8*6)) :
+# 			# 	stimuli_col = 5							
+# 			# elif (stimuli_64 >= (8*6)) and (stimuli_64 < (8*7)) :
+# 			# 	stimuli_col = 6
+# 			# elif (stimuli_64 >= (8*7)) and (stimuli_64 < (8*8)) :
+# 			# 	stimuli_col = 7	
+
+# 			# stimuli_ori = stimuli_64% 8
+
+# 			##ori
+# 			s3=f.add_subplot(gs[2,0:-2]) # First row, third column
+
+# 			# ori = beta_matrix[stimuli_ori, :]
+# 			ori_cir = np.hstack( (ori[4:8], ori, ori[0:4] ) )
+# 			plt.xticks( np.arange(16), (0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5), fontsize = 20)
+# 			plt.yticks( fontsize = 20)
+# 			# s3.set_xlabel('orientation', fontsize = 20)
+
+# 			# s3.tick_params(axis=u'both', which=u'both',length=0)
+
+# 			plt.plot( ori_cir)
+
+
+# 			s2 =f.add_subplot(gs[3:,-2])
+
+# 			# col = beta_matrix[:, stimuli_col] 
+# 			col_cir = np.hstack( (col[4:8], col, col[0:4] ) )
+# 			# roate_90_clockwise( col_cir )
+# 			# s2.tick_params(axis=u'both', which=u'both',length=0)
+
+
+# 			x = np.arange(0, len(col_cir) )
+# 			y = col_cir
+# 			x_new = y
+# 			y_new = len(col_cir)-1 -x 
+
+# 			# ax.set_xticklabels([7,6,5,4,3,2,1,0])
+
+# 			plt.plot(x_new, y_new)
+#  # (4,5,6,7,0,1,2,3,4,5,6,7,0,1,2,3 ))
+# 			plt.yticks(  np.arange(16), (3,2,1,0,7,6,5,4,3,2,1,0,7,6,5,4 ), fontsize = 20)
+# 			plt.xticks( fontsize = 20)
+
+# 			color_theta = (np.pi*2)/8
+# 			color_angle = color_theta * np.arange(0, 8,dtype=float)
+# 			color_radius = 75
+# 			color_a = color_radius * np.cos(color_angle)
+# 			color_b = color_radius * np.sin(color_angle)
+# 			colors2 = np.array([ct.lab2rgb((55, a, b)) for a,b in zip(color_a, color_b)])	
+# 			colors2 = np.hstack((colors2/255, np.ones((8,1))))
+# 			colors = np.vstack((colors2[0:4, :][::-1], colors2[::-1], colors2[4:8, :][::-1] ))
+
+# 			for ytick, color in zip(s2.get_yticklabels(), colors):
+# 				ytick.set_color(color)
+
+
+# 			# s2.set_ylabel('color', fontsize = 20)
+
+# 			# f.savefig('%s-3models_64matrix-positive_%s.pdf'%(subname, names[y] ))
+# 			f.savefig('%s-best%i-%s.pdf'%(subname, best_voxel_index, str(names[best_voxel_index]) ))
+# 			print 'plotting %s-best%i-%s.pdf'%(subname, best_voxel_index, str(names[best_voxel_index]) )
 # 			plt.close()
 
-		#### beta_matrix = beta_runs_64_allRegressors[ i, best_voxel_index, 0:128:2]
 
-
-		# beta_64_best_voxel = beta_64_across_runs [best_voxel_index]
-
-
-		# names = ['442', '5046', '684', '415', '5059', '2194', '5169', '387', '3544', '428']
-		# for y in range(len(names)):
-		# 	best_voxel_index = y
-
-		# 2. beta matrix- for each run
-
-
-		# # best_voxel_index = 442
-		# 	run_nr_all = np.arange(file_pairs_all.shape[0])
-		# 	f = plt.figure(figsize = (12*len(run_nr_all),12))
-		# 	# s4=f.add_subplot(gs[:,1]) # First row, second column
-
-		# 	preference_64 = []
-		# 	for i in run_nr_all:
-
-		# 		s4 = f.add_subplot(1,4,i+1)#(3,1,2)
-		# 		# beta_matrix = beta_64_best_voxel.reshape(8,8)
-		# 		beta_matrix = beta_runs_64_allRegressors[ i, best_voxel_index, 0:128:2].reshape(8,8)
-
-
-		# 		# beta_pre_index = np.squeeze(np.where(beta_matrix == beta_matrix.max()))
-		# 		a = beta_runs_64_allRegressors[ i, best_voxel_index, 0:128:2]
-
-		# 		beta_pre_index_64 = np.where(a == np.max(a) )
-		# 		print beta_pre_index_64
-		# 		preference_64.append(beta_pre_index_64)
-
-
-		# 		# make it circlar
-		# 		beta_matrix_add_column = np.hstack((beta_matrix[:,4:8],beta_matrix, beta_matrix[:,0:4]))
-		# 		beta_matrix_cir = np.vstack ((beta_matrix_add_column[4:8, :], beta_matrix_add_column, beta_matrix_add_column[0:4, :]))
-		# 		plt.imshow(beta_matrix_cir, cmap= plt.cm.viridis, interpolation = 'gaussian' ,  vmin= 0) #  vmin= -4.5, vmax= 4.5   #'bilinear' #"bicubic"
-		# 		# im = mainax.imshow(beta_image,clim=(0,np.abs(all_stuff_betas[voxelii,1:]).max()), cmap='viridis')
-		# 		plt.xticks( np.arange(16), (0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5))
-		# 		plt.yticks(  np.arange(16), (4,5,6,7,0,1,2,3,4,5,6,7,0,1,2,3 ))
-
-		# 		color_theta = (np.pi*2)/8
-		# 		color_angle = color_theta * np.arange(0, 8,dtype=float)
-		# 		color_radius = 75
-		# 		color_a = color_radius * np.cos(color_angle)
-		# 		color_b = color_radius * np.sin(color_angle)
-		# 		colors2 = np.array([ct.lab2rgb((55, a, b)) for a,b in zip(color_a, color_b)])	
-		# 		colors2 = np.hstack((colors2/255, np.ones((8,1))))
-		# 		colors = np.vstack((colors2[4:8, :], colors2, colors2[0:4, :]))
-
-		# 		for ytick, color in zip(s4.get_yticklabels(), colors):
-		# 			ytick.set_color(color)
-
-		# 		s4.grid(False)
-		# 		plt.colorbar()
-		# 		s4.set_xlabel('orientation')
-		# 		s4.set_ylabel('color')
-		# 		s4.set_xlabel('run%i;voxel_index: %s' % (i, str(442)) ) #(best_voxel_index) 
-
-		# 	# f.savefig('%s-3models_64matrix-positive_%s.pdf'%(subname, names[y] ))
-		# 	f.savefig('%s-3models_%s_64matrix-positive_best%i_%i.pdf'%(subname, modelii, volii, best_voxel_index))
-		# 	print 'plotting %s-3models_%s_64matrix-positive_best%i_%i.pdf'%(subname, modelii, volii, best_voxel_index)
-		# 	plt.close()
-
-
-		# 2. beta matrix- for all runs
-		names = ['442', '5046', '684', '415', '5059', '2194', '5169', '387', '3544', '428']
-		for y in range(len(names)):
-			best_voxel_index = y
-
-			# best_voxel_index = 0
-			# run_nr_all = np.arange(file_pairs_all.shape[0])
-
-			f = plt.figure(figsize = (24,24))
-			# s4=f.add_subplot(gs[:,1]) # First row, second column
-
-			# preference_64 = []
-			gs=GridSpec(6,6) # (2,3)2 rows, 3 columns
-
-
-
-			s4=f.add_subplot(gs[3:,0:-2])	
-			beta_matrix = np.mean(beta_runs_64_allRegressors[ :, best_voxel_index, 0:128:2], axis = 0).reshape(8,8)
-
-
-			beta_pre_index = np.squeeze(np.where(beta_matrix== beta_matrix.max()))
-			# if get two max values, make the first one
-			if beta_pre_index.size == 2:
-				print 'only one preferred stimulus'
-			else:
-				beta_pre_index = np.array([beta_pre_index[0][0], beta_pre_index[1][0]])
-				print 'more than one preferred stimulus'
-
-			ori = beta_matrix[beta_pre_index[0],:]
-			col = beta_matrix[:,beta_pre_index[1]]
-
-			# make it circlar
-			beta_matrix_add_column = np.hstack((beta_matrix[:,4:8],beta_matrix, beta_matrix[:,0:4]))
-			beta_matrix_cir = np.vstack ((beta_matrix_add_column[4:8, :], beta_matrix_add_column, beta_matrix_add_column[0:4, :]))
-			plt.imshow(beta_matrix_cir, cmap= plt.cm.viridis, interpolation = 'gaussian' ,  vmin= 0) #  vmin= -4.5, vmax= 4.5   #'bilinear' #"bicubic"
-			# im = mainax.imshow(beta_image,clim=(0,np.abs(all_stuff_betas[voxelii,1:]).max()), cmap='viridis')
-			plt.xticks( np.arange(16), (0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5), fontsize = 15)
-			plt.yticks(  np.arange(16), (4,5,6,7,0,1,2,3,4,5,6,7,0,1,2,3 ), fontsize = 20)
-
-			color_theta = (np.pi*2)/8
-			color_angle = color_theta * np.arange(0, 8,dtype=float)
-			color_radius = 75
-			color_a = color_radius * np.cos(color_angle)
-			color_b = color_radius * np.sin(color_angle)
-			colors2 = np.array([ct.lab2rgb((55, a, b)) for a,b in zip(color_a, color_b)])	
-			colors2 = np.hstack((colors2/255, np.ones((8,1))))
-			colors = np.vstack((colors2[4:8, :], colors2, colors2[0:4, :]))
-
-			for ytick, color in zip(s4.get_yticklabels(), colors):
-				ytick.set_color(color)
-
-			s4.grid(False)
-			plt.colorbar()
-			s4.set_xlabel('orientation', fontsize = 20)
-			s4.set_ylabel('color', fontsize = 20)
-			# s4.set_xlabel('run%i;voxel_index: %s' % (i, str(442)) ) #(best_voxel_index) 
-
-
-			# a = np.mean(beta_runs_64_allRegressors[ :, best_voxel_index, 0:128:2], axis = 0)
-
-			# beta_pre_index_64 = np.where(a == np.max(a) )
-			# print beta_pre_index_64
-
-			# # make it circlar
-			# t_matrix_add_column = np.hstack((t_matrix_cen, t_matrix_cen[:,0][:, np.newaxis]))
-			# t_matrix_cir = np.vstack ((t_matrix_add_column, t_matrix_add_column[0,:]))
-
-
-
-
-			# stimuli_64 = beta_pre_index_64[0][0]
-
-			# if (stimuli_64 >= 0 ) * (stimuli_64 < (8*1))  :
-			# 	stimuli_col = 0			
-			# elif (stimuli_64 >= (8*1)) and (stimuli_64 < (8*2)) :
-			# 	stimuli_col = 1
-			# elif (stimuli_64 >= (8*2)) and (stimuli_64 < (8*3)) :
-			# 	stimuli_col = 2
-			# elif (stimuli_64 >= (8*3)) and (stimuli_64 < (8*4)) :
-			# 	stimuli_col = 3
-			# elif (stimuli_64 >= (8*4)) and (stimuli_64 < (8*5)) :
-			# 	stimuli_col = 4
-			# elif (stimuli_64 >= (8*5)) and (stimuli_64 < (8*6)) :
-			# 	stimuli_col = 5							
-			# elif (stimuli_64 >= (8*6)) and (stimuli_64 < (8*7)) :
-			# 	stimuli_col = 6
-			# elif (stimuli_64 >= (8*7)) and (stimuli_64 < (8*8)) :
-			# 	stimuli_col = 7	
-
-			# stimuli_ori = stimuli_64% 8
-
-			##ori
-			s3=f.add_subplot(gs[2,0:-2]) # First row, third column
-
-			# ori = beta_matrix[stimuli_ori, :]
-			ori_cir = np.hstack( (ori[4:8], ori, ori[0:4] ) )
-			plt.xticks( np.arange(16), (0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5), fontsize = 20)
-			plt.yticks( fontsize = 20)
-			# s3.set_xlabel('orientation', fontsize = 20)
-
-			# s3.tick_params(axis=u'both', which=u'both',length=0)
-
-			plt.plot( ori_cir)
-
-
-			s2 =f.add_subplot(gs[3:,-2])
-
-			# col = beta_matrix[:, stimuli_col] 
-			col_cir = np.hstack( (col[4:8], col, col[0:4] ) )
-			# roate_90_clockwise( col_cir )
-			# s2.tick_params(axis=u'both', which=u'both',length=0)
-
-
-			x = np.arange(0, len(col_cir) )
-			y = col_cir
-			x_new = y
-			y_new = len(col_cir)-1 -x 
-
-			# ax.set_xticklabels([7,6,5,4,3,2,1,0])
-
-			plt.plot(x_new, y_new)
- # (4,5,6,7,0,1,2,3,4,5,6,7,0,1,2,3 ))
-			plt.yticks(  np.arange(16), (3,2,1,0,7,6,5,4,3,2,1,0,7,6,5,4 ), fontsize = 20)
-			plt.xticks( fontsize = 20)
-
-			color_theta = (np.pi*2)/8
-			color_angle = color_theta * np.arange(0, 8,dtype=float)
-			color_radius = 75
-			color_a = color_radius * np.cos(color_angle)
-			color_b = color_radius * np.sin(color_angle)
-			colors2 = np.array([ct.lab2rgb((55, a, b)) for a,b in zip(color_a, color_b)])	
-			colors2 = np.hstack((colors2/255, np.ones((8,1))))
-			colors = np.vstack((colors2[0:4, :][::-1], colors2[::-1], colors2[4:8, :][::-1] ))
-
-			for ytick, color in zip(s2.get_yticklabels(), colors):
-				ytick.set_color(color)
-
-
-			# s2.set_ylabel('color', fontsize = 20)
-
-			# f.savefig('%s-3models_64matrix-positive_%s.pdf'%(subname, names[y] ))
-			f.savefig('%s-%i-2.pdf'%(subname, best_voxel_index))
-			print 'plotting %s-%i-2.pdf'%(subname, best_voxel_index)
-			plt.close()
-
-
-
-
-
-
-
-
-
-
-
-			preference_64 = np.array(preference_64)
-
-			stimuli_col_runs=[]
-			stimuli_ori_runs=[]
-			stimuli_64_runs =[]
-
-			for i in run_nr_all:
-
-				stimuli_64 = preference_64[i]
-				stimuli_64_runs.append(stimuli_64)
-
-				if (preference_64[i] >= 0 ) * (preference_64[i] < (8*1))  :
-					stimuli_col = 0			
-				elif (preference_64[i] >= (8*1)) and (preference_64[i] < (8*2)) :
-					stimuli_col = 1
-				elif (preference_64[i] >= (8*2)) and (preference_64[i] < (8*3)) :
-					stimuli_col = 2
-				elif (preference_64[i] >= (8*3)) and (preference_64[i] < (8*4)) :
-					stimuli_col = 3
-				elif (preference_64[i] >= (8*4)) and (preference_64[i] < (8*5)) :
-					stimuli_col = 4
-				elif (preference_64[i] >= (8*5)) and (preference_64[i] < (8*6)) :
-					stimuli_col = 5							
-				elif (preference_64[i] >= (8*6)) and (preference_64[i] < (8*7)) :
-					stimuli_col = 6
-				elif (preference_64[i] >= (8*7)) and (preference_64[i] < (8*8)) :
-					stimuli_col = 7	
-
-				stimuli_ori = preference_64[i]% 8
-
-				stimuli_col_runs.append(stimuli_col)
-				stimuli_ori_runs.append(stimuli_ori)
+# #### BOLD response window. Orientaiton vs. Color vs. Average
+# 			# preference_64 = np.array(preference_64)
+
+# 			# stimuli_col_runs=[]
+# 			# stimuli_ori_runs=[]
+# 			# stimuli_64_runs =[]
+
+# 			# for i in run_nr_all:
+
+# 			# 	stimuli_64 = preference_64[i]
+# 			# 	stimuli_64_runs.append(stimuli_64)
+
+# 			# 	if (preference_64[i] >= 0 ) * (preference_64[i] < (8*1))  :
+# 			# 		stimuli_col = 0			
+# 			# 	elif (preference_64[i] >= (8*1)) and (preference_64[i] < (8*2)) :
+# 			# 		stimuli_col = 1
+# 			# 	elif (preference_64[i] >= (8*2)) and (preference_64[i] < (8*3)) :
+# 			# 		stimuli_col = 2
+# 			# 	elif (preference_64[i] >= (8*3)) and (preference_64[i] < (8*4)) :
+# 			# 		stimuli_col = 3
+# 			# 	elif (preference_64[i] >= (8*4)) and (preference_64[i] < (8*5)) :
+# 			# 		stimuli_col = 4
+# 			# 	elif (preference_64[i] >= (8*5)) and (preference_64[i] < (8*6)) :
+# 			# 		stimuli_col = 5							
+# 			# 	elif (preference_64[i] >= (8*6)) and (preference_64[i] < (8*7)) :
+# 			# 		stimuli_col = 6
+# 			# 	elif (preference_64[i] >= (8*7)) and (preference_64[i] < (8*8)) :
+# 			# 		stimuli_col = 7	
+
+# 			# 	stimuli_ori = preference_64[i]% 8
+
+# 			# 	stimuli_col_runs.append(stimuli_col)
+# 			# 	stimuli_ori_runs.append(stimuli_ori)
 			
 
-			stimuli_64_runs = np.squeeze(np.array(stimuli_64_runs))
-			stimuli_ori_runs = np.squeeze(np.array(stimuli_ori_runs))
-			stimuli_col_runs = np.array(stimuli_col_runs)
+# 			# stimuli_64_runs = np.squeeze(np.array(stimuli_64_runs))
+# 			# stimuli_ori_runs = np.squeeze(np.array(stimuli_ori_runs))
+# 			# stimuli_col_runs = np.array(stimuli_col_runs)
 
 
-			event_time_64_runs = np.zeros( (len(run_nr_all), 2, 13) )  # runs, repetitions, TRs
-			event_time_ori_runs = np.zeros( (len(run_nr_all), 16, 13) )
-			event_time_col_runs = np.zeros( (len(run_nr_all), 16, 13) )
+# 			# event_time_64_runs = np.zeros( (len(run_nr_all), 2, 13) )  # runs, repetitions, TRs
+# 			# event_time_ori_runs = np.zeros( (len(run_nr_all), 16, 13) )
+# 			# event_time_col_runs = np.zeros( (len(run_nr_all), 16, 13) )
 
-			for i in run_nr_all:
-				all_TRs_64 = events_64_runs[i, :, stimuli_64_runs[i]]
-				target_TR_64 = np.squeeze(np.where(all_TRs_64 ==1) )
+# 			# for i in run_nr_all:
+# 			# 	all_TRs_64 = events_64_runs[i, :, stimuli_64_runs[i]]
+# 			# 	target_TR_64 = np.squeeze(np.where(all_TRs_64 ==1) )
 
-				all_TRs_ori = events_8_ori_runs[i, :, stimuli_ori_runs[i]]
-				target_TR_ori = np.squeeze(np.where(all_TRs_ori ==1) )
+# 			# 	all_TRs_ori = events_8_ori_runs[i, :, stimuli_ori_runs[i]]
+# 			# 	target_TR_ori = np.squeeze(np.where(all_TRs_ori ==1) )
 
-				all_TRs_col = events_8_col_runs[i, :, stimuli_col_runs[i] ]
-				target_TR_col = np.squeeze(np.where(all_TRs_col ==1) )
+# 			# 	all_TRs_col = events_8_col_runs[i, :, stimuli_col_runs[i] ]
+# 			# 	target_TR_col = np.squeeze(np.where(all_TRs_col ==1) )
 
-				for j in range(target_TR_64.shape[0]):
-					# time_window = [target_TR[j]-4 : target_TR[j]+9 ]
-					event_time_64_runs[i, j] = fmri_data_runs[i, best_voxel_index, target_TR_64[j]-4 : target_TR_64[j]+9]
+# 			# 	for j in range(target_TR_64.shape[0]):
+# 			# 		# time_window = [target_TR[j]-4 : target_TR[j]+9 ]
+# 			# 		event_time_64_runs[i, j] = fmri_data_runs[i, best_voxel_index, target_TR_64[j]-4 : target_TR_64[j]+9]
 				
-				for j in range(target_TR_ori.shape[0]):	
-					event_time_ori_runs[i, j] = fmri_data_runs[i, best_voxel_index, target_TR_ori[j]-4 : target_TR_ori[j]+9]
+# 			# 	for j in range(target_TR_ori.shape[0]):	
+# 			# 		event_time_ori_runs[i, j] = fmri_data_runs[i, best_voxel_index, target_TR_ori[j]-4 : target_TR_ori[j]+9]
 
-				for j in range(target_TR_col.shape[0]):	
-					event_time_col_runs[i, j] = fmri_data_runs[i, best_voxel_index, target_TR_col[j]-4 : target_TR_col[j]+9]
-
-
-			event_time_64_across_repetitions =  np.mean(event_time_64_runs, axis = 1)
-			event_time_ori_across_repetitions =  np.mean(event_time_ori_runs, axis = 1)
-			event_time_col_across_repetitions =  np.mean(event_time_col_runs, axis = 1)
-
-			event_time_64_mean = np.mean(  event_time_64_across_repetitions, axis = 0)
-			event_time_ori_mean = np.mean(  event_time_ori_across_repetitions, axis = 0)
-			event_time_col_mean = np.mean(  event_time_col_across_repetitions , axis = 0)
-
-			sd = np.array([np.std(event_time_64_mean, axis = 0), np.std(event_time_ori_mean, axis = 0), np.std(event_time_col_mean, axis = 0)])
-			n = len(run_nr_all)
-			yerr = (sd/np.sqrt(n)) #*1.96
-
-			event_time_mean = [event_time_64_mean, event_time_ori_mean, event_time_col_mean]
-			labels = ['time_course_of_preferred_stimuli', 'time_course_of_preferred_orientation', 'time_course_of_preferred_color' ]
-			f = plt.figure(figsize = (12,12))
-			for i in [0,1,2]:
-				s1 = f.add_subplot(3,1,i+1)#(3,1,2)
-				plt.plot(event_time_mean[i])
-				plt.errorbar(range(0,13) , event_time_mean[i], yerr= yerr[i])
-				plt.xticks( np.arange(13), (range(-5,9)))
-
-				s1.set_xlabel(labels[i])
-				# sn.despine(offset=10)
-
-			# f.savefig('%s-3models_time_course_of_preferred_features_voxel%s.pdf'%(subname, names[y] ))
-			f.savefig('%s-3models_%s_time_course_of_preferred_features_best%i_voxel%s.pdf'%(subname, modelii,volii, best_voxel_index))	
-			plt.close()
-			# print 'plot %s-3models_time_course_of_preferred_features_voxel%s.pdf'%(subname, names[y] )
-			# f.savefig('%s-3models_%s_best%s_%s.pdf'%(subname, modelii,volii, best_voxel_index))
-			print 'plottting %s-3models_%s_time_course_of_preferred_features_best%i_voxel%s.pdf'%(subname, modelii,volii, best_voxel_index)
+# 			# 	for j in range(target_TR_col.shape[0]):	
+# 			# 		event_time_col_runs[i, j] = fmri_data_runs[i, best_voxel_index, target_TR_col[j]-4 : target_TR_col[j]+9]
 
 
+# 			# event_time_64_across_repetitions =  np.mean(event_time_64_runs, axis = 1)
+# 			# event_time_ori_across_repetitions =  np.mean(event_time_ori_runs, axis = 1)
+# 			# event_time_col_across_repetitions =  np.mean(event_time_col_runs, axis = 1)
 
-t_64vs8ori_across_sub = np.mean(t_64vs8ori, axis = 0)
-t_64vs8col_across_sub = np.mean(t_64vs8col, axis = 0)
-t_8oriVs8col_across_sub = np.mean(t_8oriVs8col, axis = 0)
+# 			# event_time_64_mean = np.mean(  event_time_64_across_repetitions, axis = 0)
+# 			# event_time_ori_mean = np.mean(  event_time_ori_across_repetitions, axis = 0)
+# 			# event_time_col_mean = np.mean(  event_time_col_across_repetitions , axis = 0)
+
+# 			# sd = np.array([np.std(event_time_64_mean, axis = 0), np.std(event_time_ori_mean, axis = 0), np.std(event_time_col_mean, axis = 0)])
+# 			# n = len(run_nr_all)
+# 			# yerr = (sd/np.sqrt(n)) #*1.96
+
+# 			# event_time_mean = [event_time_64_mean, event_time_ori_mean, event_time_col_mean]
+# 			# labels = ['time_course_of_preferred_stimuli', 'time_course_of_preferred_orientation', 'time_course_of_preferred_color' ]
+# 			# f = plt.figure(figsize = (12,12))
+# 			# for i in [0,1,2]:
+# 			# 	s1 = f.add_subplot(3,1,i+1)#(3,1,2)
+# 			# 	plt.plot(event_time_mean[i])
+# 			# 	plt.errorbar(range(0,13) , event_time_mean[i], yerr= yerr[i])
+# 			# 	plt.xticks( np.arange(13), (range(-5,9)))
+
+# 			# 	s1.set_xlabel(labels[i])
+# 			# 	# sn.despine(offset=10)
+
+# 			# # f.savefig('%s-3models_time_course_of_preferred_features_voxel%s.pdf'%(subname, names[y] ))
+# 			# f.savefig('%s-3models_%s_time_course_of_preferred_features_best%i_voxel%s.pdf'%(subname, modelii,volii, best_voxel_index))	
+# 			# plt.close()
+# 			# # print 'plot %s-3models_time_course_of_preferred_features_voxel%s.pdf'%(subname, names[y] )
+# 			# # f.savefig('%s-3models_%s_best%s_%s.pdf'%(subname, modelii,volii, best_voxel_index))
+# 			# print 'plottting %s-3models_%s_time_course_of_preferred_features_best%i_voxel%s.pdf'%(subname, modelii,volii, best_voxel_index)
+
+
+
+# t_64vs8ori_across_sub = np.mean(t_64vs8ori, axis = 0)
+# t_64vs8col_across_sub = np.mean(t_64vs8col, axis = 0)
+# t_8oriVs8col_across_sub = np.mean(t_8oriVs8col, axis = 0)
+# # print 't_64vs8ori_r2_rel_mean: %.2f, p_64vs8ori_r2_rel_mean: %.2f' % (t_64vs8ori_across_sub[0], t_64vs8ori_across_sub[1] )
+# # print 't_64vs8col_r2_rel_mean: %.2f, p_64vs8col_r2_rel_mean: %.2f' % (t_64vs8col_across_sub[0], t_64vs8col_across_sub[1])
+# # print 't_8oriVs8col_r2_rel_mean: %.2f, p_8oriVs8col_r2_rel_mean: %.2f' % (t_8oriVs8col_across_sub[0], t_8oriVs8col_across_sub[1])
+
+# # print 'sub-n001', 
+# # print aov_values[0]
+
+# # print 'sub-n003'
+# # print aov_values[1]
+
+# # print 'sub-n005'
+# # print aov_values[2]
+
+# # sys.stdout = open('%s_F_t_64v8v8_r2.txt'%(subname), 'w')
+# sys.stdout = open('ALL_F_t_64v8v8_r2.txt', 'w')
+# # print subname
+# # print aov
+
+# # print 't_64vs8ori_r2_rel: %f, p_64vs8ori_r2_rel: %f, correction: %f' %(t_64vs8ori_r2_rel, p_64vs8ori_r2_rel, p_64vs8ori_r2_rel*len(voxel_list)*3 )
+# # print 't_64vs8col_r2_rel: %f, p_64vs8col_r2_rel: %f, correction: %f ' %(t_64vs8col_r2_rel, p_64vs8col_r2_rel, p_64vs8ori_r2_rel*len(voxel_list)*3 )
+# # print 't_8oriVs8col_r2_rel: %f, p_8oriVs8col_r2_rel: %f, correction: %f' %(t_8oriVs8col_r2_rel, p_8oriVs8col_r2_rel, p_64vs8ori_r2_rel*len(voxel_list)*3 )
+
+# # print p_64vs8ori_r2_rel*len(voxel_list)*3
+# # print p_64vs8ori_r2_rel*len(voxel_list)*3
+# # print p_64vs8ori_r2_rel*len(voxel_list)*3
+
+
+# # print 'beta_runs_64'
+# # print beta_runs_64
+
+# # sys.stdout.close()
+
+
+# for i in [0,1,2]:
+# 	print sublist[i]
+# 	print aov_values[i]
+# 	print 't_64vs8ori_r2_rel: %.2f, p_64vs8ori_r2_rel: %.2f' % (t_64vs8ori[i, 0], t_64vs8ori[i,1])
+
+# 	print 't_64vs8ori_r2_rel: %f, p_64vs8ori_r2_rel: %f, correction: %f' %(t_64vs8ori[i,0], t_64vs8ori[i,1], t_64vs8ori[i,1]*len(voxel_lists[i])*3 )
+# 	print 't_64vs8col_r2_rel: %f, p_64vs8col_r2_rel: %f, correction: %f ' %(t_64vs8col[i,0], t_64vs8col[i,1], t_64vs8col[i,1]*len(voxel_lists[i])*3 )
+# 	print 't_8oriVs8col_r2_rel: %f, p_8oriVs8col_r2_rel: %f, correction: %f' %(t_8oriVs8col[i,0], t_8oriVs8col[i,1], t_8oriVs8col[i,1]*len(voxel_lists[i])*3 )
+
+# 	print t_64vs8ori[i,1]*len(voxel_lists[i])*3
+# 	print t_64vs8col[i,1]*len(voxel_lists[i])*3 
+# 	print t_8oriVs8col[i,1]*len(voxel_lists[i])*3
+
+# print 'MEAN across Subjects'
 # print 't_64vs8ori_r2_rel_mean: %.2f, p_64vs8ori_r2_rel_mean: %.2f' % (t_64vs8ori_across_sub[0], t_64vs8ori_across_sub[1] )
 # print 't_64vs8col_r2_rel_mean: %.2f, p_64vs8col_r2_rel_mean: %.2f' % (t_64vs8col_across_sub[0], t_64vs8col_across_sub[1])
 # print 't_8oriVs8col_r2_rel_mean: %.2f, p_8oriVs8col_r2_rel_mean: %.2f' % (t_8oriVs8col_across_sub[0], t_8oriVs8col_across_sub[1])
 
-# print 'sub-n001', 
-# print aov_values[0]
-
-# print 'sub-n003'
-# print aov_values[1]
-
-# print 'sub-n005'
-# print aov_values[2]
-
-# sys.stdout = open('%s_F_t_64v8v8_r2.txt'%(subname), 'w')
-sys.stdout = open('ALL_F_t_64v8v8_r2.txt', 'w')
-# print subname
-# print aov
-
-# print 't_64vs8ori_r2_rel: %f, p_64vs8ori_r2_rel: %f, correction: %f' %(t_64vs8ori_r2_rel, p_64vs8ori_r2_rel, p_64vs8ori_r2_rel*len(voxel_list)*3 )
-# print 't_64vs8col_r2_rel: %f, p_64vs8col_r2_rel: %f, correction: %f ' %(t_64vs8col_r2_rel, p_64vs8col_r2_rel, p_64vs8ori_r2_rel*len(voxel_list)*3 )
-# print 't_8oriVs8col_r2_rel: %f, p_8oriVs8col_r2_rel: %f, correction: %f' %(t_8oriVs8col_r2_rel, p_8oriVs8col_r2_rel, p_64vs8ori_r2_rel*len(voxel_list)*3 )
-
-# print p_64vs8ori_r2_rel*len(voxel_list)*3
-# print p_64vs8ori_r2_rel*len(voxel_list)*3
-# print p_64vs8ori_r2_rel*len(voxel_list)*3
-
-
-# print 'beta_runs_64'
-# print beta_runs_64
-
 # sys.stdout.close()
 
-
-for i in [0,1,2]:
-	print sublist[i]
-	print aov_values[i]
-	print 't_64vs8ori_r2_rel: %.2f, p_64vs8ori_r2_rel: %.2f' % (t_64vs8ori[i, 0], t_64vs8ori[i,1])
-
-	print 't_64vs8ori_r2_rel: %f, p_64vs8ori_r2_rel: %f, correction: %f' %(t_64vs8ori[i,0], t_64vs8ori[i,1], t_64vs8ori[i,1]*len(voxel_lists[i])*3 )
-	print 't_64vs8col_r2_rel: %f, p_64vs8col_r2_rel: %f, correction: %f ' %(t_64vs8col[i,0], t_64vs8col[i,1], t_64vs8col[i,1]*len(voxel_lists[i])*3 )
-	print 't_8oriVs8col_r2_rel: %f, p_8oriVs8col_r2_rel: %f, correction: %f' %(t_8oriVs8col[i,0], t_8oriVs8col[i,1], t_8oriVs8col[i,1]*len(voxel_lists[i])*3 )
-
-	print t_64vs8ori[i,1]*len(voxel_lists[i])*3
-	print t_64vs8col[i,1]*len(voxel_lists[i])*3 
-	print t_8oriVs8col[i,1]*len(voxel_lists[i])*3
-
-
-
-	# aov_values.append(aov)
-	# t_64vs8ori.append((t_64vs8ori_r2_rel, p_64vs8ori_r2_rel))
-	# t_64vs8col.append((t_64vs8col_r2_rel, p_64vs8col_r2_rel))
-	# t_8oriVs8col.append((t_8oriVs8col_r2_rel, p_8oriVs8col_r2_rel))
-
-
-
-
-
-print 'MEAN across Subjects'
-print 't_64vs8ori_r2_rel_mean: %.2f, p_64vs8ori_r2_rel_mean: %.2f' % (t_64vs8ori_across_sub[0], t_64vs8ori_across_sub[1] )
-print 't_64vs8col_r2_rel_mean: %.2f, p_64vs8col_r2_rel_mean: %.2f' % (t_64vs8col_across_sub[0], t_64vs8col_across_sub[1])
-print 't_8oriVs8col_r2_rel_mean: %.2f, p_8oriVs8col_r2_rel_mean: %.2f' % (t_8oriVs8col_across_sub[0], t_8oriVs8col_across_sub[1])
-
-sys.stdout.close()
-
-# sys.stdout = open('%s_voxel_list_.txt'%(subname), 'w')
-# print voxel_list
-# sys.stdout.close()
-
-
-### bonferroni correction: 
-
-# TESTS OF WITHIN SUBJECTS EFFECTS
-
-# Measure: r_squareds
-#      Source                              Type III    eps       df        MS          F       Sig.   et2_G   Obs.      SE       95% CI    lambda     Obs.  
-#                                             SS                                                                                                      Power 
-# =========================================================================================================================================================
-# model_type          Sphericity Assumed    111.892       -          2    55.946   12921.075      0   1.037   5734   8.690e-04    0.002   12923.328       1 
-#                     Greenhouse-Geisser    111.892   0.503      1.006   111.212   12921.075      0   1.037   5734   8.690e-04    0.002   12923.328       1 
-#                     Huynh-Feldt           111.892   0.503      1.006   111.212   12921.075      0   1.037   5734   8.690e-04    0.002   12923.328       1 
-#                     Box                   111.892   0.500          1   111.892   12921.075      0   1.037   5734   8.690e-04    0.002   12923.328       1 
-# ---------------------------------------------------------------------------------------------------------------------------------------------------------
-# Error(model_type)   Sphericity Assumed     49.646       -      11466     0.004                                                                            
-#                     Greenhouse-Geisser     49.646   0.503   5768.020     0.009                                                                            
-#                     Huynh-Feldt            49.646   0.503   5768.020     0.009                                                                            
-#                     Box                    49.646   0.500       5733     0.009                                                                            
-
-# TABLES OF ESTIMATED MARGINAL MEANS
-
-# Estimated Marginal Means for model_type
-# model_type   Mean    Std. Error   95% Lower Bound   95% Upper Bound 
-# ===================================================================
-# 1            0.212        0.002             0.209             0.216 
-# 2            0.044    3.883e-04             0.044             0.045 
-# 3            0.039    3.377e-04             0.038             0.039 
-
-
-# #### (400, with steps of 5)
-# TESTS OF WITHIN SUBJECTS EFFECTS
-
-# Measure: r_squareds
-#      Source                              Type III    eps       df        MS          F       Sig.   et2_G   Obs.      SE       95% CI    lambda     Obs.  
-#                                             SS                                                                                                      Power 
-# =========================================================================================================================================================
-# model_type          Sphericity Assumed    111.519       -          2    55.760   12696.634      0   1.021   5734   8.752e-04    0.002   12698.849       1 
-#                     Greenhouse-Geisser    111.519   0.503      1.006   110.844   12696.634      0   1.021   5734   8.752e-04    0.002   12698.849       1 
-#                     Huynh-Feldt           111.519   0.503      1.006   110.844   12696.634      0   1.021   5734   8.752e-04    0.002   12698.849       1 
-#                     Box                   111.519   0.500          1   111.519   12696.634      0   1.021   5734   8.752e-04    0.002   12698.849       1 
-# ---------------------------------------------------------------------------------------------------------------------------------------------------------
-# Error(model_type)   Sphericity Assumed     50.355       -      11466     0.004                                                                            
-#                     Greenhouse-Geisser     50.355   0.503   5767.920     0.009                                                                            
-#                     Huynh-Feldt            50.355   0.503   5767.920     0.009                                                                            
-#                     Box                    50.355   0.500       5733     0.009                                                                            
-
-# TABLES OF ESTIMATED MARGINAL MEANS
-
-# Estimated Marginal Means for model_type
-# model_type   Mean    Std. Error   95% Lower Bound   95% Upper Bound 
-# ===================================================================
-# 1            0.212        0.002             0.209             0.216 
-# 2            0.044    3.882e-04             0.044             0.045 
-# 3            0.039    3.377e-04             0.038             0.039 
-
-
-
-
-
-
-
-
-
-# 	shell()
-# 	print 'prepare preference, & a set of tunings for 3 leftin runs. '
-
-# 	# get voxel_indices_reliVox (indices of reliable voxels)
-# 	voxel_indices_reliVox_64, n_reli_64 = ma.get_voxel_indices_reliVox( r_squareds_selection_runs_64, r_squareds_threshold = 0.05, select_100 = False ) 
-
-# 	# beta_runs_64 = np.array(beta_runs)
-# 	# r_squareds_runs = np.array(r_squareds_runs)
-
-# 	# # prepare preference. 
-# 	beta_pre_indices_reliVox_64 = ma.find_preference_matrix_allRuns ( beta_runs_64, n_reli_64, voxel_indices_reliVox_64)
-
-
-
-# 	# a set of tunings for 3 leftin runs. 
-# 	run_nr_all = np.arange(file_pairs_all.shape[0])
-# 	beta_ori_mean_iterations_64 = np.zeros((len(run_nr_all), 9)) 
-# 	beta_col_mean_iterations_64 = np.zeros((len(run_nr_all), 9))
-
-# 	beta_ori_mean_iterations_16 = np.zeros((len(run_nr_all), 9))
-# 	beta_col_mean_iterations_16 = np.zeros((len(run_nr_all), 9))
-
-# 	for filepairii in run_nr_all :
-	
-# 		run_nr_leftOut = filepairii
-# 		run_nr_rest = run_nr_all[~(run_nr_all == run_nr_leftOut)]
-
-# 		beta_mean_64 = np.mean(beta_runs_64[run_nr_rest], axis = 0)
-# 		beta_ori_reliVox_mean_64, beta_col_reliVox_mean_64  = ma.calculate_tunings_matrix (n_reli_64, voxel_indices_reliVox_64, beta_mean_64, beta_pre_indices_reliVox_64, position_cen=2)
-# 		beta_ori_mean_iterations_64 [filepairii,:] = beta_ori_reliVox_mean_64 # shape: (4,9)
-# 		beta_col_mean_iterations_64 [filepairii,:] = beta_col_reliVox_mean_64
-
-
-# 		# betas_z_ori_mean = np.mean(betas_z_ori_runs[run_nr_rest], axis = 0)
-# 		# betas_z_col_mean = np.mean(betas_z_col_runs[run_nr_rest], axis = 0)
-
-
-
-
-# # plot figures across iterations!
-# 	print 'plot figures across iterations!'
-
-# 	pt.plot_tunings(run_nr_all, n_reli_64, beta_ori_mean_iterations_64, beta_col_mean_iterations_64, subname, ROI, data_type, regression, position_cen = 2)
-
-
-
-
-# ##################
-# #######################
-# #######################
-# #########################
-
-
-# 	# print t_64vs16_r2, p_64vs16_r2
-# 	sys.stdout = open('%s_t_64vs16_r2_.txt'%(subname), 'w')
-# 	# print 'r_squareds_runs_64_%2.f' %(np.mean(r_squareds_runs_64))
-# 	# print 'r_squareds_runs_16_%2.f' %(np.mean(r_squareds_runs_16))	
-# 	print 't_64vs16_r2: %.2f' %(t_64vs16_r2)
-# 	print 'p_64vs16_r2: %.2f' %(p_64vs16_r2)
-# 	sys.stdout.close()
 
