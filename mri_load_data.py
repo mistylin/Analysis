@@ -227,7 +227,11 @@ def calculate_ACC(filename_fixation):
 		if 'after response' in event:
 			n_response_all += 1
 		
-		if 'after response' in event:
+		if 'after response 1' in event:
 			n_response_correct += 1
 
 	return n_response_all, n_response_correct
+
+
+
+

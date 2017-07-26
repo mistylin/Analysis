@@ -143,7 +143,7 @@ for subii, sub in enumerate(sublist):
 
 	## Load all types of data
 	file_pairs_all = np.array(zip (target_files_fmri, target_files_beh, target_files_moco, target_files_fixation))
-
+	run_nr_all = np.arange(file_pairs_all.shape[0])
 	
 	n_response_all_runs = [] 
 	n_response_correct_runs = [] 
@@ -151,11 +151,11 @@ for subii, sub in enumerate(sublist):
 	for fileii, (filename_fmri, filename_beh, filename_moco, filename_fixation) in enumerate(file_pairs_all):	
 		# shell()
 		#0,1,2,3
-		file_pair = file_pairs_all[fileii]
-		filename_fmri = file_pair[0]
-		filename_beh = file_pair[1]
-		filename_moco = file_pair[2]
-		filename_fixation = file_pair[3]
+		# file_pair = file_pairs_all[fileii]
+		# filename_fmri = file_pair[0]
+		# filename_beh = file_pair[1]
+		# filename_moco = file_pair[2]
+		# filename_fixation = file_pair[3]
 		# shell()
 		# n_response_all, n_response_correct = ld.calculate_ACC(filename_fixation)
 
@@ -165,19 +165,36 @@ for subii, sub in enumerate(sublist):
 		n_response_all = 0
 		n_response_correct = 0
 
-		for event in eventArray:
-			# for txt in event:
-			if 'after response' in event:
-				n_response_all += 1
-			
-			if 'after response 1' in event:
-				n_response_correct += 1
+		if subname == 'sub-n003':
+			for event in eventArray:
+				for txt in event:
+					if 'after response' in txt:
+						n_response_all += 1
+					
+					if 'after response 1' in txt:
+						n_response_correct += 1
+		else:
+			for event in eventArray:
+				if 'after response' in event:
+					n_response_all += 1
+				
+				if 'after response 1' in event:
+					n_response_correct += 1
 
+		# shell()
 		n_response_all_runs.append(n_response_all)
 		n_response_correct_runs.append(n_response_correct)
 
 	n_response_all_runs = np.array(n_response_all_runs)
 	n_response_correct_runs = np.array(n_response_correct_runs)
+
+	ACC_per_run = n_response_correct_runs / n_response_all_runs
+	ACC_across_run_mean = np.mean(ACC_per_run)
+	ACC_across_run_sd = np.std(ACC_per_run)
+	yerr_run = ACC_across_run_sd/np.sqrt(len(run_nr_all))
+
+	print sub
+	print ACC_across_run_mean, ACC_across_run_sd, yerr_run
 
 	ACC = np.sum(n_response_correct_runs)/ np.sum(n_response_all_runs)
 
@@ -190,6 +207,9 @@ ACC_across_sub_mean = np.mean(ACC_across_sub)
 ACC_across_sub_sd = np.std(ACC_across_sub)
 n_sub = len(sublist)
 
-yerr = ACC_across_sub_sd/np.sqrt(n)
+yerr = ACC_across_sub_sd/np.sqrt(n_sub)
+
+print ACC_across_sub
+print ACC_across_sub_mean, ACC_across_sub_sd, yerr 
 
 
