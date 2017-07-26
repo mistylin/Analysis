@@ -142,6 +142,7 @@ for subii, sub in enumerate(sublist):
 		if (os.path.split(fixation_file)[1].split('_')[3]== 'params.pickle')*(os.path.split(fixation_file)[1].split('_')[1]== target_condition):
 			target_files_fixation.append(fixation_file)
 
+	shell()
 # #----------------------------------------------------------------------------------------------------------		
 # #----------------------------------------------------------------------------------------------------------
 ###
@@ -248,12 +249,11 @@ for subii, sub in enumerate(sublist):
 
 		# Only one event was created at the specific TR when a stimulus was presented.
 
-
-
 	## Load motion correction parameters
 		moco_params = pd.read_csv(filename_moco, delim_whitespace=True, header = None) # shape (286,6)
 	# ## Load fixation task parameters
 		key_press = ld.load_key_press_regressor (filename_fixation, fmri_data)
+
 	### Load stimulus regressor
 		stim_regressor = ld.load_stimuli_regressor (filename_beh, fmri_data, empty_start = 15, empty_end = 15)
 

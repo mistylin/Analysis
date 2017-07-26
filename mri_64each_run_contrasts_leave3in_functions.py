@@ -128,6 +128,7 @@ for subii, sub in enumerate(sublist):
 		if (os.path.split(fixation_file)[1].split('_')[3]== 'params.pickle')*(os.path.split(fixation_file)[1].split('_')[1]== target_condition):
 			target_files_fixation.append(fixation_file)
 
+	shell()
 # #----------------------------------------------------------------------------------------------------------		
 # #----------------------------------------------------------------------------------------------------------
 ###

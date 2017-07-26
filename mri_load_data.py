@@ -192,13 +192,14 @@ def load_key_press_regressor (filename_fixation, fmri_data):
 	## new standard dataset
 	for event in eventArray:
 		# for txt in event:
-			if 'key: y' in event:
-				n_event = int(event.split( )[1])
-				key_press[n_event] = 1
+		if 'key: y' in event:
+			n_event = int(event.split( )[1])
+			print
+			key_press[n_event] = 1
 
-			elif 'key: b' in event:
-				n_event = int(event.split( )[1])
-				key_press[n_event] = 1
+		elif 'key: b' in event:
+			n_event = int(event.split( )[1])
+			key_press[n_event] = 1
 	return key_press
 
 def load_stimuli_regressor (filename_beh, fmri_data, empty_start = 15, empty_end = 15): 
@@ -214,3 +215,19 @@ def load_stimuli_regressor (filename_beh, fmri_data, empty_start = 15, empty_end
 	return stim_regressor
 
 
+def calculate_ACC(filename_fixation):
+	fixation_order_run = pickle.load(open(filename_fixation, 'rb'))
+	eventArray = fixation_order_run['eventArray']  # a list of lists
+
+	n_response_all = 0
+	n_response_correct = 0
+	for event in eventArray:
+		# for txt in event:
+
+		if 'after response' in event:
+			n_response_all += 1
+		
+		if 'after response' in event:
+			n_response_correct += 1
+
+	return n_response_all, n_response_correct
