@@ -24,7 +24,7 @@ import sys
 import ColorTools as ct
 from Staircase import ThreeUpOneDownStaircase
 from tools import two_gamma as hrf_fun
-
+ 
 import mri_load_data as ld
 import mri_main_analysis as ma
 import mri_plot_tunings as pt
@@ -393,7 +393,7 @@ for subii, sub in enumerate(sublist):
 	print 'prepare preference, & a set of tunings for 3 leftin runs. '
 
 	# get voxel_indices_reliVox (indices of reliable voxels)
-	voxel_indices_reliVox, n_reli = ma.get_voxel_indices_reliVox( r_squareds_selection_runs, r_squareds_threshold = 0.05, select_100 = True ) 
+	voxel_indices_reliVox, n_reli = ma.get_voxel_indices_reliVox( r_squareds_selection_runs, r_squareds_threshold = 0.05, select_100 = False ) 
 	# beta_runs = np.array(beta_runs)
 	# r_squareds_runs = np.array(r_squareds_runs)
 

@@ -209,7 +209,9 @@ n_sub = len(sublist)
 
 yerr = ACC_across_sub_sd/np.sqrt(n_sub)
 
+t_test = stats.ttest_1samp(ACC_across_sub, 0.5)
+
 print ACC_across_sub
 print ACC_across_sub_mean, ACC_across_sub_sd, yerr 
-
+print t_test
 
